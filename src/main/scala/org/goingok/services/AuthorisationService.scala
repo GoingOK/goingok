@@ -8,7 +8,6 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier.Builde
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.http.HttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
-import Config
 import org.goingok.data.models.GoogleUser
 import play.api.Logger
 
