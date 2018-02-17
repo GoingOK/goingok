@@ -1,2 +1,6 @@
 *.class
 *.log
+.idea/*
+goingok.iml
+src/main/resources/application.conf
+project/LocalSbtSettings.scala
