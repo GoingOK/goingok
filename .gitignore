@@ -7,10 +7,8 @@ project/LocalSbtSettings.scala
 /src/main/public/css/bootstrap.css
 /src/main/public/css/bootstrap-reboot.css
 /src/main/public/css/bootstrap-grid.css
-/src/main/public/img/
 /src/main/public/js/bootstrap.js
 /src/main/public/js/bootstrap.bundle.js
-/src/main/public/ui/
 /src/main/public/css/bootstrap.css.map
 /src/main/public/css/bootstrap-grid.min.css.map
 /src/main/public/css/bootstrap.min.css
@@ -26,3 +24,5 @@ project/LocalSbtSettings.scala
 /src/main/public/js/bootstrap.js.map
 /src/main/public/js/bootstrap.min.js
 /src/main/public/js/bootstrap.min.js.map
+/src/main/resources/application-bkp.conf
+

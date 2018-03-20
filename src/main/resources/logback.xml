@@ -12,14 +12,10 @@
     </encoder>
   </appender>
 
-  <logger name="play" level="INFO" />
+  <logger name="play" level="DEBUG" />
   <logger name="application" level="DEBUG" />
 
-  <logger name="com.gargoylesoftware.htmlunit.javascript" level="OFF" />
-  <!-- https://hibernate.atlassian.net/browse/HV-1323 -->
-  <logger name="org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator" level="ERROR" />
-
-  <root level="INFO">
+  <root level="DEBUG">
     <appender-ref ref="STDOUT" />
   </root>
 
