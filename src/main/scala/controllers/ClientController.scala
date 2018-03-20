@@ -13,20 +13,29 @@ import scala.concurrent.{ExecutionContext, Future}
 class ClientController @Inject()(clientService:ClientService)(implicit ec: ExecutionContext) extends InjectedController {
 
   def profile:Action[AnyContent] = Action.async { request =>
-    val uid = request.session.get("uid").getOrElse("")
-    Logger.info("Getting profile for: " + uid)
-    clientService.getFullProfileForGoingokId(uid).map { profile =>
-      if(uid.nonEmpty) { Ok(Json.toJson(profile)) }
-      else { Unauthorized("No user id available from session") }
+    val optUid = request.session.get("uid")
+    if(optUid.isEmpty) {
+      Logger.error("The client sent an empty uid")
+      Future(Unauthorized("No user id available from session"))
+    } else {
+      val uid = optUid.get
+      Logger.info("Getting profile for: " + uid)
+      clientService.getFullProfileForGoingokId(uid).map { profile =>
+        if(uid.nonEmpty) { Ok(Json.toJson(profile)) }
+        else { Unauthorized("No user id available from session") }
+      }
     }
+
   }
 
   def saveReflection:Action[AnyContent] = Action.async { request =>
     val optUid = request.session.get("uid")
     val optReflection = request.body.asJson
     if(optUid.isEmpty) {
+      Logger.error("The client sent an empty uid")
       Future(Unauthorized("No user id available from session"))
     } else if(optReflection.isEmpty) {
+      Logger.error("The client sent an empty reflection")
       Future(BadRequest("No reflection data"))
     } else {
       val uid:String = optUid.get
@@ -39,8 +48,20 @@ class ClientController @Inject()(clientService:ClientService)(implicit ec: Execu
       }
     }
   }
-  //  ProfileService.saveReflection(msg.id,msg.reflection)
 
-  // def saveResearch
-  //  ProfileService.saveResearch(msg.id,msg.research)
+  def reflectionsCsv:Action[AnyContent] = Action.async { request =>
+    val optUid = request.session.get("uid")
+    if(optUid.isEmpty) {
+      Logger.error("The client sent an empty uid")
+      Future(Unauthorized("You are not authorised to access these reflections."))
+    } else {
+      val uid = optUid.get
+      Logger.info("Getting reflections CSV for: " + uid)
+      clientService.getReflectionsCsvForGoingokId(uid).map { reflectionsStr =>
+        if(uid.nonEmpty) { Ok(reflectionsStr) }
+        else { Unauthorized("You are not authorised to access these reflections. ") }
+      }
+    }
+
+  }
 }

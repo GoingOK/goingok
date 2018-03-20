@@ -1,10 +1,15 @@
 GET     /                   controllers.DefaultController.index
 GET     /health             controllers.DefaultController.health
++ nocsrf
 GET     /v1/admin/version   controllers.DefaultController.version
-
-POST     /v1/client/auth     controllers.AuthController.authorise
++ nocsrf
 GET     /v1/client/profile   controllers.ClientController.profile
++ nocsrf
+GET     /profile/records/csv    controllers.ClientController.reflectionsCsv
 
++ nocsrf
+POST     /v1/client/auth     controllers.AuthController.authorise
++ nocsrf
 POST    /v1/client/profile/reflection       controllers.ClientController.saveReflection
 #POST     /v1/research
 

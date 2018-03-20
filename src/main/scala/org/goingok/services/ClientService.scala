@@ -49,6 +49,15 @@ class ClientService @Inject()(val dbOps:DatabaseOps)(implicit ec: ExecutionConte
     }
   }
 
+  def getReflectionsCsvForGoingokId(goingok_id:String):Future[String] = {
+    val id = UUID.fromString(goingok_id)
+    dbOps.selectReflectionsForGoingokId(id).map { refs =>
+      val refList = refs.map { r => s"""${r.timestamp},${r.point},"${r.text}""""}
+      val header = """"TIMESTAMP","REFL_POINT","REFL_TEXT"\n"""
+      header + refList.mkString("\n")
+    }
+  }
+
 
   def getResearchForGoingokId(goingok_id:UUID):Future[Research] = {
     dbOps.selectUserForGoingokId(goingok_id).map{ user =>
