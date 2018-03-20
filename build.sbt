@@ -18,7 +18,7 @@ import LocalSbtSettings._
 
 name := "goingok"
 
-version := "4.0.0"
+version := "4.0.3"
 
 scalaVersion := "2.12.4"
 
@@ -103,7 +103,7 @@ copyDocsTask := {
 }
 
 enablePlugins(JavaAppPackaging) // sbt universal:packageZipTarball
-dockerExposedPorts := Seq(9000,80) // sbt docker:publishLocal
+dockerExposedPorts := Seq(9000) // sbt docker:publishLocal
 dockerRepository := Some(s"$dockerRepoURI")
 defaultLinuxInstallLocation in Docker := "/opt/docker"
 dockerExposedVolumes := Seq("/opt/docker/logs")
