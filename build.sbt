@@ -16,49 +16,53 @@
 
 import LocalSbtSettings._
 
-name := "goingok"
+//Project details
 
-version := "4.0.3"
+lazy val projectName = "goingok"
+lazy val projectOrg = "org.goingok"
+lazy val projectVersion = "4.1.0"
+lazy val projectScalaVersion = "2.12.6"
 
-scalaVersion := "2.12.4"
+lazy val serverName = "goingok_server"
+lazy val clientName = "goingok_client"
+lazy val sharedName = "goingok_shared"
 
-organization := "org.goingok"
+lazy val serverVersion = projectVersion
+lazy val clientVersion = projectVersion
+lazy val sharedVersion = projectVersion
 
-lazy val playJsonVersion = "2.6.8"
+//Dependencies
+
+lazy val playJsonVersion = "2.6.9"
 lazy val scalaTagsVersion = "0.6.7"
 
 lazy val scalatestVersion = "3.0.5"
 lazy val scalatestPlayVersion = "3.1.2"
 
 lazy val googleClientApiVersion = "1.23.0"
-lazy val postgresDriverVersion = "42.2.1"
+lazy val postgresDriverVersion = "42.2.2"
 lazy val json4sVersion = "3.5.3"
 lazy val slickVersion = "3.2.1"
-lazy val slickpgVersion = "0.15.7"
-//lazy val slf4jVersion = "1.7.25"
+lazy val slickpgVersion = "0.16.1"
+lazy val playSlickVersion = "3.0.3"
 
-
-enablePlugins(PlayScala)
-disablePlugins(PlayLayoutPlugin)
-PlayKeys.playMonitoredFiles ++= (sourceDirectories in (Compile, TwirlKeys.compileTemplates)).value
-libraryDependencies += ws     //Http client
-libraryDependencies += guice  //Dependency injection
+lazy val scalaJsDomVersion = "0.9.5"
+lazy val scalaJsD3Version = "0.3.4"
+lazy val scalaJsBootstrapVersion = "2.3.1"
 
 val generalDependencies = Seq(
   "com.typesafe.play" %% "play-json" % playJsonVersion,
-  "com.lihaoyi" %% "scalatags" % scalaTagsVersion
+  //"com.lihaoyi" %% "scalatags" % scalaTagsVersion
 )
 
-// Database Dependencies
 val dbDependencies = Seq(
   "org.postgresql" % "postgresql" % postgresDriverVersion,
-  "com.typesafe.play" %% "play-slick" % "3.0.3",
+  "com.typesafe.play" %% "play-slick" % playSlickVersion,
   "com.github.tminglei" %% "slick-pg" % slickpgVersion exclude("org.postgresql","postgresql"), //provided by postgresql
   "com.github.tminglei" %% "slick-pg_play-json" % slickpgVersion
 
 )
 
-//Google dependencies
 val googleDependencies = Seq(
   "com.google.api-client" % "google-api-client" % googleClientApiVersion
 )
@@ -70,18 +74,68 @@ val testDependencies = Seq(
   //"com.typesafe.akka" % "akka-stream-testkit_2.12" % akkaStreamVersion
 )
 
-libraryDependencies ++= generalDependencies ++ dbDependencies ++ googleDependencies ++ testDependencies
+
+//Modules
+
+lazy val commonSettings = Seq(
+  scalaVersion := projectScalaVersion,
+  organization := projectOrg
+)
+
+lazy val goingok_server = (project in file(serverName))
+  .settings(
+    commonSettings,
+    name := serverName,
+    version := serverVersion,
+    scalaJSProjects := Seq(goingok_client),
+    pipelineStages in Assets := Seq(scalaJSPipeline),
+    pipelineStages := Seq(digest, gzip),
+    compile in Compile := ((compile in Compile) dependsOn scalaJSPipeline).value,
+    libraryDependencies ++= Seq(ws, guice),
+    libraryDependencies ++= generalDependencies ++ dbDependencies ++ googleDependencies ++ testDependencies,
+    WebKeys.packagePrefix in Assets := "public/",
+    managedClasspath in Runtime += (packageBin in Assets).value,
+    PlayKeys.playMonitoredFiles ++= (sourceDirectories in (Compile, TwirlKeys.compileTemplates)).value,
+    buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
+    buildInfoPackage := projectOrg,
+    buildInfoOptions += BuildInfoOption.BuildTime
+  ).enablePlugins(PlayScala,BuildInfoPlugin)
+  .disablePlugins(PlayLayoutPlugin)
+  .dependsOn(sharedJvm)
+
+lazy val goingok_client = (project in file(clientName))
+  .settings(
+    commonSettings,
+    name := clientName,
+    version := clientVersion,
+    scalaJSUseMainModuleInitializer := true,
+    libraryDependencies ++= Seq(
+      "org.scala-js" %%% "scalajs-dom" % scalaJsDomVersion,
+      "org.singlespaced" %%% "scalajs-d3" % scalaJsD3Version,
+      "com.github.karasiq" %%% "scalajs-bootstrap-v4" % scalaJsBootstrapVersion
+    )
+  ).enablePlugins(ScalaJSPlugin, ScalaJSWeb).
+  dependsOn(sharedJs)
+
+lazy val goingok_shared = (crossProject.crossType(CrossType.Pure) in file(sharedName))
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq("com.lihaoyi" %%% "scalatags" % scalaTagsVersion)
+  )
+lazy val sharedJvm = goingok_shared.jvm
+lazy val sharedJs = goingok_shared.js
+
+// loads the server project at sbt startup
+onLoad in Global := (onLoad in Global).value andThen {s: State => s"project $serverName" :: s}
+
+
+/*
 
 scalacOptions in (Compile, doc) ++= Seq("-doc-root-content", baseDirectory.value+"/src/main/scala/root-doc.md")
 
 //Set the environment variable for hosts allowed in testing
 fork in Test := true
-envVars in Test := Map("TAP_HOSTS" -> "localhost")
-
-enablePlugins(BuildInfoPlugin)
-  buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
-  buildInfoPackage := "org.goingok"
-  buildInfoOptions += BuildInfoOption.BuildTime
+envVars in Test := Map("GOINGOK_HOSTS" -> "localhost")
 
 //Documentation - run ;paradox;copyDocs
 enablePlugins(ParadoxPlugin) //Generate documentation with Paradox
@@ -113,3 +167,4 @@ javaOptions in Universal ++= Seq(
   "-J-Xmx4g",
   "-J-Xms2g"
 )
+*/
