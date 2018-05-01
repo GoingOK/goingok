@@ -1,7 +1,6 @@
 package org.goingok.server.views
 
-import org.goingok.server.views.fragments.NavBar
-
+import org.goingok.server.views.components.{ComponentTests, NavBar}
 import scalatags.Text.TypedTag
 
 

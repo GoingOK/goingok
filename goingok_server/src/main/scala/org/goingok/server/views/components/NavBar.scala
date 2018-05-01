@@ -1,4 +1,4 @@
-package org.goingok.server.views.fragments
+package org.goingok.server.views.components
 
 object NavBar {
   import scalatags.Text.all._
