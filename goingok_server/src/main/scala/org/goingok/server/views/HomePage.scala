@@ -26,13 +26,9 @@ object HomePage extends GenericPage {
     body(
       NavBar.main,
       p(id :="sjs","..."),
-      script(src:="https://code.jquery.com/jquery-3.2.1.slim.min.js"),
-        //attr("integrity"):="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN",
-        //attr("crossorigin"):="anonymous"),
-      script(src:="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"),
-        //attr("integrity"):="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q",
-        //attr("crossorigin"):="anonymous"),
+      div(id :="d3element"),
       script(src:=Assets.at("js/bootstrap.js").url),
+      script(src:=Assets.at("js/d3.js").url),
       script(src:="./assets/goingok_client-fastopt.js")
     )
   )

@@ -35,7 +35,6 @@ lazy val sharedVersion = projectVersion
 
 lazy val playJsonVersion = "2.6.9"
 lazy val scalaTagsVersion = "0.6.7"
-lazy val scalaJsDomVersion = "0.9.5"
 
 lazy val scalatestVersion = "3.0.5"
 lazy val scalatestPlayVersion = "3.1.2"
@@ -46,6 +45,10 @@ lazy val json4sVersion = "3.5.3"
 lazy val slickVersion = "3.2.1"
 lazy val slickpgVersion = "0.16.1"
 lazy val playSlickVersion = "3.0.3"
+
+lazy val scalaJsDomVersion = "0.9.5"
+lazy val scalaJsD3Version = "0.3.4"
+lazy val scalaJsBootstrapVersion = "2.3.1"
 
 val generalDependencies = Seq(
   "com.typesafe.play" %% "play-json" % playJsonVersion,
@@ -107,7 +110,9 @@ lazy val goingok_client = (project in file(clientName))
     version := clientVersion,
     scalaJSUseMainModuleInitializer := true,
     libraryDependencies ++= Seq(
-      "org.scala-js" %%% "scalajs-dom" % scalaJsDomVersion
+      "org.scala-js" %%% "scalajs-dom" % scalaJsDomVersion,
+      "org.singlespaced" %%% "scalajs-d3" % scalaJsD3Version,
+      "com.github.karasiq" %%% "scalajs-bootstrap-v4" % scalaJsBootstrapVersion
     )
   ).enablePlugins(ScalaJSPlugin, ScalaJSWeb).
   dependsOn(sharedJs)
