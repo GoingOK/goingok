@@ -17,10 +17,9 @@
 package controllers
 
 import javax.inject.Inject
-
 import org.goingok.BuildInfo
 import org.goingok.data.models.{HealthStatus, ServerInfo}
-import org.goingok.views.HomePageAngular
+import org.goingok.views.{HomePage, HomePageAngular}
 import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.libs.json._
 
@@ -32,8 +31,8 @@ class DefaultController @Inject() (assets: AssetsFinder) extends InjectedControl
 
 
   def index:Action[AnyContent] = Action {
-    Ok(HomePageAngular.render("GoingOK"))
-    //Ok(HomePage.render("GoingOK"))
+    //Ok(HomePageAngular.render("GoingOK"))
+    Ok(HomePage.render("GoingOK"))
   }
 
   def health:Action[AnyContent] = Action {
