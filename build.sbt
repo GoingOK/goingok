@@ -105,7 +105,7 @@ lazy val goingok_client = (project in file(clientName))
     commonSettings,
     name := clientName,
     version := clientVersion,
-    //scalaJSUseMainModuleInitializer := true,
+    scalaJSUseMainModuleInitializer := true,
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % scalaJsDomVersion
     )

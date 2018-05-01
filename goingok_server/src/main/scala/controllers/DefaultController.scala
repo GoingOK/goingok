@@ -18,8 +18,10 @@ package controllers
 
 import javax.inject.Inject
 import org.goingok.BuildInfo
-import org.goingok.data.models.{HealthStatus, ServerInfo}
-import org.goingok.views.{HomePage, HomePageAngular}
+import org.goingok.server.data.models.{HealthStatus, ServerInfo}
+import org.goingok.server.views.{HomePage, HomePageAngular}
+import org.goingok.shared.SharedObject
+import play.api.Logger
 import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.libs.json._
 
@@ -32,6 +34,7 @@ class DefaultController @Inject() (assets: AssetsFinder) extends InjectedControl
 
   def index:Action[AnyContent] = Action {
     //Ok(HomePageAngular.render("GoingOK"))
+    Logger.info("Server says: "+SharedObject.sharedMessage)
     Ok(HomePage.render("GoingOK"))
   }
 

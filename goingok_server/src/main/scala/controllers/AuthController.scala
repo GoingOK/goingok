@@ -18,8 +18,8 @@ package controllers
 
 import javax.inject.Inject
 
-import org.goingok.data.models.GokId
-import org.goingok.services.AuthorisationService
+import org.goingok.server.data.models.GokId
+import org.goingok.server.services.AuthorisationService
 import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, InjectedController}

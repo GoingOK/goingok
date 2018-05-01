@@ -2,8 +2,8 @@ package controllers
 
 import javax.inject.Inject
 
-import org.goingok.data.models.ReflectionEntry
-import org.goingok.services.ClientService
+import org.goingok.server.data.models.ReflectionEntry
+import org.goingok.server.services.ClientService
 import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, InjectedController}
