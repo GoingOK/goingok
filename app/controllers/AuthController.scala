@@ -1,64 +1,40 @@
-/*
- * Copyright 2016-2017 original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package controllers
 
+import auth.{DefaultEnv, GoogleAuthService}
+import com.mohiva.play.silhouette.api._
+import com.mohiva.play.silhouette.api.exceptions.ProviderException
+import com.mohiva.play.silhouette.impl.providers._
 import javax.inject.Inject
+import play.api.mvc.{AbstractController, AnyContent, ControllerComponents, Request}
 
-import org.goingok.server.data.models.GokId
-import org.goingok.server.services.AuthorisationService
-import play.api.Logger
-import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, InjectedController}
+import scala.concurrent.{ExecutionContext, Future}
 
-/**
-  * Created by andrew@andrewresearch.net on 22/8/17.
-  */
 
-class AuthController @Inject()(authService:AuthorisationService, assets: AssetsFinder) extends InjectedController {
+class AuthController @Inject()(components: ControllerComponents, silhouette: Silhouette[DefaultEnv], authService: GoogleAuthService)
+                              (implicit ex: ExecutionContext) extends AbstractController(components) with Logger {
 
-  import scala.concurrent.ExecutionContext.Implicits.global
 
-  def authorise:Action[AnyContent] = Action.async { request =>
-    val token = request.body.asText.getOrElse("")
-    Logger.debug("TOKEN: "+token)
-    val fuid = authService.process(token)
-    fuid.map { uid =>
-      Logger.debug("User: " + uid)
-      val gokId = Json.toJson(GokId(uid))
-      Ok(gokId).withSession(
-        "uid" -> uid)
+  def authenticateWithGoogle =  Action.async { implicit request: Request[AnyContent] =>
+    (authService.registry.get[SocialProvider]("google") match {
+      case Some(p: SocialProvider with CommonSocialProfileBuilder) =>
+        p.authenticate().flatMap {
+          case Left(result) => Future.successful(result)
+          case Right(authInfo) => for {
+            profile <- p.retrieveProfile(authInfo)
+            user <- authService.user.save(profile)
+            authenticator <- authService.cookieAuth.create(profile.loginInfo)
+            value <- authService.cookieAuth.init(authenticator)
+            result <- authService.cookieAuth.embed(value, Redirect(routes.ApplicationController.profile()))
+          } yield {
+            silhouette.env.eventBus.publish(LoginEvent(user, request))
+            result
+          }
+        }
+      case _ => Future.failed(new ProviderException(s"Cannot authenticate with google"))
+    }).recover {
+      case e: ProviderException =>
+        logger.error("Unexpected provider error", e)
+        Redirect(routes.ApplicationController.index()).flashing("error" -> "could.not.authenticate")
     }
   }
 }
-
-//def saveStock = Action { request =>
-//  val json = request.body.asJson.get
-//  val stock = json.as[Stock]
-//  println(stock)
-//  Ok
-//}
-
-// import akka.http.scaladsl.unmarshalling.PredefinedFromEntityUnmarshallers.stringUnmarshaller
-//      entity(as[String]) { str =>
-//        if (str.isEmpty) complete("An  ID Token is required")
-//        else {
-//          val authMsg = HandlerMessage.Authorisation(str)
-//          onComplete(AuthorisationHandler.process(authMsg)) {gokId =>
-//            val id = gokId.get
-//            //System.out.println("FINAL ID: ",id)
-//            setSession(oneOff, usingHeaders, id) { ctx =>
-//              ctx.complete(GokId(id))

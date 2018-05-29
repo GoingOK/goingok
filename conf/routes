@@ -1,4 +1,11 @@
-GET     /                   controllers.DefaultController.index()
+
+GET     /                               controllers.ApplicationController.index
+GET     /profile                        controllers.ApplicationController.profile
+GET     /signout                        controllers.ApplicationController.signOut
+GET     /signin                         controllers.AuthController.authenticateWithGoogle
+GET     /authenticate                   controllers.AuthController.authenticateWithGoogle
+
+
 GET     /health             controllers.DefaultController.health()
 #+ nocsrf
 GET     /v1/admin/version   controllers.DefaultController.version()
@@ -8,7 +15,7 @@ GET     /v1/client/profile   controllers.ClientController.profile()
 GET     /profile/records/csv    controllers.ClientController.reflectionsCsv()
 
 #+ nocsrf
-POST     /v1/client/auth     controllers.AuthController.authorise()
+#POST     /v1/client/auth     controllers.OLD_AuthController.authorise()
 #+ nocsrf
 POST    /v1/client/profile/reflection       controllers.ClientController.saveReflection()
 #POST     /v1/research
