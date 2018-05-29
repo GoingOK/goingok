@@ -27,3 +27,6 @@ project/LocalSbtSettings.scala
 /src/main/public/js/bootstrap.min.js.map
 /src/main/resources/application-bkp.conf
 
+/clientJS/target/
+/project/target/
+/target/

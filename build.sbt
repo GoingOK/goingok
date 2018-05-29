@@ -23,9 +23,9 @@ lazy val projectOrg = "org.goingok"
 lazy val projectVersion = "4.1.0"
 lazy val projectScalaVersion = "2.12.6"
 
-lazy val serverName = "goingok_server"
-lazy val clientName = "goingok_client"
-lazy val sharedName = "goingok_shared"
+lazy val serverName = "goingok"
+lazy val clientName = "clientJS"
+lazy val sharedName = "sharedJS"
 
 lazy val serverVersion = projectVersion
 lazy val clientVersion = projectVersion
@@ -35,6 +35,7 @@ lazy val sharedVersion = projectVersion
 
 lazy val playJsonVersion = "2.6.9"
 lazy val scalaTagsVersion = "0.6.7"
+lazy val playSilhouetteVersion = "5.0.4"
 
 lazy val scalatestVersion = "3.0.5"
 lazy val scalatestPlayVersion = "3.1.2"
@@ -52,7 +53,22 @@ lazy val scalaJsBootstrapVersion = "2.3.1"
 
 val generalDependencies = Seq(
   "com.typesafe.play" %% "play-json" % playJsonVersion,
-  //"com.lihaoyi" %% "scalatags" % scalaTagsVersion
+  "com.lihaoyi" %% "scalatags" % scalaTagsVersion,
+   //,
+  //"com.atlassian.jwt" % "jwt-core" % "1.6.1",
+  //"com.atlassian.jwt" % "jwt-api" % "1.6.1"
+)
+
+val silhouetteDependencies = Seq(
+  "com.mohiva" %% "play-silhouette" % playSilhouetteVersion,
+  "com.mohiva" %% "play-silhouette-password-bcrypt" % playSilhouetteVersion,
+  "com.mohiva" %% "play-silhouette-persistence" % playSilhouetteVersion,
+  "com.mohiva" %% "play-silhouette-crypto-jca" % playSilhouetteVersion,
+  "net.codingwell" %% "scala-guice" % "4.1.0",
+  "com.iheart" %% "ficus" % "1.4.1",
+  "com.mohiva" %% "play-silhouette-testkit" % playSilhouetteVersion % "test",
+  "javax.xml.bind" % "jaxb-api" % "2.3.0",
+  "net.minidev" % "json-smart" % "2.3"
 )
 
 val dbDependencies = Seq(
@@ -82,28 +98,61 @@ lazy val commonSettings = Seq(
   organization := projectOrg
 )
 
-lazy val goingok_server = (project in file(serverName))
+lazy val play = (project in file("."))
   .settings(
     commonSettings,
-    name := serverName,
-    version := serverVersion,
-    scalaJSProjects := Seq(goingok_client),
+    name := projectName,
+    version := projectVersion,
+    scalaJSProjects := Seq(clientJS),
     pipelineStages in Assets := Seq(scalaJSPipeline),
     pipelineStages := Seq(digest, gzip),
     compile in Compile := ((compile in Compile) dependsOn scalaJSPipeline).value,
-    libraryDependencies ++= Seq(ws, guice),
-    libraryDependencies ++= generalDependencies ++ dbDependencies ++ googleDependencies ++ testDependencies,
+    libraryDependencies ++= silhouetteDependencies,
+    libraryDependencies ++= Seq(ws, guice, ehcache, specs2 % Test),
     WebKeys.packagePrefix in Assets := "public/",
     managedClasspath in Runtime += (packageBin in Assets).value,
-    PlayKeys.playMonitoredFiles ++= (sourceDirectories in (Compile, TwirlKeys.compileTemplates)).value,
+    dockerExposedPorts := Seq(9000,80), // sbt docker:publishLocal
+    dockerRepository := Some(s"$dockerRepoURI"),
+    defaultLinuxInstallLocation in Docker := "/opt/docker",
+    dockerExposedVolumes := Seq("/opt/docker/logs"),
+    dockerBaseImage := "openjdk:9-jdk"
+  ).enablePlugins(PlayScala,WebScalaJSBundlerPlugin,SbtWeb)
+  .dependsOn(server,sharedJvm)
+
+lazy val server = (project in file(serverName))
+  .settings(
+    resolvers += Resolver.bintrayRepo("nlytx", "nlytx-nlp"),
+    //resolvers += Resolver.sonatypeRepo("releases"),
+    resolvers += Resolver.jcenterRepo,
+    libraryDependencies ++= generalDependencies ++ dbDependencies ++ googleDependencies ++ testDependencies,
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
     buildInfoPackage := projectOrg,
-    buildInfoOptions += BuildInfoOption.BuildTime
-  ).enablePlugins(PlayScala,BuildInfoPlugin)
-  .disablePlugins(PlayLayoutPlugin)
+    buildInfoOptions += BuildInfoOption.BuildTime,
+  ).enablePlugins(BuildInfoPlugin)
   .dependsOn(sharedJvm)
 
-lazy val goingok_client = (project in file(clientName))
+//lazy val goingok_server = (project in file(serverName))
+//  .settings(
+//    commonSettings,
+//    name := serverName,
+//    version := serverVersion,
+//    scalaJSProjects := Seq(goingok_client),
+//    pipelineStages in Assets := Seq(scalaJSPipeline),
+//    pipelineStages := Seq(digest, gzip),
+//    compile in Compile := ((compile in Compile) dependsOn scalaJSPipeline).value,
+//    libraryDependencies ++= Seq(ws, guice),
+//    libraryDependencies ++= generalDependencies ++ dbDependencies ++ googleDependencies ++ testDependencies,
+//    WebKeys.packagePrefix in Assets := "public/",
+//    managedClasspath in Runtime += (packageBin in Assets).value,
+//    PlayKeys.playMonitoredFiles ++= (sourceDirectories in (Compile, TwirlKeys.compileTemplates)).value,
+//    buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
+//    buildInfoPackage := projectOrg,
+//    buildInfoOptions += BuildInfoOption.BuildTime
+//  ).enablePlugins(PlayScala,BuildInfoPlugin)
+//  .disablePlugins(PlayLayoutPlugin)
+//  .dependsOn(sharedJvm)
+
+lazy val clientJS = (project in file(clientName))
   .settings(
     commonSettings,
     name := clientName,
@@ -112,21 +161,34 @@ lazy val goingok_client = (project in file(clientName))
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % scalaJsDomVersion,
       "org.singlespaced" %%% "scalajs-d3" % scalaJsD3Version,
-      "com.github.karasiq" %%% "scalajs-bootstrap-v4" % scalaJsBootstrapVersion
+      "com.github.karasiq" %%% "scalajs-bootstrap-v4" % "2.3.1",
+      "me.shadaj" %%% "slinky-core" % "0.4.2", // core React functionality, no React DOM
+      "me.shadaj" %%% "slinky-web" % "0.4.2" // React DOM, HTML and SVG tags
+    ),
+    npmDependencies in Compile ++= Seq(
+      "bootstrap" -> "4.1.1",
+      //"font-awesome5" -> "1.0.5",
+      "d3" -> "5.4.0",
+      "react" -> "16.2.0",
+      "react-dom" -> "16.2.0"
     )
-  ).enablePlugins(ScalaJSPlugin, ScalaJSWeb).
+  ).enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin, ScalaJSWeb).
   dependsOn(sharedJs)
 
-lazy val goingok_shared = (crossProject.crossType(CrossType.Pure) in file(sharedName))
+lazy val sharedJS = (crossProject.crossType(CrossType.Pure) in file(sharedName))
   .settings(
     commonSettings,
     libraryDependencies ++= Seq("com.lihaoyi" %%% "scalatags" % scalaTagsVersion)
   )
-lazy val sharedJvm = goingok_shared.jvm
-lazy val sharedJs = goingok_shared.js
+
+lazy val sharedJvm = sharedJS.jvm
+lazy val sharedJs = sharedJS.js
+
+
+
 
 // loads the server project at sbt startup
-onLoad in Global := (onLoad in Global).value andThen {s: State => s"project $serverName" :: s}
+//onLoad in Global := (onLoad in Global).value andThen {s: State => s"project $serverName" :: s}
 
 
 /*
