@@ -12,6 +12,7 @@ object NavBar {
 
     val linkDisabled = if(!navParams.signedIn) "disabled" else ""
     val profileActive = if(navParams.page=="profile") "active" else ""
+    val helpActive = if(navParams.page=="help") "active" else ""
     val displayName = navParams.displayName.getOrElse("")
 
     tag("nav")(name:="nav",id:="main-nav-bar",`class`:="navbar navbar-dark navbar-expand-lg", role:="navigation")(
@@ -42,7 +43,7 @@ object NavBar {
             else a(`class`:="nav-link",href:="/signin")("Sign In")
           ),
           li(`class`:="nav-item")(
-            a(`class`:="nav-link",href:="/help")(span(`class` := "fas fa-question-circle"))
+            a(`class`:=s"nav-link $helpActive",href:="/help")(span(`class` := "fas fa-question-circle"))
           )
         )
       )

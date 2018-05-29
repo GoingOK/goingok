@@ -5,7 +5,7 @@ import com.mohiva.play.silhouette.api.actions.{SecuredErrorHandler, SecuredReque
 import com.mohiva.play.silhouette.api.{LogoutEvent, Silhouette}
 import javax.inject.Inject
 import play.api.mvc._
-import views.{HomePage, ProfilePage}
+import views.{HelpPage, HomePage, ProfilePage}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -25,6 +25,13 @@ class ApplicationController @Inject()(components: ControllerComponents, silhouet
   def index = silhouette.UserAwareAction.async {
     implicit request: UserAwareRequest[DefaultEnv,AnyContent] => {
       val page = HomePage.render("GoingOK :: home",request.identity)
+      Future.successful(Ok(page))
+    }
+  }
+
+  def help = silhouette.UserAwareAction.async {
+    implicit request: UserAwareRequest[DefaultEnv,AnyContent] => {
+      val page = HelpPage.render("GoingOK :: help",request.identity)
       Future.successful(Ok(page))
     }
   }
