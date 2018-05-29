@@ -1,7 +1,25 @@
 package views
 
+import controllers.routes
+import scalatags.Text.{tags, tags2}
+
 object Includes {
   import scalatags.Text.all._
+
+  def headContent(titleStr:String) = tags.head(
+    tags2.title(titleStr),
+    meta(charset := "utf-8"),
+    meta(name := "viewport", content := "width=device-width, initial-scale=1"),
+    link(rel := "icon", `type` := "image/x-icon", href := routes.Assets.versioned("images/favicon.ico").url),
+    link(rel := "stylesheet", href := routes.Assets.versioned("stylesheets/bootstrap.min.css").url),
+    link(rel := "stylesheet", href := routes.Assets.versioned("stylesheets/main.css").url),
+    link(rel := "stylesheet", href := routes.Assets.versioned("stylesheets/navbar.component.css").url),
+    link(rel := "stylesheet", href := routes.Assets.versioned("stylesheets/fa-svg-with-js.css").url),
+    script(src := routes.Assets.versioned("javascripts/fa-solid.min.js").url),
+    script(src := routes.Assets.versioned("javascripts/fontawesome.min.js").url)
+  )
+
+  val clientJs = script(src := routes.Assets.versioned("clientjs-fastopt-bundle.js").url)
 
 //  val bootstrapCSS = link(rel:="stylesheet",
 //    href:="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css",

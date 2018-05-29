@@ -1,5 +1,6 @@
 
 GET     /                               controllers.ApplicationController.index
+GET     /help                           controllers.ApplicationController.help
 GET     /profile                        controllers.ApplicationController.profile
 GET     /signout                        controllers.ApplicationController.signOut
 GET     /signin                         controllers.AuthController.authenticateWithGoogle

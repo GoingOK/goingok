@@ -11,7 +11,7 @@ object MainClient {
 
   //As this is a main method it should run on client load
   def main(args: Array[String]): Unit = {
-    dom.document.getElementById("sjs").textContent = "This text has been inserted by a scalaJs script"
+    dom.document.getElementById("test-js-content").textContent = "TEST: This text has been inserted by a scalaJs script"
     println("This is scalaJs printing to the console. The shared message is: " + SharedObject.sharedMessage)
   }
     //D3 Test

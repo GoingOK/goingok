@@ -7,7 +7,7 @@ object Charts {
   val demoHistogram = div(id :="d3element")
 
   val reflectionPoints = div( id := "container", `class` := "svg-container","This is where the chart goes.",
-    div(id := "sjs","This should be replaced by text from ClientJS"),
+    div(id := "test-js-content","This should be replaced by text from ClientJS"),
     //div(id := "d3element")
   )
 

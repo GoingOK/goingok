@@ -52,7 +52,7 @@ object ProfileContent {
     )
   )
 
-  def panel(idName:String,icon:String,title:String,content:TypedTag[String]):TypedTag[String] = div(id := idName, `class` := "card",
+  def panel(idName:String,icon:String,title:String,content:TypedTag[String]):TypedTag[String] = div(id := idName, `class` := "card profile-panel",
     div(`class` := "card-header",
       span(`class` := icon), b(s" $title"),
       span(`class` := "fas fa-question-circle float-right")
