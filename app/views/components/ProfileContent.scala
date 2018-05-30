@@ -14,7 +14,7 @@ object ProfileContent {
     div( id := "main-content", `class` := "row",
       div( id := "main-left-column", `class` := "col-sm-8",
         panel("reflection-entry","fas fa-edit","Enter a reflection",this.entryForm),
-        panel("reflection-list", "fas fa-list-alt", "Past reflections", this.reflections)
+        panel("reflection-list", "fas fa-list-alt", "Past reflections", ReflectionList.display())
       ),
       div( id := "main-right-column", `class` := "col-sm-4",
         panel("message-list", "fas fa-envelope", "Messages", this.messages)
@@ -61,8 +61,6 @@ object ProfileContent {
       content
     )
   )
-
-  def reflections = div("Reflections go here")
 
   def messages = div("Messages go here")
 

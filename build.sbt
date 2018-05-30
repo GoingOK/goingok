@@ -64,7 +64,7 @@ val silhouetteDependencies = Seq(
   "com.mohiva" %% "play-silhouette-password-bcrypt" % playSilhouetteVersion,
   "com.mohiva" %% "play-silhouette-persistence" % playSilhouetteVersion,
   "com.mohiva" %% "play-silhouette-crypto-jca" % playSilhouetteVersion,
-  "net.codingwell" %% "scala-guice" % "4.2.1", //extention to guice DI
+  "net.codingwell" %% "scala-guice" % "4.1.1", //extention to guice DI - latest version breaks
   "com.iheart" %% "ficus" % "1.4.3", //extention to typesafe config
   "com.mohiva" %% "play-silhouette-testkit" % playSilhouetteVersion % "test",
   "javax.xml.bind" % "jaxb-api" % "2.3.0", //to fix issue with missing xml in Java9
@@ -104,7 +104,7 @@ lazy val play = (project in file("."))
     name := projectName,
     version := projectVersion,
     scalaJSProjects := Seq(clientJS),
-    pipelineStages in Assets := Seq(scalaJSPipeline),„
+    pipelineStages in Assets := Seq(scalaJSPipeline),
     pipelineStages := Seq(digest, gzip),
     compile in Compile := ((compile in Compile) dependsOn scalaJSPipeline).value,
     libraryDependencies ++= silhouetteDependencies,
