@@ -1,10 +1,9 @@
 package views
 
 import auth.data.User
-import scalatags.Text.all._
 import scalatags.Text.{TypedTag, tags}
 import views.components.NavBar.NavParams
-import views.components.{ComponentTests, HomeContent, NavBar}
+import views.components.{HomeContent, NavBar}
 
 /**
   * Created by andrew@andrewresearch.net on 20/11/17.

@@ -12,9 +12,9 @@ GET     /signin                 controllers.AuthController.authenticateWithGoogl
 
 # Profile routes
 GET     /profile                controllers.ProfileController.profile
-GET     /profile/records/csv    controllers.ProfileController.reflectionsCsv
+#GET     /profile/records/csv    controllers.ProfileController.reflectionsCsv
 
-POST    /profile/reflection     controllers.ProfileController.saveReflection
+#POST    /profile/reflection     controllers.ProfileController.saveReflection
 
 # Assets
 GET /assets/*file               controllers.Assets.at(file)
