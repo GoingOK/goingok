@@ -1,21 +1,15 @@
-package views.components
+package views.components.profile
 
 import java.util.UUID
 
-import org.goingok.server.data.models.{Reflection, ReflectionEntry}
+import org.goingok.server.data.models.Reflection
 import scalatags.Text.TypedTag
 import scalatags.Text.all._
 
 object ReflectionList {
 
-  val dummyData = List(
-    Reflection("2018-01-01",100.0,"This is a dummy reflection. Number 1.",UUID.randomUUID()),
-    Reflection("2018-02-02",50.0,"This is a dummy reflection Number 2. This is a dummy reflection Number 2. This is a dummy reflection Number 2.",UUID.randomUUID()),
-    Reflection("2018-03-03",0.0,"This is a dummy reflection Number 3. This is a dummy reflection Number 3. This is a dummy reflection Number 3. This is a dummy reflection Number 3. This is a dummy reflection Number 3.",UUID.randomUUID()),
-    )
-
   def display(data:Option[List[Reflection]]=None) :TypedTag[String] = {
-    val refs = data.getOrElse(dummyData)
+    val refs = data.getOrElse(List())
     div(id:="reflection-box",
         for(ref <- refs) yield {
           div(`class` := "reflist-item",

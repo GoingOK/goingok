@@ -1,6 +1,7 @@
 package views
 
 import auth.data.User
+import scalatags.Text.all._
 import scalatags.Text.{TypedTag, tags}
 import views.components.NavBar.NavParams
 import views.components.{ComponentTests, HomeContent, NavBar}

@@ -17,13 +17,11 @@
 package controllers
 
 import javax.inject.Inject
-import org.goingok.BuildInfo
-import org.goingok.server.data.models.{HealthStatus, ServerInfo}
-import views.ProfilePage
-import org.goingok.shared.SharedObject
+//import org.goingok.BuildInfo
+import org.goingok.server.data.models.HealthStatus
 import play.api.Logger
-import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.libs.json._
+import play.api.mvc.{Action, AnyContent, InjectedController}
 import views.ProfilePage
 
 /**
@@ -35,7 +33,7 @@ class DefaultController @Inject() (assets: AssetsFinder) extends InjectedControl
 
   def index:Action[AnyContent] = Action {
     //Ok(HomePageAngular.render("GoingOK"))
-    Logger.info("Server says: "+SharedObject.sharedMessage)
+    Logger.info("Logging from default controller")
     Ok(ProfilePage.render("GoingOK"))
   }
 
@@ -45,6 +43,7 @@ class DefaultController @Inject() (assets: AssetsFinder) extends InjectedControl
   }
 
   def version:Action[AnyContent] = Action {
-    Ok(Json.toJson(ServerInfo(BuildInfo.name,BuildInfo.version,BuildInfo.builtAtString)))
+    Ok("temporarily disabled")
+    //Ok(Json.toJson(ServerInfo(BuildInfo.name,BuildInfo.version,BuildInfo.builtAtString)))
   }
 }
