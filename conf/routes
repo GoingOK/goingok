@@ -1,37 +1,22 @@
 
-GET     /                               controllers.ApplicationController.index
-GET     /help                           controllers.ApplicationController.help
-GET     /profile                        controllers.ApplicationController.profile
-GET     /signout                        controllers.ApplicationController.signOut
-GET     /signin                         controllers.AuthController.authenticateWithGoogle
-GET     /authenticate                   controllers.AuthController.authenticateWithGoogle
+# General application routes
+GET     /                       controllers.ApplicationController.index
+GET     /health                 controllers.ApplicationController.health
+GET     /version                controllers.ApplicationController.version
+GET     /help                   controllers.ApplicationController.help
 
+# Auth routes
+GET     /signout                controllers.AuthController.signOut
+GET     /authenticate           controllers.AuthController.authenticateWithGoogle
+GET     /signin                 controllers.AuthController.authenticateWithGoogle
 
-GET     /health             controllers.DefaultController.health()
-#+ nocsrf
-GET     /v1/admin/version   controllers.DefaultController.version()
-#+ nocsrf
-GET     /v1/client/profile   controllers.ClientController.profile()
-#+ nocsrf
-GET     /profile/records/csv    controllers.ClientController.reflectionsCsv()
+# Profile routes
+GET     /profile                controllers.ProfileController.profile
+GET     /profile/records/csv    controllers.ProfileController.reflectionsCsv
 
-#+ nocsrf
-#POST     /v1/client/auth     controllers.OLD_AuthController.authorise()
-#+ nocsrf
-POST    /v1/client/profile/reflection       controllers.ClientController.saveReflection()
-#POST     /v1/research
+POST    /profile/reflection     controllers.ProfileController.saveReflection
 
-#GET   /  controllers.Assets.at(path="/public", file="html/client-index.html")
-#GET   /graphiql  controllers.GraphQlController.graphiql
-#GET   /AWAgraphiql  controllers.AWAGraphQlController.graphiql
+# Assets
+GET /assets/*file               controllers.Assets.at(file)
+GET /versionedAssets/*file      controllers.Assets.versioned(file)
 
-#GET   /health  controllers.HealthController.health
-
-#+ nocsrf # This should be removed once graphiql is passing tokens
-#POST  /graphql  controllers.GraphQlController.graphql
-#POST  /AWAgraphql  controllers.AWAGraphQlController.graphql
-
-# prefix must match `play.assets.urlPrefix`
-GET /assets/*file           controllers.Assets.at(file)
-GET /versionedAssets/*file  controllers.Assets.versioned(file)
-#POST  /upload controllers.FileController.upload

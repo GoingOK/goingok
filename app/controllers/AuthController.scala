@@ -2,6 +2,7 @@ package controllers
 
 import auth.{DefaultEnv, GoogleAuthService}
 import com.mohiva.play.silhouette.api._
+import com.mohiva.play.silhouette.api.actions.SecuredRequest
 import com.mohiva.play.silhouette.api.exceptions.ProviderException
 import com.mohiva.play.silhouette.impl.providers._
 import javax.inject.Inject
@@ -36,5 +37,11 @@ class AuthController @Inject()(components: ControllerComponents, silhouette: Sil
         logger.error("Unexpected provider error", e)
         Redirect(routes.ApplicationController.index()).flashing("error" -> "could.not.authenticate")
     }
+  }
+
+  def signOut = silhouette.SecuredAction.async { implicit request: SecuredRequest[DefaultEnv, AnyContent] =>
+    val result = Redirect(routes.ApplicationController.index())
+    silhouette.env.eventBus.publish(LogoutEvent(request.identity, request))
+    silhouette.env.authenticatorService.discard(request.authenticator, result)
   }
 }
