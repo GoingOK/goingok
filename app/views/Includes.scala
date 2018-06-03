@@ -1,7 +1,7 @@
 package views
 
 import controllers.routes
-import scalatags.Text.{tags, tags2}
+import scalatags.Text.{TypedTag, tags, tags2}
 
 object Includes {
   import scalatags.Text.all._
@@ -22,6 +22,17 @@ object Includes {
 
   val clientJs = script(src := routes.Assets.versioned("javascripts/client-fastOptJS-bundle.js").url)
   val d3Js = script(src := routes.Assets.versioned("javascripts/d3.min.js").url)
+  val startRegister = script("$('#register-modal').modal({ keyboard: false })")
+
+  def panel(idName:String,icon:String,title:String,content:TypedTag[String]):TypedTag[String] = div(id := idName, `class` := "card profile-panel",
+    div(`class` := "card-header",
+      span(`class` := icon), b(s" $title"),
+      span(`class` := "fas fa-question-circle float-right")
+    ),
+    div(`class` := "card-body",
+      content
+    )
+  )
 
 //  val d3JS = script(src:="https://d3js.org/d3.v5.min.js")
 

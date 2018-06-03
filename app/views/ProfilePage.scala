@@ -34,16 +34,16 @@ object ProfilePage extends GenericPage {
         div(id := "profile-content",`class` := "container-fluid",
           div( id := "reflectchart-content", `class` := "row",
             div( `class` := "col-sm-12",
-              panel("reflection-points","fas fa-chart-line","GoingOK over time",ReflectionPointChart.display())
+              Includes.panel("reflection-points","fas fa-chart-line","GoingOK over time",ReflectionPointChart.display())
             )
           ),
           div( id := "main-content", `class` := "row",
             div( id := "main-left-column", `class` := "col-sm-8",
-              panel("reflection-entry","fas fa-edit","Enter a reflection",ReflectionEntry.display(sliderStartPoint)),
-              panel("reflection-list", "fas fa-list-alt", "Past reflections", ReflectionList.display(Some(dummyData)))
+              Includes.panel("reflection-entry","fas fa-edit","Enter a reflection",ReflectionEntry.display(sliderStartPoint)),
+              Includes.panel("reflection-list", "fas fa-list-alt", "Past reflections", ReflectionList.display(Some(dummyData)))
             ),
             div( id := "main-right-column", `class` := "col-sm-4",
-              panel("message-list", "fas fa-envelope", "Messages", MessagesList.display())
+              Includes.panel("message-list", "fas fa-envelope", "Messages", MessagesList.display())
             )
           )
         ),
@@ -54,15 +54,6 @@ object ProfilePage extends GenericPage {
     )
   }
 
-  private def panel(idName:String,icon:String,title:String,content:TypedTag[String]):TypedTag[String] = div(id := idName, `class` := "card profile-panel",
-    div(`class` := "card-header",
-      span(`class` := icon), b(s" $title"),
-      span(`class` := "fas fa-question-circle float-right")
-    ),
-    div(`class` := "card-body",
-      content
-    )
-  )
 
   private def createChart(data:List[Reflection]) = {
     val chartData:List[ujson.Js.Obj] = data.map(r => ujson.Js.Obj("timestamp" -> r.timestamp, "point" -> r.point))
