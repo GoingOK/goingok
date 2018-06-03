@@ -11,6 +11,7 @@ GET     /authenticate           controllers.AuthController.authenticateWithGoogl
 GET     /signin                 controllers.AuthController.authenticateWithGoogle
 
 # Profile routes
+GET     /register               controllers.ProfileController.register
 GET     /profile                controllers.ProfileController.profile
 #GET     /profile/records/csv    controllers.ProfileController.reflectionsCsv
 

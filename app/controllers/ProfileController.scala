@@ -5,7 +5,7 @@ import com.mohiva.play.silhouette.api.Silhouette
 import com.mohiva.play.silhouette.api.actions.{SecuredErrorHandler, SecuredRequest}
 import javax.inject.Inject
 import play.api.mvc._
-import views.ProfilePage
+import views.{ProfilePage, RegisterPage}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -23,6 +23,18 @@ class ProfileController @Inject()(components: ControllerComponents, silhouette: 
     val page = ProfilePage.render("GoingOK :: profile",Some(request.identity))
     Future.successful(Ok(page))
   }
+
+  def register :Action[AnyContent] = silhouette.SecuredAction(errorHandler).async { implicit request: SecuredRequest[DefaultEnv, AnyContent] =>
+
+    //    clientService.getFullProfileForGoingokId(uid).map { profile =>
+    //      if(uid.nonEmpty) { Ok(Json.toJson(profile)) }
+    //      else { Unauthorized("No user id available from session") }
+    //    }
+
+    val page = RegisterPage.render("GoingOK :: register",Some(request.identity))
+    Future.successful(Ok(page))
+  }
+
 
 
 //  def reflectionsCsv :Action[AnyContent] = silhouette.SecuredAction(errorHandler).async { implicit request: SecuredRequest[DefaultEnv, AnyContent] =>

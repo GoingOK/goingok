@@ -41,7 +41,7 @@ lazy val vWebpack = "4.10.2"
 lazy val vWebpackDevServer = "3.1.4"
 
 lazy val vBootstrap = "4.1.1"
-lazy val vJquery = "3.3.1"
+lazy val vJquery = "3.2.1"
 lazy val vPopper = "1.14.3"
 lazy val vD3 = "5.4.0"
 
@@ -114,6 +114,7 @@ lazy val client = project.in(file(clientName))
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % vScalaJsDom,
       "org.singlespaced" %%% "scalajs-d3" % "0.3.4",
+      "com.github.karasiq" %%% "scalajs-bootstrap-v4" % "2.3.1",
       "com.lihaoyi" %%% "scalatags" % vScalaTags, //Using ScalaTags instead of Twirl
       "com.lihaoyi" %%% "upickle" % vUpickle //Using uJson for main JSON
     ),
