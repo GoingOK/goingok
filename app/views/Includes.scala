@@ -4,7 +4,7 @@ import controllers.routes
 import scalatags.Text.{TypedTag, tags, tags2}
 
 object Includes {
-  import scalatags.Text.all._
+  import scalatags.Text.all._ // scalastyle:ignore
 
   def headContent(titleStr:String) = tags.head(
     tags2.title(titleStr),
@@ -20,8 +20,8 @@ object Includes {
     script(src := routes.Assets.versioned("javascripts/fontawesome.min.js").url)
   )
 
-  val clientJs = script(src := routes.Assets.versioned("javascripts/client-fastOptJS-bundle.js").url)
-  val d3Js = script(src := routes.Assets.versioned("javascripts/d3.min.js").url)
+  //val clientJs = script(src := routes.Assets.versioned("javascripts/client-fastOptJS-bundle.js").url)
+  //val d3Js = script(src := routes.Assets.versioned("javascripts/d3.min.js").url)
   val startRegister = script("$('#register-modal').modal({ keyboard: false })")
 
   def panel(idName:String,icon:String,title:String,content:TypedTag[String]):TypedTag[String] = div(id := idName, `class` := "card profile-panel",

@@ -47,8 +47,8 @@ object ProfilePage extends GenericPage {
             )
           )
         ),
-        Includes.d3Js,
-        Includes.clientJs,
+        //Includes.d3Js,
+        script(src:=bundleUrl),
         createChart(dummyData)
       )
     )

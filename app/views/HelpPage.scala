@@ -1,6 +1,7 @@
 package views
 
 import auth.data.User
+import scalatags.Text.all._ // scalastyle:ignore
 import scalatags.Text.{TypedTag, tags}
 import views.components.NavBar.NavParams
 import views.components.{HelpContent, NavBar}
@@ -17,7 +18,7 @@ object HelpPage extends GenericPage {
       tags.body(
         NavBar.main(NavParams(signedIn,page="help",displayName = user.flatMap(_.fullName))),
         HelpContent.mainContainer,
-        Includes.clientJs
+        script(src:=bundleUrl)
       )
     )
   }

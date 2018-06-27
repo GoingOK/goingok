@@ -1,7 +1,7 @@
 package views
 
 import auth.data.User
-import scalatags.Text.all._
+import scalatags.Text.all._ // scalastyle:ignore
 import scalatags.Text.{TypedTag, tags}
 import views.components.NavBar
 import views.components.NavBar.NavParams
@@ -23,7 +23,7 @@ object RegisterPage extends GenericPage {
             )
           )
         ),
-        Includes.clientJs,
+        script(src:=bundleUrl)
         //Includes.startRegister
       )
     )

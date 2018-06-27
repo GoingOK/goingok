@@ -16,11 +16,13 @@
 
 import LocalSbtSettings._
 
+lazy val projectName = "goingok"
 lazy val projectVersion = "4.1.0"
 lazy val projectOrganisation = "org.goingok"
-lazy val serverName = "goingok_server"
-lazy val clientName = "goingok_client"
-lazy val sharedName = "goingok_shared"
+
+lazy val serverName = s"${projectName}_server"
+lazy val clientName = s"${projectName}_client"
+lazy val sharedName = s"${projectName}_shared"
 
 //Versions
 scalaVersion in ThisBuild := "2.12.6"
@@ -90,130 +92,56 @@ lazy val goingok = project.in(file("."))
     libraryDependencies ++= playDeps,
     libraryDependencies ++= generalDeps,
     libraryDependencies ++= authDeps,
-    publish := {},
-    publishLocal := {}
+
+    scalaJSProjects := Seq(client),
+    pipelineStages in Assets := Seq(scalaJSPipeline),
+
+    dockerExposedPorts := Seq(9000,80), // sbt docker:publishLocal
+    dockerRepository := Some(s"$dockerRepoURI"),
+    defaultLinuxInstallLocation in Docker := "/opt/docker",
+    dockerExposedVolumes := Seq("/opt/docker/logs"),
+    dockerBaseImage := "openjdk:9-jdk"
   ).enablePlugins(PlayScala)
+  .enablePlugins(WebScalaJSBundlerPlugin)
+  .enablePlugins(SbtWeb)
 
 lazy val server = project.in(file(serverName))
   .settings(
     sharedSettings,
     libraryDependencies ++= dbDeps,
-//      buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
-//      buildInfoPackage := projectOrganisation,
-//      buildInfoOptions += BuildInfoOption.BuildTime,
-  )
+    buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
+    buildInfoPackage := projectOrganisation,
+    buildInfoOptions += BuildInfoOption.BuildTime,
+  ).enablePlugins(BuildInfoPlugin)
 
 lazy val client = project.in(file(clientName))
   .settings(
     sharedSettings,
     scalaJSUseMainModuleInitializer := true,
-    artifactPath in(Compile, fastOptJS) := baseDirectory.value / ".." / "public" / "javascripts" / "client-fastOptJS.js",
-    webpackBundlingMode := BundlingMode.LibraryAndApplication(),
-    version in webpack := vWebpack,
-    version in startWebpackDevServer := vWebpackDevServer,
+    webpackBundlingMode := BundlingMode.LibraryAndApplication(), //Needed for top level exports
+    version in webpack := vWebpack, // Needed for version 4 webpack
+    version in startWebpackDevServer := vWebpackDevServer, // Needed for version 4 webpack
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % vScalaJsDom,
       "org.singlespaced" %%% "scalajs-d3" % "0.3.4",
       "com.github.karasiq" %%% "scalajs-bootstrap-v4" % "2.3.1",
       "com.lihaoyi" %%% "scalatags" % vScalaTags, //Using ScalaTags instead of Twirl
-      "com.lihaoyi" %%% "upickle" % vUpickle //Using uJson for main JSON
+      "com.lihaoyi" %%% "upickle" % vUpickle, //Using uJson for main JSON
+      "me.shadaj" %%% "slinky-core" % "0.4.3", // core React functionality, no React DOM
+      "me.shadaj" %%% "slinky-web" % "0.4.3" // React DOM, HTML and SVG tags
     ),
     npmDependencies in Compile ++= Seq(
       "bootstrap" -> vBootstrap,
       "jquery" -> vJquery, //used by bootstrap
       "popper.js" -> vPopper, //used by bootstrap
-      "d3" -> vD3
+      "d3" -> vD3,
+      "react" -> "16.4.1",
+      "react-dom" -> "16.4.1"
     )
-  )
-  .enablePlugins(ScalaJSPlugin)
-  .enablePlugins(ScalaJSBundlerPlugin)
+  ).enablePlugins(ScalaJSPlugin)
+  .enablePlugins(ScalaJSBundlerPlugin, ScalaJSWeb)
 
 
-
-////Dependencies
-//
-//lazy val scalaJsD3Version = "0.3.4"
-//lazy val scalaJsBootstrapVersion = "2.3.1"
-//
-//lazy val scalatestVersion = "3.0.5"
-//lazy val scalatestPlayVersion = "3.1.2"
-//
-
-//val testDependencies = Seq(
-//  "org.scalactic" %% "scalactic" % scalatestVersion,
-//  "org.scalatest" %% "scalatest" % scalatestVersion % "test",
-//  "org.scalatestplus.play" %% "scalatestplus-play" % scalatestPlayVersion % "test" //,
-//  //"com.typesafe.akka" % "akka-stream-testkit_2.12" % akkaStreamVersion
-//)
-//
-//
-////Modules
-//
-
-//
-//lazy val play = (project in file("."))
-//  .settings(
-
-//    dockerExposedPorts := Seq(9000,80), // sbt docker:publishLocal
-//    dockerRepository := Some(s"$dockerRepoURI"),
-//    defaultLinuxInstallLocation in Docker := "/opt/docker",
-//    dockerExposedVolumes := Seq("/opt/docker/logs"),
-//    dockerBaseImage := "openjdk:9-jdk"
-//  )
-//
-//lazy val server = (project in file(serverName))
-//  .settings(
-//    resolvers += Resolver.bintrayRepo("nlytx", "nlytx-nlp"),
-//    //resolvers += Resolver.sonatypeRepo("releases"),
-//    resolvers += Resolver.jcenterRepo,
-//    libraryDependencies ++= generalDependencies ++ dbDependencies ++ googleDependencies ++ testDependencies,
-//    buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
-//    buildInfoPackage := projectOrg,
-//    buildInfoOptions += BuildInfoOption.BuildTime,
-//  ).enablePlugins(BuildInfoPlugin)
-//  .dependsOn(JvmShared)
-//
-//
-//lazy val clientJS = (project in file(clientName))
-//  .settings(
-//    commonSettings,
-//    name := clientName,
-//    version := clientVersion,
-//    scalaJSUseMainModuleInitializer := true,
-//    libraryDependencies ++= Seq(
-//      "org.scala-js" %%% "scalajs-dom" % scalaJsDomVersion,
-//      //"org.singlespaced" %%% "scalajs-d3" % scalaJsD3Version,
-//      "com.github.karasiq" %%% "scalajs-bootstrap-v4" % "2.3.1",
-//      //"me.shadaj" %%% "slinky-core" % "0.4.2", // core React functionality, no React DOM
-//      //"me.shadaj" %%% "slinky-web" % "0.4.2" // React DOM, HTML and SVG tags
-//    ),
-//    npmDependencies in Compile ++= Seq(
-//      "bootstrap" -> "4.1.1",
-//      //"font-awesome5" -> "1.0.5",
-//      "d3" -> "5.4.0",
-//      //"react" -> "16.2.0",
-//      //"react-dom" -> "16.2.0"
-//    )
-//  ).enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin, ScalaJSWeb).
-//  dependsOn(JsShared)
-//
-//lazy val sharedJS = (crossProject.crossType(CrossType.Pure) in file(sharedName))
-//  .settings(
-//    commonSettings,
-//    libraryDependencies ++= Seq("com.lihaoyi" %%% "scalatags" % scalaTagsVersion)
-//  )
-//
-//lazy val JvmShared = sharedJS.jvm
-//lazy val JsShared = sharedJS.js
-//
-////compile in Compile := ((compile in Compile) dependsOn scalaJSPipeline).value
-//
-//
-//// loads the server project at sbt startup
-////onLoad in Global := (onLoad in Global).value andThen {s: State => s"project $serverName" :: s}
-//
-//
-///*
 //
 //scalacOptions in (Compile, doc) ++= Seq("-doc-root-content", baseDirectory.value+"/src/main/scala/root-doc.md")
 //
