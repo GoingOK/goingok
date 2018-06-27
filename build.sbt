@@ -82,7 +82,7 @@ val dbDeps = Seq(
 
 )
 
-lazy val play = project.in(file("."))
+lazy val goingok = project.in(file("."))
   .dependsOn(server,client)
   .aggregate(server,client)
   .settings(
