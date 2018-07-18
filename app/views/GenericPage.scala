@@ -1,14 +1,14 @@
 package views
 
-import auth.data.User
+import models.User
 import play.twirl.api.Html
 import scalatags.Text
-import scalatags.Text.all._ // scalastyle:ignore
+import scalatags.Text.all._
 import scalatags.Text.{tags, tags2}
 
 trait GenericPage {
 
-  def render(title:String,user:Option[User]=None) :Html = Html("<!DOCTYPE html>" +page(title,user).render)
+  def render(title:String,user:Option[User]=None) :Html = Html("""<!DOCTYPE html>""" +page(title,user).render)
 
   def page(titleStr:String,user:Option[User]=None) :Text.TypedTag[String] = tags.html(head(tags2.title(titleStr)))
 

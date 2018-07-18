@@ -16,26 +16,26 @@
 
 package org.goingok.server.data.models
 
-import play.api.libs.json._
+//import play.api.libs.json._
 
 case class HealthStatus(code: Int)
 
-object HealthStatus {
-
-  implicit object HealthStatusFormat extends Format[HealthStatus] {
-    // convert from JSON string to a HealthStatus object (de-serializing from JSON)
-    def reads(json: JsValue): JsResult[HealthStatus] = {
-      val code = (json \ "code").as[Int]
-      JsSuccess(HealthStatus(code))
-    }
-
-    // convert from HealthStatus object to JSON (serializing to JSON)
-    def writes(s: HealthStatus): JsValue = {
-      val code = JsNumber(s.code).toString()
-      code match{
-        case "200" => JsObject(Seq("message" -> JsString("Ok")))
-        case whoa  => JsObject(Seq("message" -> JsString("Unexpected code: " + whoa)))
-      }
-    }
-  }
-}
+//object HealthStatus {
+//
+//  implicit object HealthStatusFormat extends Format[HealthStatus] {
+//    // convert from JSON string to a HealthStatus object (de-serializing from JSON)
+//    def reads(json: JsValue): JsResult[HealthStatus] = {
+//      val code = (json \ "code").as[Int]
+//      JsSuccess(HealthStatus(code))
+//    }
+//
+//    // convert from HealthStatus object to JSON (serializing to JSON)
+//    def writes(s: HealthStatus): JsValue = {
+//      val code = JsNumber(s.code).toString()
+//      code match{
+//        case "200" => JsObject(Seq("message" -> JsString("Ok")))
+//        case whoa  => JsObject(Seq("message" -> JsString("Unexpected code: " + whoa)))
+//      }
+//    }
+//  }
+//}

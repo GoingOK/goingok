@@ -2,7 +2,7 @@ package views
 
 import java.util.UUID
 
-import auth.data.User
+import models.User
 import org.goingok.server.data.models.Reflection
 import scalatags.Text.all._
 import scalatags.Text.{TypedTag, tags}

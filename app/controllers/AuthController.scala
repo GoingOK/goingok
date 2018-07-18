@@ -1,47 +1,58 @@
 package controllers
 
-import auth.{DefaultEnv, GoogleAuthService}
-import com.mohiva.play.silhouette.api._
-import com.mohiva.play.silhouette.api.actions.SecuredRequest
-import com.mohiva.play.silhouette.api.exceptions.ProviderException
-import com.mohiva.play.silhouette.impl.providers._
 import javax.inject.Inject
-import play.api.mvc._
+import org.goingok.server.Config
+import org.goingok.server.services.{GoogleAuthService, UserService}
+import play.api.Logger
+import play.api.mvc.{Action, AnyContent, _}
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
+class AuthController @Inject()(components: ControllerComponents,authService:GoogleAuthService,userService:UserService)
+                              (implicit ex: ExecutionContext) extends AbstractController(components) {
 
-class AuthController @Inject()(components: ControllerComponents, silhouette: Silhouette[DefaultEnv], authService: GoogleAuthService)
-                              (implicit ex: ExecutionContext) extends AbstractController(components) with Logger {
+  val logger: Logger = Logger(this.getClass)
 
+  private val baseUrl = Config.string("app.baseurl")
+  private val clientid = Config.string("google.client.id")
+  private val secret = Config.string("google.client.secret")
+  private val redirectUrl = Config.string("google.redirect.url")
 
-  def authenticateWithGoogle :Action[AnyContent] =  Action.async { implicit request: Request[AnyContent] =>
-    (authService.registry.get[SocialProvider]("google") match {
-      case Some(p: SocialProvider with CommonSocialProfileBuilder) =>
-        p.authenticate().flatMap {
-          case Left(result) => Future.successful(result)
-          case Right(authInfo) => for {
-            profile <- p.retrieveProfile(authInfo)
-            user <- authService.user.save(profile)
-            authenticator <- authService.cookieAuth.create(profile.loginInfo)
-            value <- authService.cookieAuth.init(authenticator)
-            result <- authService.cookieAuth.embed(value, Redirect(routes.ProfileController.profile()))
-          } yield {
-            silhouette.env.eventBus.publish(LoginEvent(user, request))
-            result
+  def signin: Action[AnyContent] = Action {
+    Redirect(authService.url)
+  }
+
+  def signout: Action[AnyContent] = Action {
+    Ok("Not implemented yet")
+  }
+
+  def googleAuth: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    Future {
+      val user = for {
+        code <- Try(request.queryString.get("code").map(_.head)).toEither
+        gu <- authService.parseAuthCode(code.get)
+        usr <- userService.getRegisteredUser(gu)
+      } yield usr
+
+      val url = user match {
+        case Left(e) => {
+          logger.error(s"ERROR: ${e.getMessage}")
+          e.getMessage match {
+            case UserService.NOT_REGISTERED_ERROR => "/register"
+            case _ => "/"
           }
         }
-      case _ => Future.failed(new ProviderException(s"Cannot authenticate with google"))
-    }).recover {
-      case e: ProviderException =>
-        logger.error("Unexpected provider error", e)
-        Redirect(routes.ApplicationController.index()).flashing("error" -> "could.not.authenticate")
+        case Right(usr) => {
+          logger.info(s"GOOD: ${usr.toString}")
+          "/profile"
+        }
+      }
+      Redirect(url)
     }
   }
 
-  def signOut :Action[AnyContent] = silhouette.SecuredAction.async { implicit request: SecuredRequest[DefaultEnv, AnyContent] =>
-    val result = Redirect(routes.ApplicationController.index())
-    silhouette.env.eventBus.publish(LogoutEvent(request.identity, request))
-    silhouette.env.authenticatorService.discard(request.authenticator, result)
-  }
+
+
 }
+

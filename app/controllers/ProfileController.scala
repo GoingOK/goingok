@@ -1,39 +1,50 @@
 package controllers
 
-import auth.DefaultEnv
-import com.mohiva.play.silhouette.api.Silhouette
-import com.mohiva.play.silhouette.api.actions.{SecuredErrorHandler, SecuredRequest}
+//import auth.DefaultEnv
+//import com.mohiva.play.silhouette.api.Silhouette
+//import com.mohiva.play.silhouette.api.actions.{SecuredErrorHandler, SecuredRequest}
 import javax.inject.Inject
+import models.User
 import play.api.mvc._
 import views.{ProfilePage, RegisterPage}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ProfileController @Inject()(components: ControllerComponents, silhouette: Silhouette[DefaultEnv])
+class ProfileController @Inject()(components: ControllerComponents) //, silhouette: Silhouette[DefaultEnv])
                                  (implicit ec: ExecutionContext, assets: AssetsFinder) extends AbstractController(components) {
 
 
-  def profile :Action[AnyContent] = silhouette.SecuredAction(errorHandler).async { implicit request: SecuredRequest[DefaultEnv, AnyContent] =>
-
-//    clientService.getFullProfileForGoingokId(uid).map { profile =>
-//      if(uid.nonEmpty) { Ok(Json.toJson(profile)) }
-//      else { Unauthorized("No user id available from session") }
-//    }
-
-    val page = ProfilePage.render("GoingOK :: profile",Some(request.identity))
+  def profile: Action[AnyContent] = Action.async {
+    val page = ProfilePage.render("GoingOK :: profile",Some(User(Some("Dummy User"))))
     Future.successful(Ok(page))
   }
 
-  def register :Action[AnyContent] = silhouette.SecuredAction(errorHandler).async { implicit request: SecuredRequest[DefaultEnv, AnyContent] =>
+//  def profile :Action[AnyContent] = silhouette.SecuredAction(errorHandler).async { implicit request: SecuredRequest[DefaultEnv, AnyContent] =>
+//
+////    clientService.getFullProfileForGoingokId(uid).map { profile =>
+////      if(uid.nonEmpty) { Ok(Json.toJson(profile)) }
+////      else { Unauthorized("No user id available from session") }
+////    }
+//
+//    val page = ProfilePage.render("GoingOK :: profile",Some(request.identity))
+//    Future.successful(Ok(page))
+//  }
 
-    //    clientService.getFullProfileForGoingokId(uid).map { profile =>
-    //      if(uid.nonEmpty) { Ok(Json.toJson(profile)) }
-    //      else { Unauthorized("No user id available from session") }
-    //    }
-
-    val page = RegisterPage.render("GoingOK :: register",Some(request.identity))
+  def register: Action[AnyContent] = Action.async {
+    val page = RegisterPage.render("GoingOK :: register",Some(User(Some("Dummy User"))))
     Future.successful(Ok(page))
   }
+
+//  def register :Action[AnyContent] = silhouette.SecuredAction(errorHandler).async { implicit request: SecuredRequest[DefaultEnv, AnyContent] =>
+//
+//    //    clientService.getFullProfileForGoingokId(uid).map { profile =>
+//    //      if(uid.nonEmpty) { Ok(Json.toJson(profile)) }
+//    //      else { Unauthorized("No user id available from session") }
+//    //    }
+//
+//    val page = RegisterPage.render("GoingOK :: register",Some(request.identity))
+//    Future.successful(Ok(page))
+//  }
 
 
 
@@ -72,13 +83,13 @@ class ProfileController @Inject()(components: ControllerComponents, silhouette: 
 //    Future.successful(OK())
 //  }
 
-  val errorHandler = new SecuredErrorHandler {
-    override def onNotAuthenticated(implicit request: RequestHeader) :Future[Result] = {
-      Future.successful(Redirect(routes.ApplicationController.index()))
-    }
-    override def onNotAuthorized(implicit request: RequestHeader) :Future[Result] = {
-      Future.successful(Forbidden("local.not.authorized"))
-    }
-  }
+//  val errorHandler = new SecuredErrorHandler {
+//    override def onNotAuthenticated(implicit request: RequestHeader) :Future[Result] = {
+//      Future.successful(Redirect(routes.ApplicationController.index()))
+//    }
+//    override def onNotAuthorized(implicit request: RequestHeader) :Future[Result] = {
+//      Future.successful(Forbidden("local.not.authorized"))
+//    }
+//  }
 
 }

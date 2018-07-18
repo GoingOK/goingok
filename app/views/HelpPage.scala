@@ -1,7 +1,8 @@
 package views
 
-import auth.data.User
-import scalatags.Text.all._ // scalastyle:ignore
+
+import models.User
+import scalatags.Text.all._
 import scalatags.Text.{TypedTag, tags}
 import views.components.NavBar.NavParams
 import views.components.{HelpContent, NavBar}

@@ -1,6 +1,6 @@
 package org.goingok.server.data.models
 
-import play.api.libs.json.{Json, Writes}
+//import play.api.libs.json.{Json, Writes}
 
 //import org.json4s.JsonAST.JValue
 

@@ -6,7 +6,7 @@ package org.goingok.server.data.models
 
 import java.util.UUID
 
-import play.api.libs.json.JsValue
+//import play.api.libs.json.JsValue
 
 
 
@@ -31,7 +31,7 @@ case class Message(
                     timestamp:String,
                     title:String,
                     text:String,
-                    value: JsValue,
+                    value: Any,
                     goingok_id:UUID
                   )
 

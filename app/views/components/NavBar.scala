@@ -43,8 +43,19 @@ object NavBar {
         // Right items
         ul(`class`:="nav navbar-nav ml-auto")(
           li(`class`:="nav-item")(
-            if(navParams.signedIn) { a(`class`:="nav-link",href:="/signout")("Sign Out") }
-            else { a(`class`:="nav-link",href:="/signin")("Sign In") }
+            //button( id:="signinButton","Sign in with Google"),
+//            script(raw(
+//              """
+//                |$('#signinButton').click(function() {
+//                |    auth2.grantOfflineAccess().then(signInCallback);
+//                |  });
+//              """.stripMargin))
+            if(navParams.signedIn) {
+              a(`class`:="nav-link",href:="/signout")("Sign Out")
+            } else {
+              //a(`class`:="nav-link",onclick:="auth2.grantOfflineAccess().then(signInCallback)", href:="#")("Sign In")
+              a(`class`:="nav-link", href:="/signin")("Sign In")
+            }
           ),
           li(`class`:="nav-item")(
             a(`class`:=s"nav-link $helpActive",href:="/help")(span(`class` := "fas fa-question-circle"))
