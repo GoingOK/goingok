@@ -1,13 +1,15 @@
 package org.goingok.server.services
 
-import cats.effect._      // scalastyle:ignore
-import doobie._           // scalastyle:ignore
-import doobie.implicits._ // scalastyle:ignore
+import java.time.LocalDateTime
+
+import cats.effect._
+import doobie._
+import doobie.implicits._
 import java.util.UUID
 
 import doobie.util.meta.AdvancedMeta
 import org.goingok.server.Config
-import org.goingok.server.data.models.{ReflectionEntry, User, UserAuth}
+import org.goingok.server.data.models.{GroupCode, ReflectionEntry, User, UserAuth}
 
 class DataService {
 
@@ -70,6 +72,23 @@ class DataService {
                   where goingok_id=$goingokId""".query[ReflectionEntry]
 
     runQuery(query.to[Vector])
+  }
+
+
+  def getGroupCode(code:String): Either[Throwable,GroupCode] = {
+    val query = sql"""select * from group_codes
+                      where group_code=$code""".query[GroupCode].unique
+    runQuery(query)
+  }
+
+  def updateCodeForUser(code:String,goingok_id:UUID): Either[Throwable,Int] = {
+    val time = LocalDateTime.now().toString
+    val query = sql"""update users
+                    set group_code=$code, register_timestamp=$time
+                    where goingok_id=$goingok_id
+                """.update.run
+
+    runQuery(query)
   }
 
 

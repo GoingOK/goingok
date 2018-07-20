@@ -12,22 +12,30 @@ class UserService {
 
   val ds = new DataService
 
-  def getRegisteredUser(googleUser:GoogleUser):Either[Throwable, User] = for {
+  def getUser(googleUser:GoogleUser):Either[Throwable, User] = for {
       u1 <- ds.getUserWithGoogleId(googleUser.gId)
-      u2 <- checkRegistration(u1)
-    } yield u2
+  } yield u1
 
   def createUser(googleUser:GoogleUser):Either[Throwable,User] = {
-    //logger.info("Creating new user")
+    logger.debug("Creating new user")
     val user = for {
       gid <- ds.insertNewUserAuth(new UserAuth(googleUser.gId, googleUser.email))
       u1 <- ds.insertNewUser(User(gid,Some("dummy")))
       u2 <- checkRegistration(u1)
     } yield u2
-    //logger.warn(s"user: $user")
-
+    logger.debug(s"user: $user")
     user
   }
+
+  def isGroupCodeValid(code:String):Either[Throwable,Boolean] = for {
+    gc <- ds.getGroupCode(code)
+  } yield gc.group_code.contentEquals(code)
+
+
+  def addGroupCodeToUser(code:String,goingok_id:UUID):Either[Throwable,Int] = for {
+    rows <- ds.updateCodeForUser(code:String,goingok_id:UUID)
+  } yield rows
+
 
   private def printAndReturn[A](message:A):A = { logger.debug(message.toString); message }
 

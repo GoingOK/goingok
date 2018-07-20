@@ -11,7 +11,7 @@ import views.components.{HomeContent, NavBar}
   */
 object HomePage extends GenericPage {
 
-  override def page(titleStr: String, user: Option[User]=None): TypedTag[String] = {
+  override def page(titleStr: String, user: Option[User]=None,message:String=""): TypedTag[String] = {
     val signedIn = user.nonEmpty
     tags.html(
       attr("itemscope") := "",

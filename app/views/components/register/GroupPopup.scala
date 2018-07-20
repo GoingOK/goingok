@@ -6,7 +6,7 @@ object GroupPopup {
 
 
 
-  def display(message:String="Please check the group-code and try again") = div(
+  def display(message:String="") = div(
     p("In order to use GoingOK, you need to register with an existing GoingOK group such as an organisational unit, a subject cohort, or a research group."),
     p("A ",b("GoingOK group code")," should have been given to you by someone responsible for your group."),
     p("Please enter this code below and click ",b("register.")),

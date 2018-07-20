@@ -5,19 +5,14 @@ GET     /health                 controllers.ApplicationController.health
 GET     /version                controllers.ApplicationController.version
 GET     /help                   controllers.ApplicationController.help
 
-# Auth routes
-#GET     /signout                controllers.AuthController.signOut
-#+ nocsrf
-#POST     /authenticate           controllers.AuthController.authenticate
-#GET     /authenticate           controllers.AuthController.authenticate
+
 GET     /googleAuth             controllers.AuthController.googleAuth
 GET     /signin                 controllers.AuthController.signin
-#AuthController.authenticateWithGoogle
 
-# Profile routes
-GET     /register               controllers.ProfileController.register
+GET     /register               controllers.RegisterController.register
 + nocsrf
-POST    /registerWithGroup               controllers.ProfileController.registerWithGroup
+POST    /registerWithGroup               controllers.RegisterController.registerWithGroup
+
 GET     /profile                controllers.ProfileController.profile
 #GET     /profile/records/csv    controllers.ProfileController.reflectionsCsv
 

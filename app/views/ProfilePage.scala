@@ -25,7 +25,7 @@ object ProfilePage extends GenericPage {
   private val sliderStartPoint:Double = 50.0
 
 
-  override def page(titleStr: String, user: Option[User]): TypedTag[String] = {
+  override def page(titleStr: String, user: Option[User]=None,message:String=""): TypedTag[String] = {
     val signedIn = user.nonEmpty
     tags.html(
       Includes.headContent(titleStr),

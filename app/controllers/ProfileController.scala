@@ -32,27 +32,6 @@ class ProfileController @Inject()(components: ControllerComponents) //, silhouet
 //    Future.successful(Ok(page))
 //  }
 
-  def register: Action[AnyContent] = Action.async {
-    val page = RegisterPage.render("GoingOK :: register",None)
-    Future.successful(Ok(page))
-  }
-
-  def registerWithGroup: Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
-    println(s"register form submit: ${request.body.toString}")
-    Redirect("/profile")
-  }
-
-//  def register :Action[AnyContent] = silhouette.SecuredAction(errorHandler).async { implicit request: SecuredRequest[DefaultEnv, AnyContent] =>
-//
-//    //    clientService.getFullProfileForGoingokId(uid).map { profile =>
-//    //      if(uid.nonEmpty) { Ok(Json.toJson(profile)) }
-//    //      else { Unauthorized("No user id available from session") }
-//    //    }
-//
-//    val page = RegisterPage.render("GoingOK :: register",Some(request.identity))
-//    Future.successful(Ok(page))
-//  }
-
 
 
 //  def reflectionsCsv :Action[AnyContent] = silhouette.SecuredAction(errorHandler).async { implicit request: SecuredRequest[DefaultEnv, AnyContent] =>

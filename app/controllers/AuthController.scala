@@ -37,15 +37,27 @@ class AuthController @Inject()(components: ControllerComponents,authService:Goog
 
       val user = for {
         gu <- googleUser
-        usr <- userService.getRegisteredUser(gu)
+        usr <- userService.getUser(gu)
       } yield usr
 
-      val finalUser = for {
-        fusr <- handleNewUser(user,googleUser)
-      } yield fusr
+      user match {
+        case Right(u) => {
+          logger.info(s"Sucessful login for ${u.goingok_id.toString} [${u.pseudonym}]")
+          val url = if(u.group_code!="" && u.register_timestamp.nonEmpty) { "/profile"} else { "/register" }
+          Redirect(url).withSession("user" -> u.goingok_id.toString)
+        }
+        case Left(e) => {
+          logger.error(s"ERROR: ${e.getMessage}")
+          Redirect("/").withNewSession
+        }
+        case _ => {
+          logger.error("A problem occured during the authentication process.")
+          Redirect("/").withNewSession
+        }
+      }
 
-      val url = parseUserResult(finalUser)
-      Redirect(url)
+
+
     }
   }
 
@@ -64,25 +76,6 @@ class AuthController @Inject()(components: ControllerComponents,authService:Goog
     }
   }
 
-  private def parseUserResult(user:Either[Throwable,User]):String = user match {
-    case Left(e) => {
-
-      e.getMessage match {
-        case UserService.NOT_REGISTERED_ERROR => {
-          logger.warn(s"${e.getMessage}")
-          "/register"
-        }
-        case _ => {
-          logger.error(s"ERROR: ${e.getMessage}")
-          "/"
-        }
-      }
-    }
-    case Right(usr) => {
-      logger.info(s"Sucessful login for ${usr.goingok_id.toString} [${usr.pseudonym}]")
-      "/profile"
-    }
-  }
 
 }
 

@@ -11,7 +11,7 @@ import views.components.{HelpContent, NavBar}
   */
 object HelpPage extends GenericPage {
 
-  override def page(titleStr: String, user: Option[User]): TypedTag[String] = {
+  override def page(titleStr: String, user: Option[User]=None,message:String=""): TypedTag[String] = {
     val signedIn = user.nonEmpty
     tags.html(
       Includes.headContent(titleStr),
