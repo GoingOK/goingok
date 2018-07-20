@@ -16,6 +16,8 @@ GET     /signin                 controllers.AuthController.signin
 
 # Profile routes
 GET     /register               controllers.ProfileController.register
++ nocsrf
+POST    /registerWithGroup               controllers.ProfileController.registerWithGroup
 GET     /profile                controllers.ProfileController.profile
 #GET     /profile/records/csv    controllers.ProfileController.reflectionsCsv
 

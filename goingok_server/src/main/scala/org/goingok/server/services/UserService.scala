@@ -1,59 +1,79 @@
 package org.goingok.server.services
 
-//import java.util.UUID
-//import javax.inject.Inject
-//
-//import org.goingok.server.data.models.{User, UserAuth}
-//import org.goingok.server.data.db.DatabaseOps
-//import play.api.Logger
-
 import java.util.UUID
 
 import com.typesafe.scalalogging.Logger
-import doobie.util.meta.{AdvancedMeta, Meta}
-import org.goingok.server.data.models.{GoogleUser, User}
-import org.postgresql.util.PGobject
+import org.goingok.server.data.models.{GoogleUser, User, UserAuth}
 
-import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
-
-/**
-  * Created by andrew@andrewresearch.net on 12/4/17.
-  */
-//class UserService @Inject()(val dbOps:DatabaseOps)(implicit ec: ExecutionContext) {
-//
-//  def getOrCreateGoingokId(google_id:String,google_email:String): Future[UUID] = {
-//    dbOps.selectUserAuthForGoogleId(google_id).map { uao =>
-//      if(uao.nonEmpty) {
-//        val gokId = uao.get.goingok_id
-//        Logger.info(s"Authorised user with goingok_id: $gokId")
-//        gokId
-//      }
-//      else {
-//        val newUserAuth = UserAuth(google_id=google_id,google_email=google_email)
-//        val newUser = User(newUserAuth.goingok_id,"","NON-NON-NON")
-//        Logger.info(s"Creating new user with goingok_id: ${newUserAuth.goingok_id}")
-//        dbOps.insertUserAuth(newUserAuth)
-//        dbOps.insertUser(newUser)
-//        newUserAuth.goingok_id
-//      }
-//    }
-//  }
-//}
 
 class UserService {
 
   val logger = Logger(this.getClass)
 
-  def getRegisteredUser(googleUser:GoogleUser):Either[Throwable, User] = {
-    val ds = new DataService
-    val gid = UUID.fromString("f0915332-cdef-4ddf-8ba7-fec814df7f31")
-    ds.getReflectionsForUser(gid).foreach(re => logger.info(s"ReflectionEntry: $re"))
-    logger.warn("getRegisteredUser not implemented, so throwing an exception")
+  val ds = new DataService
+
+  def getRegisteredUser(googleUser:GoogleUser):Either[Throwable, User] = for {
+      u1 <- ds.getUserWithGoogleId(googleUser.gId)
+      u2 <- checkRegistration(u1)
+    } yield u2
+
+  def createUser(googleUser:GoogleUser):Either[Throwable,User] = {
+    //logger.info("Creating new user")
+    val user = for {
+      gid <- ds.insertNewUserAuth(new UserAuth(googleUser.gId, googleUser.email))
+      u1 <- ds.insertNewUser(User(gid,Some("dummy")))
+      u2 <- checkRegistration(u1)
+    } yield u2
+    //logger.warn(s"user: $user")
+
+    user
+  }
+
+  private def printAndReturn[A](message:A):A = { logger.debug(message.toString); message }
+
+  private def checkRegistration(user:User) :Either[Throwable,User] = if(user.group_code.isEmpty || user.group_code.contains("none")) {
     Left(new Exception(UserService.NOT_REGISTERED_ERROR))
+  } else {
+    Right(user)
+  }
+
+
+
+    //    val userOpt = ds.getOrCreateUserWithGoogleId(googleUser.gId)
+//    if(userOpt.isEmpty) {
+//      logger.error(s"Unable to get or create user in database - id: ${googleUser.gId}")
+//      Left(new Exception(UserService.USER_FETCH_ERROR))
+//    } else {
+//      val user = userOpt.get
+//      if (user.group_code.isEmpty) {
+//        //Redirect for registration
+//        logger.warn("getRegisteredUser not implemented, so throwing an exception")
+//        Left(new Exception(UserService.NOT_REGISTERED_ERROR))
+//      } else {
+//        //Insert login timestamp - profile
+//        ds.insertLoginStage(user.goingok_id,"profile")
+//        //Get reflections
+//        ds.getReflectionsForUser(user.goingok_id).foreach(re => logger.info(s"ReflectionEntry: $re"))
+//        //Redirect to profile page
+//      }
+//
+//
+//    }
+
+
+
+
+  def createUser(googleId:String):Option[User] = {
+    //Create a new goingok user and return the created user
+    None
+  }
+
+  def addRegistration = {
+
   }
 
 }
 object UserService {
+  val USER_FETCH_ERROR = "Unable to get or create user in database"
   val NOT_REGISTERED_ERROR = "User is not registered with GoingOK"
 }

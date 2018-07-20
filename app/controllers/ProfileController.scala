@@ -4,7 +4,9 @@ package controllers
 //import com.mohiva.play.silhouette.api.Silhouette
 //import com.mohiva.play.silhouette.api.actions.{SecuredErrorHandler, SecuredRequest}
 import javax.inject.Inject
-import models.User
+import org.goingok.server.data.models
+import org.goingok.server.data.models.User
+import play.api.Logger
 import play.api.mvc._
 import views.{ProfilePage, RegisterPage}
 
@@ -15,7 +17,7 @@ class ProfileController @Inject()(components: ControllerComponents) //, silhouet
 
 
   def profile: Action[AnyContent] = Action.async {
-    val page = ProfilePage.render("GoingOK :: profile",Some(User(Some("Dummy User"))))
+    val page = ProfilePage.render("GoingOK :: profile",None)
     Future.successful(Ok(page))
   }
 
@@ -31,8 +33,13 @@ class ProfileController @Inject()(components: ControllerComponents) //, silhouet
 //  }
 
   def register: Action[AnyContent] = Action.async {
-    val page = RegisterPage.render("GoingOK :: register",Some(User(Some("Dummy User"))))
+    val page = RegisterPage.render("GoingOK :: register",None)
     Future.successful(Ok(page))
+  }
+
+  def registerWithGroup: Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
+    println(s"register form submit: ${request.body.toString}")
+    Redirect("/profile")
   }
 
 //  def register :Action[AnyContent] = silhouette.SecuredAction(errorHandler).async { implicit request: SecuredRequest[DefaultEnv, AnyContent] =>

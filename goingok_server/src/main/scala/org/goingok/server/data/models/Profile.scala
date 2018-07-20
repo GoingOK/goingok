@@ -1,5 +1,7 @@
 package org.goingok.server.data.models
 
+import org.goingok.server.data.Message
+
 case class Profile(id:String = "", messages:List[Message]=List(), reflectionEntries:List[ReflectionEntry]=List(), research:Research = Research())
 
 //object Profile {

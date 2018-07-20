@@ -1,7 +1,6 @@
 package views
 
-
-import models.User
+import org.goingok.server.data.models.User
 import scalatags.Text.all._
 import scalatags.Text.{TypedTag, tags}
 import views.components.NavBar
@@ -15,7 +14,7 @@ object RegisterPage extends GenericPage {
     tags.html(
       Includes.headContent(titleStr),
       tags.body(
-        NavBar.main(NavParams(signedIn,displayName = user.flatMap(_.fullName))),
+        NavBar.main(NavParams(signedIn,displayName = None)),
         div(id := "register-content",`class` := "container-fluid",
           div(`class` := "row justify-content-md-center align-items-center",
             div(`class` := "col-sm-5",

@@ -2,7 +2,7 @@ package views.components.profile
 
 import java.util.UUID
 
-import org.goingok.server.data.models.Reflection
+import org.goingok.server.data.Reflection
 import scalatags.Text.TypedTag
 import scalatags.Text.all._
 

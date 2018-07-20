@@ -1,6 +1,16 @@
-package models
+package org.goingok.server.data.models
 
-case class User(fullName:Option[String])
+import java.util.UUID
+
+case class User(
+                 goingok_id:UUID,
+                 pseudonym:Option[String]=None,
+                 research_code:Option[String]=None,
+                 research_consent:Boolean = false,
+                 supervisor:Boolean = false,
+                 admin:Boolean = false,
+                 group_code:String = "none",
+                 register_timestamp:Option[String]=None)
 
 //
 //import java.util.UUID

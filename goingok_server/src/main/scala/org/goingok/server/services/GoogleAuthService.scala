@@ -4,7 +4,7 @@ import com.google.api.client.googleapis.auth.oauth2.{GoogleAuthorizationCodeToke
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
 import org.goingok.server.Config
-import org.goingok.server.data.models.GoogleUser
+import org.goingok.server.data.models.{GoogleUser, UserAuth}
 
 import scala.collection.JavaConverters._
 import scala.util.Try

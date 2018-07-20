@@ -1,6 +1,6 @@
 package views
 
-import models.User
+import org.goingok.server.data.models.User
 import play.twirl.api.Html
 import scalatags.Text
 import scalatags.Text.all._

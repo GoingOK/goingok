@@ -2,6 +2,7 @@ package controllers
 
 import javax.inject.Inject
 import org.goingok.server.Config
+import org.goingok.server.data.models.{GoogleUser, User}
 import org.goingok.server.services.{GoogleAuthService, UserService}
 import play.api.Logger
 import play.api.mvc.{Action, AnyContent, _}
@@ -29,30 +30,59 @@ class AuthController @Inject()(components: ControllerComponents,authService:Goog
 
   def googleAuth: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     Future {
-      val user = for {
+      val googleUser = for {
         code <- Try(request.queryString.get("code").map(_.head)).toEither
         gu <- authService.parseAuthCode(code.get)
+      } yield gu
+
+      val user = for {
+        gu <- googleUser
         usr <- userService.getRegisteredUser(gu)
       } yield usr
 
-      val url = user match {
-        case Left(e) => {
-          logger.error(s"ERROR: ${e.getMessage}")
-          e.getMessage match {
-            case UserService.NOT_REGISTERED_ERROR => "/register"
-            case _ => "/"
-          }
-        }
-        case Right(usr) => {
-          logger.info(s"GOOD: ${usr.toString}")
-          "/profile"
-        }
-      }
+      val finalUser = for {
+        fusr <- handleNewUser(user,googleUser)
+      } yield fusr
+
+      val url = parseUserResult(finalUser)
       Redirect(url)
     }
   }
 
+  private def handleNewUser(user:Either[Throwable,User],googleUser:Either[Throwable,GoogleUser]):Either[Throwable,User] = user match {
+    case Right(usr) => Right(usr)
+    case Left(e) => {
+      if(e.getMessage.contains("ResultSet exhausted;")) {
+        logger.warn("This user appears to be logging in for the first time. Create new GoingOK User")
+        for {
+          gu <- googleUser
+          usr <- userService.createUser(gu)
+        } yield usr
+      } else {
+        Left(e)
+      }
+    }
+  }
 
+  private def parseUserResult(user:Either[Throwable,User]):String = user match {
+    case Left(e) => {
+
+      e.getMessage match {
+        case UserService.NOT_REGISTERED_ERROR => {
+          logger.warn(s"${e.getMessage}")
+          "/register"
+        }
+        case _ => {
+          logger.error(s"ERROR: ${e.getMessage}")
+          "/"
+        }
+      }
+    }
+    case Right(usr) => {
+      logger.info(s"Sucessful login for ${usr.goingok_id.toString} [${usr.pseudonym}]")
+      "/profile"
+    }
+  }
 
 }
 

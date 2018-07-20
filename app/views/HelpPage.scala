@@ -1,7 +1,6 @@
 package views
 
-
-import models.User
+import org.goingok.server.data.models.User
 import scalatags.Text.all._
 import scalatags.Text.{TypedTag, tags}
 import views.components.NavBar.NavParams
@@ -17,7 +16,7 @@ object HelpPage extends GenericPage {
     tags.html(
       Includes.headContent(titleStr),
       tags.body(
-        NavBar.main(NavParams(signedIn,page="help",displayName = user.flatMap(_.fullName))),
+        NavBar.main(NavParams(signedIn,page="help",displayName = None)),
         HelpContent.mainContainer,
         script(src:=bundleUrl)
       )

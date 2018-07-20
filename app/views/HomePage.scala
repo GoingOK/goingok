@@ -1,6 +1,6 @@
 package views
 
-import models.User
+import org.goingok.server.data.models.User
 import scalatags.Text.all._
 import scalatags.Text.{TypedTag, tags}
 import views.components.NavBar.NavParams
@@ -18,7 +18,7 @@ object HomePage extends GenericPage {
       attr("itemtype") := "http://schema.org/Article",
       Includes.headContent(titleStr),
       tags.body(
-        NavBar.main(NavParams(signedIn,displayName = user.flatMap(_.fullName))),
+        NavBar.main(NavParams(signedIn,displayName = None)),
         HomeContent.mainContainer,
         script(src:=bundleUrl)
       )

@@ -2,8 +2,8 @@ package views
 
 import java.util.UUID
 
-import models.User
-import org.goingok.server.data.models.Reflection
+import org.goingok.server.data.Reflection
+import org.goingok.server.data.models.User
 import scalatags.Text.all._
 import scalatags.Text.{TypedTag, tags}
 import views.components.NavBar.NavParams
@@ -30,7 +30,7 @@ object ProfilePage extends GenericPage {
     tags.html(
       Includes.headContent(titleStr),
       tags.body(
-        NavBar.main(NavParams(signedIn,displayName = user.get.fullName, page = "profile")),
+        NavBar.main(NavParams(signedIn,displayName = None, page = "profile")),
         div(id := "profile-content",`class` := "container-fluid",
           div( id := "reflectchart-content", `class` := "row",
             div( `class` := "col-sm-12",
