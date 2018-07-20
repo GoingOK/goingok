@@ -8,6 +8,7 @@ GET     /help                   controllers.ApplicationController.help
 
 GET     /googleAuth             controllers.AuthController.googleAuth
 GET     /signin                 controllers.AuthController.signin
+GET     /signout                controllers.AuthController.signout
 
 GET     /register               controllers.RegisterController.register
 + nocsrf

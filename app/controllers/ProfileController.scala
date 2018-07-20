@@ -3,22 +3,50 @@ package controllers
 //import auth.DefaultEnv
 //import com.mohiva.play.silhouette.api.Silhouette
 //import com.mohiva.play.silhouette.api.actions.{SecuredErrorHandler, SecuredRequest}
+import java.util.UUID
+
 import javax.inject.Inject
-import org.goingok.server.data.models
-import org.goingok.server.data.models.User
+import org.goingok.server.data.{Profile, Reflection, models}
+import org.goingok.server.data.models.{ReflectionEntry, User}
+import org.goingok.server.services.{ProfileService, UserService}
 import play.api.Logger
 import play.api.mvc._
 import views.{ProfilePage, RegisterPage}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ProfileController @Inject()(components: ControllerComponents) //, silhouette: Silhouette[DefaultEnv])
+class ProfileController @Inject()(components: ControllerComponents,profileService:ProfileService)
                                  (implicit ec: ExecutionContext, assets: AssetsFinder) extends AbstractController(components) {
 
+  val logger: Logger = Logger(this.getClass)
 
-  def profile: Action[AnyContent] = Action.async {
-    val page = ProfilePage.render("GoingOK :: profile",None)
-    Future.successful(Ok(page))
+  private val UNAUTHORIZED_MESSAGE = "You need to login to GoingOK to access this page"
+
+
+    private val dummyUid = UUID.randomUUID()
+    private val dummyData = Vector(
+      Reflection("2018-05-02T06:01:29.077Z",100.0,"This is a dummy reflection. Number 1.",dummyUid),
+      Reflection("2018-06-03T06:01:29.077Z",50.0,"This is a dummy reflection Number 2. This is a dummy reflection Number 2. This is a dummy reflection Number 2.",dummyUid),
+      Reflection("2018-08-04T06:01:29.077Z",0.0,"This is a dummy reflection Number 3. This is a dummy reflection Number 3. This is a dummy reflection Number 3. This is a dummy reflection Number 3. This is a dummy reflection Number 3.",dummyUid),
+      Reflection("2018-08-20T06:01:29.077Z",70.0,"This is a dummy reflection. Number 4.",dummyUid),
+    )
+
+  def profile: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    request.session.get("user").map { uid =>
+      Future {
+        val goingok_id = UUID.fromString(uid)
+        val reflections = profileService.getReflections(goingok_id)
+        val user = profileService.getUser(goingok_id)
+        if(user.getOrElse(User(UUID.randomUUID())).group_code!="none") {
+          val page = ProfilePage.page("GoingOK :: profile", "This is a test message", Profile(user, reflections))
+          Ok(ProfilePage.getHtml(page))
+        } else {
+          Redirect("/register")
+        }
+      }
+    }.getOrElse {
+      Future.successful(Unauthorized(UNAUTHORIZED_MESSAGE))
+    }
   }
 
 //  def profile :Action[AnyContent] = silhouette.SecuredAction(errorHandler).async { implicit request: SecuredRequest[DefaultEnv, AnyContent] =>

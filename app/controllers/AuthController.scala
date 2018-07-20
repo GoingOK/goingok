@@ -25,7 +25,7 @@ class AuthController @Inject()(components: ControllerComponents,authService:Goog
   }
 
   def signout: Action[AnyContent] = Action {
-    Ok("Not implemented yet")
+    Redirect("/").withNewSession
   }
 
   def googleAuth: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
