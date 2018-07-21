@@ -17,9 +17,10 @@
 import LocalSbtSettings._
 
 scalacOptions += "-Ypartial-unification" // 2.11.9+
+scalacOptions += "-target:jvm-1.8"
 
 lazy val projectName = "goingok"
-lazy val projectVersion = "4.1.2"
+lazy val projectVersion = "4.1.4"
 lazy val projectOrganisation = "org.goingok"
 
 lazy val serverName = s"${projectName}_server"
@@ -97,7 +98,7 @@ lazy val goingok = project.in(file("."))
     dockerRepository := Some(s"$dockerRepoURI"),
     defaultLinuxInstallLocation in Docker := "/opt/docker",
     dockerExposedVolumes := Seq("/opt/docker/logs"),
-    dockerBaseImage := "openjdk:9-jdk"
+    dockerBaseImage := "openjdk:8-jdk"
   ).enablePlugins(PlayScala)
   .enablePlugins(WebScalaJSBundlerPlugin)
   .enablePlugins(SbtWeb)
