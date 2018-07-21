@@ -15,6 +15,9 @@ GET     /register               controllers.RegisterController.register
 POST    /registerWithGroup               controllers.RegisterController.registerWithGroup
 
 GET     /profile                controllers.ProfileController.profile
++ nocsrf
+POST     /profile         controllers.ProfileController.profile
+
 #GET     /profile/records/csv    controllers.ProfileController.reflectionsCsv
 
 #POST    /profile/reflection     controllers.ProfileController.saveReflection

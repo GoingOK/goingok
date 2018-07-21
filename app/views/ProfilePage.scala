@@ -2,7 +2,7 @@ package views
 
 import java.util.UUID
 
-import org.goingok.server.data.{Profile, models}
+import org.goingok.server.data.{Profile, UiMessage, models}
 import scalatags.Text.all._
 import scalatags.Text.{TypedTag, tags}
 import views.components.NavBar.NavParams
@@ -15,7 +15,7 @@ object ProfilePage extends GenericPage {
   private val sliderStartPoint:Double = 50.0
 
 
-  def page(titleStr: String,message:String="",profile:Profile = Profile()): TypedTag[String] = {
+  def page(titleStr: String,message:Option[UiMessage],profile:Profile = Profile()): TypedTag[String] = {
     val signedIn = profile.user.nonEmpty
     val name:Option[String] = for {
       u <- profile.user
@@ -53,14 +53,12 @@ object ProfilePage extends GenericPage {
     )
   }
 
-  private def showMessage(message:String) = {
-    if(message!="") {
-      div(id:="message",`class`:="alert alert-danger",attr("role"):="alert",message)
-    } else {
-      div()
-    }
-
+  private def showMessage(message:Option[UiMessage]): TypedTag[String] = message match {
+    case Some(msg) => div(id:="message",`class`:=s"alert alert-${msg.style}",attr("role"):="alert",msg.text)
+    case None => div()
   }
+
+
 
   private def createChart(data:Option[Vector[models.ReflectionEntry]]) = {
     val refs = data.getOrElse(Vector()).toList

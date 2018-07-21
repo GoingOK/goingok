@@ -3,7 +3,7 @@ package org.goingok.server.services
 import java.util.UUID
 
 import com.typesafe.scalalogging.Logger
-import org.goingok.server.data.models.{ReflectionEntry, User}
+import org.goingok.server.data.models.{ReflectionData, ReflectionEntry, User}
 
 class ProfileService {
 
@@ -30,4 +30,8 @@ class ProfileService {
       }
     }
   }
+
+  def saveReflection(reflection:ReflectionData,goingok_id:UUID):Either[Throwable,Int] = for {
+    rows <- ds.insertReflection(reflection:ReflectionData,goingok_id:UUID)
+  } yield rows
 }
