@@ -19,7 +19,7 @@ import LocalSbtSettings._
 scalacOptions += "-Ypartial-unification" // 2.11.9+
 
 lazy val projectName = "goingok"
-lazy val projectVersion = "4.1.0"
+lazy val projectVersion = "4.1.2"
 lazy val projectOrganisation = "org.goingok"
 
 lazy val serverName = s"${projectName}_server"
@@ -30,22 +30,9 @@ lazy val sharedName = s"${projectName}_shared"
 scalaVersion in ThisBuild := "2.12.6"
 
 lazy val vScalaTags = "0.6.7"
-//lazy val vCiris = "0.10.1"
-//lazy val vXmlBind = "2.3.0"
 lazy val vUpickle = "0.6.6"
-//lazy val vPlayJson = "2.6.9"
-//lazy val vSilhouette = "5.0.5"
 lazy val vGoogleClientApi = "1.23.0"
-//lazy val vDeadbolt = "2.6.1"
-//lazy val vSecureSocial = "master-SNAPSHOT"
-//lazy val vScalaGuice = "4.2.1"
-//lazy val vFicus = "1.4.3"
-
-//lazy val vPostgresDriver = "42.2.2"
 lazy val vDoobie = "0.5.3"
-//lazy val vSlick = "3.2.1"
-//lazy val vSlickpg = "0.16.1"
-//lazy val vPlaySlick = "3.0.3"
 
 lazy val vScalaJsDom = "0.9.6"
 lazy val vWebpack = "4.10.2"
@@ -71,36 +58,18 @@ val playDeps = Seq(ws, guice, ehcache) //, specs2 % Test)
 
 val generalDeps = Seq(
   "com.typesafe" % "config" % "1.3.2",
-  //"is.cir" %% "ciris-core" % vCiris,
-  //"com.typesafe.play" %% "play-json" % vPlayJson,
-  //"javax.xml.bind" % "jaxb-api" % vXmlBind, //to fix issue with missing xml in Java9
   "com.lihaoyi" %% "scalatags" % vScalaTags, //Using ScalaTags instead of Twirl
   "com.lihaoyi" %% "upickle" % vUpickle //Using uJson for main JSON
 )
 
 val authDeps = Seq(
     "com.google.api-client" % "google-api-client" % vGoogleClientApi,
-    //"be.objectify" %% "deadbolt-scala" % vDeadbolt
-    //"ws.securesocial" %% "securesocial" % vSecureSocial,
-    //"com.mohiva" %% "play-silhouette" % vSilhouette,
-    //"com.mohiva" %% "play-silhouette-password-bcrypt" % vSilhouette,
-    //"com.mohiva" %% "play-silhouette-persistence" % vSilhouette,
-    //"com.mohiva" %% "play-silhouette-crypto-jca" % vSilhouette,
-    //"net.codingwell" %% "scala-guice" % vScalaGuice, //extention to guice DI - latest version breaks
-    //"com.iheart" %% "ficus" % vFicus, //extention to typesafe config
-    //"com.mohiva" %% "play-silhouette-testkit" % vSilhouette % "test",
-    //"net.minidev" % "json-smart" % "2.3"
 )
 
 val dbDeps = Seq(
   "org.tpolecat" %% "doobie-core" % vDoobie,
   "org.tpolecat" %% "doobie-postgres"  % vDoobie, // Postgres driver 42.2.2 + type mappings
   "org.tpolecat" %% "doobie-scalatest" % "0.5.3"  // ScalaTest support for typechecking statements.
-  //"org.postgresql" % "postgresql" % vPostgresDriver,
-  //"com.typesafe.play" %% "play-slick" % vPlaySlick,
-  //"com.github.tminglei" %% "slick-pg" % vSlickpg exclude("org.postgresql","postgresql"), //provided by postgresql
-  //"com.github.tminglei" %% "slick-pg_play-json" % vSlickpg
-
 )
 
 val testDeps = Seq(
@@ -203,14 +172,4 @@ lazy val client = project.in(file(clientName))
 //  IO.copyDirectory(apiSource,apiDest,overwrite=true,preserveLastModified=true)
 //}
 //
-//enablePlugins(JavaAppPackaging) // sbt universal:packageZipTarball
-//dockerExposedPorts := Seq(9000) // sbt docker:publishLocal
-//dockerRepository := Some(s"$dockerRepoURI")
-//defaultLinuxInstallLocation in Docker := "/opt/docker"
-//dockerExposedVolumes := Seq("/opt/docker/logs")
-//dockerBaseImage := "openjdk:9-jdk"
-//javaOptions in Universal ++= Seq(
-//  // -J params will be added as jvm parameters
-//  "-J-Xmx4g",
-//  "-J-Xms2g"
-//)
+

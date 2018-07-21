@@ -7,11 +7,14 @@ import doobie._
 import doobie.implicits._
 import java.util.UUID
 
+import com.typesafe.scalalogging.Logger
 import doobie.util.meta.AdvancedMeta
 import org.goingok.server.Config
 import org.goingok.server.data.models._
 
 class DataService {
+
+  val logger = Logger(this.getClass)
 
   private val driver = Config.string("db.driver")
   private val url = Config.string("db.url")
@@ -41,7 +44,8 @@ class DataService {
     runQuery(query)
   }
 
-  def insertNewUser(user:User):Either[Throwable,User] = {
+  def insertNewUser(user:User):Either[Throwable,UUID] = {
+    logger.info(s"Inserting new user: $user")
     val query = sql"""insert into users (goingok_id,pseudonym,research_code,research_consent,supervisor,admin,group_code,register_timestamp)
                       values(${user.goingok_id},${user.pseudonym},
                             ${user.research_code},${user.research_consent},
@@ -51,14 +55,11 @@ class DataService {
                    """.update
                   .withUniqueGeneratedKeys[UUID]("goingok_id")
 
-    val result = runQuery(query)
-    for {
-      u <- result
-      usr <- getUserForId(u)
-    } yield usr
+    runQuery(query)
   }
 
   def getUserForId(goingok_id:UUID):Either[Throwable,User] = {
+    logger.info(s"Getting user for goingok_id: $goingok_id")
     val query = sql"""select * from users
                  where goingok_id = $goingok_id::uuid
               """.query[User].unique

@@ -35,19 +35,33 @@ class AuthController @Inject()(components: ControllerComponents,authService:Goog
         gu <- authService.parseAuthCode(code.get)
       } yield gu
 
+      logger.info(s"Get GoogleUser from Google result: $googleUser")
+
       val user = for {
         gu <- googleUser
         usr <- userService.getUser(gu)
       } yield usr
 
-      user match {
+      logger.info(s"Get User from DB result: $user")
+
+      val newUser = for {
+        nu <- handleNewUser(user,googleUser)
+      } yield nu
+
+      logger.info(s"handleNewUser result: $newUser")
+
+      newUser match {
         case Right(u) => {
           logger.info(s"Sucessful login for ${u.goingok_id.toString} [${u.pseudonym}]")
-          val url = if(u.group_code!="" && u.register_timestamp.nonEmpty) { "/profile"} else { "/register" }
+          val url = if(registeredUser(u)) { "/profile"} else { "/register" }
           Redirect(url).withSession("user" -> u.goingok_id.toString)
         }
         case Left(e) => {
           logger.error(s"ERROR: ${e.getMessage}")
+          if(e.getMessage.contains(UserService.NOT_REGISTERED_ERROR)) {
+            Redirect("")
+          }
+
           Redirect("/").withNewSession
         }
         case _ => {
@@ -76,6 +90,15 @@ class AuthController @Inject()(components: ControllerComponents,authService:Goog
     }
   }
 
+  private def registeredUser(user:User):Boolean = user.group_code.nonEmpty &&
+    !user.group_code.contains("none") &&
+    user.register_timestamp.nonEmpty
+
+//  private def checkRegistration(user:User) :Either[Throwable,User] = if(user.group_code.isEmpty || user.group_code.contains("none")) {
+//    Left(new Exception(UserService.NOT_REGISTERED_ERROR))
+//  } else {
+//    Right(user)
+//  }
 
 }
 

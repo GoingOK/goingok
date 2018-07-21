@@ -21,14 +21,20 @@ class UserService {
   } yield usr
 
   def createUser(googleUser:GoogleUser):Either[Throwable,User] = {
-    logger.debug("Creating new user")
+    logger.warn("Creating new user")
     val user = for {
       gid <- ds.insertNewUserAuth(new UserAuth(googleUser.gId, googleUser.email))
-      u1 <- ds.insertNewUser(User(gid,Some("dummy")))
-      u2 <- checkRegistration(u1)
-    } yield u2
-    logger.debug(s"user: $user")
+      p <- getNewPseudonym
+      uuid <- ds.insertNewUser(User(gid,Some(p)))
+      usr <- ds.getUserForId(uuid)
+    } yield usr
+    logger.info(s"user: $user")
     user
+  }
+
+  def getNewPseudonym:Either[Throwable,String] = {
+    logger.warn("Getting new pseudonym")
+    Right("no-pseuodnym-yet")
   }
 
   def isGroupCodeValid(code:String):Either[Throwable,Boolean] = for {
@@ -43,11 +49,7 @@ class UserService {
 
   private def printAndReturn[A](message:A):A = { logger.debug(message.toString); message }
 
-  private def checkRegistration(user:User) :Either[Throwable,User] = if(user.group_code.isEmpty || user.group_code.contains("none")) {
-    Left(new Exception(UserService.NOT_REGISTERED_ERROR))
-  } else {
-    Right(user)
-  }
+
 
 
 
