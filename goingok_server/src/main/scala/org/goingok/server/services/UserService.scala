@@ -16,6 +16,10 @@ class UserService {
       u1 <- ds.getUserWithGoogleId(googleUser.gId)
   } yield u1
 
+  def getUser(goingok_id:UUID):Either[Throwable,User] = for {
+    usr <- ds.getUserForId(goingok_id)
+  } yield usr
+
   def createUser(googleUser:GoogleUser):Either[Throwable,User] = {
     logger.debug("Creating new user")
     val user = for {

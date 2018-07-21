@@ -3,35 +3,88 @@ package controllers
 //import auth.DefaultEnv
 //import com.mohiva.play.silhouette.api.Silhouette
 //import com.mohiva.play.silhouette.api.actions.{SecuredErrorHandler, SecuredRequest}
+import java.util.UUID
+
 import javax.inject.Inject
-import org.goingok.server.data.models
-import org.goingok.server.data.models.User
+import org.goingok.server.data.{Profile, Reflection, UiMessage, models}
+import org.goingok.server.data.models.{ReflectionData, ReflectionEntry, User}
+import org.goingok.server.services.{ProfileService, UserService}
 import play.api.Logger
 import play.api.mvc._
 import views.{ProfilePage, RegisterPage}
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
-class ProfileController @Inject()(components: ControllerComponents) //, silhouette: Silhouette[DefaultEnv])
+class ProfileController @Inject()(components: ControllerComponents,profileService:ProfileService)
                                  (implicit ec: ExecutionContext, assets: AssetsFinder) extends AbstractController(components) {
 
+  val logger: Logger = Logger(this.getClass)
 
-  def profile: Action[AnyContent] = Action.async {
-    val page = ProfilePage.render("GoingOK :: profile",None)
-    Future.successful(Ok(page))
+  private val UNAUTHORIZED_MESSAGE = "You need to login to GoingOK to access this page"
+
+
+    private val dummyUid = UUID.randomUUID()
+    private val dummyData = Vector(
+      Reflection("2018-05-02T06:01:29.077Z",100.0,"This is a dummy reflection. Number 1.",dummyUid),
+      Reflection("2018-06-03T06:01:29.077Z",50.0,"This is a dummy reflection Number 2. This is a dummy reflection Number 2. This is a dummy reflection Number 2.",dummyUid),
+      Reflection("2018-08-04T06:01:29.077Z",0.0,"This is a dummy reflection Number 3. This is a dummy reflection Number 3. This is a dummy reflection Number 3. This is a dummy reflection Number 3. This is a dummy reflection Number 3.",dummyUid),
+      Reflection("2018-08-20T06:01:29.077Z",70.0,"This is a dummy reflection. Number 4.",dummyUid),
+    )
+
+  def profile: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    request.session.get("user").map { uid =>
+      Future {
+        val formValues = request.body.asFormUrlEncoded
+        logger.debug(s"formValues: ${formValues.toString}")
+        val goingok_id = UUID.fromString(uid)
+        val user = profileService.getUser(goingok_id)
+
+        val message: Option[UiMessage] = if(formValues.nonEmpty && user.nonEmpty) {
+          saveReflection(formValues.get,user.get) match {
+            case Right(rows) => if(rows==1) {
+              Some(UiMessage("Reflection saved","success"))
+            } else {
+              val errMsg = s"The reflection didn't save - please try again."
+              logger.error(errMsg)
+              Some(UiMessage(errMsg,"danger"))
+            }
+            case Left(error) => {
+              val errMsg = s"Unable to save reflection: ${error.getMessage.toString}"
+              logger.error(errMsg)
+              Some(UiMessage(errMsg,"danger"))
+            }
+          }
+        } else {
+          None
+        }
+
+        val reflections = profileService.getReflections(goingok_id)
+
+        if(user.getOrElse(User(UUID.randomUUID())).group_code!="none") {
+          val page = ProfilePage.page("GoingOK :: profile", message, Profile(user, reflections))
+          Ok(ProfilePage.getHtml(page))
+        } else {
+          Redirect("/register")
+        }
+      }
+    }.getOrElse {
+      Future.successful(Unauthorized(UNAUTHORIZED_MESSAGE))
+    }
   }
 
-//  def profile :Action[AnyContent] = silhouette.SecuredAction(errorHandler).async { implicit request: SecuredRequest[DefaultEnv, AnyContent] =>
-//
-////    clientService.getFullProfileForGoingokId(uid).map { profile =>
-////      if(uid.nonEmpty) { Ok(Json.toJson(profile)) }
-////      else { Unauthorized("No user id available from session") }
-////    }
-//
-//    val page = ProfilePage.render("GoingOK :: profile",Some(request.identity))
-//    Future.successful(Ok(page))
-//  }
+  private def saveReflection(formValues:Map[String,Seq[String]],user: User): Either[Throwable, Int] = {
+    for {
+      rd <- getReflectionData(formValues)
+      res <- profileService.saveReflection(rd,user.goingok_id)
+    } yield res
+  }
 
+  private def getReflectionData(formValues:Map[String,Seq[String]]):Either[Throwable,ReflectionData] = Try {
+    val point = formValues.get("reflection-point").get.head.toDouble
+    val text = formValues.get("reflection-text").get.head
+    ReflectionData(point,text)
+  }.toEither
 
 
 //  def reflectionsCsv :Action[AnyContent] = silhouette.SecuredAction(errorHandler).async { implicit request: SecuredRequest[DefaultEnv, AnyContent] =>
@@ -45,37 +98,5 @@ class ProfileController @Inject()(components: ControllerComponents) //, silhouet
 //    Future.successful(OK())
 //  }
 
-//  def saveReflection:Action[AnyContent] = silhouette.SecuredAction(errorHandler).async { implicit request: SecuredRequest[DefaultEnv, AnyContent] =>
-//
-//    /*
-//    val optUid = request.session.get("uid")
-//    val optReflection = request.body.asJson
-//    if(optUid.isEmpty) {
-//      Logger.error("The client sent an empty uid")
-//      Future(Unauthorized("No user id available from session"))
-//    } else if(optReflection.isEmpty) {
-//      Logger.error("The client sent an empty reflection")
-//      Future(BadRequest("No reflection data"))
-//    } else {
-//      val uid:String = optUid.get
-//      val reflection:ReflectionEntry = optReflection.get.as[ReflectionEntry]
-//      Logger.info("Saving reflection for: " + uid)
-//      Logger.debug("Reflection: "+reflection.toString)
-//      clientService.saveReflection(uid,reflection).map { profile =>
-//        Ok(Json.toJson(profile))
-//
-//      }
-//    } */
-//    Future.successful(OK())
-//  }
-
-//  val errorHandler = new SecuredErrorHandler {
-//    override def onNotAuthenticated(implicit request: RequestHeader) :Future[Result] = {
-//      Future.successful(Redirect(routes.ApplicationController.index()))
-//    }
-//    override def onNotAuthorized(implicit request: RequestHeader) :Future[Result] = {
-//      Future.successful(Forbidden("local.not.authorized"))
-//    }
-//  }
 
 }

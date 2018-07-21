@@ -36,7 +36,7 @@ object NavBar {
         // Centre items
         ul(`class`:="nav navbar-nav mx-auto")(
           li(`class`:="nav-item")(
-            if(navParams.signedIn) { button(`class`:="btn btn-sm btn-outline-light", disabled)("qut182a-axe37wit") } //(s"$displayName") }
+            if(navParams.signedIn) { button(`class`:="btn btn-sm btn-outline-light", disabled)(displayName) } //(s"$displayName") }
             else { "" }
           )
         ),

@@ -8,12 +8,16 @@ GET     /help                   controllers.ApplicationController.help
 
 GET     /googleAuth             controllers.AuthController.googleAuth
 GET     /signin                 controllers.AuthController.signin
+GET     /signout                controllers.AuthController.signout
 
 GET     /register               controllers.RegisterController.register
 + nocsrf
 POST    /registerWithGroup               controllers.RegisterController.registerWithGroup
 
 GET     /profile                controllers.ProfileController.profile
++ nocsrf
+POST     /profile         controllers.ProfileController.profile
+
 #GET     /profile/records/csv    controllers.ProfileController.reflectionsCsv
 
 #POST    /profile/reflection     controllers.ProfileController.saveReflection

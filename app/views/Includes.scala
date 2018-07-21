@@ -19,6 +19,7 @@ object Includes {
     link(rel := "stylesheet", href := routes.Assets.versioned("stylesheets/navbar.component.css").url),
     link(rel := "stylesheet", href := routes.Assets.versioned("stylesheets/fa-svg-with-js.css").url),
     link(rel := "stylesheet", href := routes.Assets.versioned("stylesheets/reflection-point-chart.css").url),
+    link(rel := "stylesheet", href := routes.Assets.versioned("stylesheets/entry.component.css").url),
     script(src := routes.Assets.versioned("javascripts/fa-solid.min.js").url),
     script(src := routes.Assets.versioned("javascripts/fontawesome.min.js").url),
     script(src := "//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js" ),

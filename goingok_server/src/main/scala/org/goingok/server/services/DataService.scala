@@ -9,7 +9,7 @@ import java.util.UUID
 
 import doobie.util.meta.AdvancedMeta
 import org.goingok.server.Config
-import org.goingok.server.data.models.{GroupCode, ReflectionEntry, User, UserAuth}
+import org.goingok.server.data.models._
 
 class DataService {
 
@@ -86,6 +86,15 @@ class DataService {
     val query = sql"""update users
                     set group_code=$code, register_timestamp=$time
                     where goingok_id=$goingok_id
+                """.update.run
+
+    runQuery(query)
+  }
+
+  def insertReflection(reflection:ReflectionData,goingok_id:UUID): Either[Throwable,Int] = {
+    val time = LocalDateTime.now().toString
+    val query = sql"""insert into reflections (timestamp, point, text, goingok_id)
+                    values ($time,${reflection.point},${reflection.text},$goingok_id)
                 """.update.run
 
     runQuery(query)

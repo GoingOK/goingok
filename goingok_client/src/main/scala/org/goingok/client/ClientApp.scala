@@ -23,6 +23,16 @@ object ClientApp {
 
   }
 
+  @JSExportTopLevel("rangestatic")
+  var rangestatic = true
+
+  @JSExportTopLevel("rangeChange")
+  def rangeChange() = {
+    //println("change")
+    document.getElementById("slider-group").setAttribute("style","border: thin solid #00BB00;")
+    rangestatic = false
+  }
+
 //  @JSExportTopLevel("signInCallback")
 //  def signInCallback(authResult:js.Dictionary[String]) = {
 //    val code = authResult.getOrElse("code","")
