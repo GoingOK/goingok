@@ -3,6 +3,7 @@ package org.goingok.server.services
 import java.time.LocalDateTime
 
 import cats.effect._
+import cats.implicits._
 import doobie._
 import doobie.implicits._
 import java.util.UUID
@@ -101,5 +102,25 @@ class DataService {
     runQuery(query)
   }
 
+  def getAllPseudonyms: Either[Throwable,Vector[String]] = {
+    val query = sql"""select pseudonym from pseudonyms""".query[String]
+    runQuery(query.to[Vector])
+  }
+
+  def insertPseudonyms(pseudocodes:List[String]): Either[Throwable, Int] = {
+    val query = "insert into pseudonyms (pseudonym) values (?)"
+    val batch = Update[String](query).updateMany(pseudocodes)
+    runQuery(batch)
+  }
+
+  def getNextPseudonym: Either[Throwable,String] = {
+    val query = sql"""select pseudonym from pseudonyms where allocated is not true limit 1""".query[String].unique
+    runQuery(query)
+  }
+
+  def updatePseudonym(pseudonym:String): Either[Throwable,Int] = {
+    val query = sql"""update pseudonyms set allocated = true where pseudonym = $pseudonym""".update.run
+    runQuery(query)
+  }
 
 }
