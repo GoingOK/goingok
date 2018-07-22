@@ -4,6 +4,19 @@
     margin-top: 1em;
 }
 
+#register-content {
+    margin-top: 2em;
+}
+
 .profile-panel {
     margin-bottom: 1em;
+}
+
+.reflist-item {
+    padding-bottom: 0.75em;
+}
+
+.reflist-item-date {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
 }

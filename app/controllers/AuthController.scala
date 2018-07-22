@@ -1,40 +1,104 @@
 package controllers
 
-import auth.{DefaultEnv, GoogleAuthService}
-import com.mohiva.play.silhouette.api._
-import com.mohiva.play.silhouette.api.exceptions.ProviderException
-import com.mohiva.play.silhouette.impl.providers._
 import javax.inject.Inject
-import play.api.mvc.{AbstractController, AnyContent, ControllerComponents, Request}
+import org.goingok.server.Config
+import org.goingok.server.data.models.{GoogleUser, User}
+import org.goingok.server.services.{GoogleAuthService, UserService}
+import play.api.Logger
+import play.api.mvc.{Action, AnyContent, _}
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
+class AuthController @Inject()(components: ControllerComponents,authService:GoogleAuthService,userService:UserService)
+                              (implicit ex: ExecutionContext) extends AbstractController(components) {
 
-class AuthController @Inject()(components: ControllerComponents, silhouette: Silhouette[DefaultEnv], authService: GoogleAuthService)
-                              (implicit ex: ExecutionContext) extends AbstractController(components) with Logger {
+  val logger: Logger = Logger(this.getClass)
 
+  private val baseUrl = Config.string("app.baseurl")
+  private val clientid = Config.string("google.client.id")
+  private val secret = Config.string("google.client.secret")
+  private val redirectUrl = Config.string("google.redirect.url")
 
-  def authenticateWithGoogle =  Action.async { implicit request: Request[AnyContent] =>
-    (authService.registry.get[SocialProvider]("google") match {
-      case Some(p: SocialProvider with CommonSocialProfileBuilder) =>
-        p.authenticate().flatMap {
-          case Left(result) => Future.successful(result)
-          case Right(authInfo) => for {
-            profile <- p.retrieveProfile(authInfo)
-            user <- authService.user.save(profile)
-            authenticator <- authService.cookieAuth.create(profile.loginInfo)
-            value <- authService.cookieAuth.init(authenticator)
-            result <- authService.cookieAuth.embed(value, Redirect(routes.ApplicationController.profile()))
-          } yield {
-            silhouette.env.eventBus.publish(LoginEvent(user, request))
-            result
-          }
+  def signin: Action[AnyContent] = Action {
+    Redirect(authService.url)
+  }
+
+  def signout: Action[AnyContent] = Action {
+    Redirect("/").withNewSession
+  }
+
+  def googleAuth: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    Future {
+      val googleUser = for {
+        code <- Try(request.queryString.get("code").map(_.head)).toEither
+        gu <- authService.parseAuthCode(code.get)
+      } yield gu
+
+      logger.info(s"Get GoogleUser from Google result: $googleUser")
+
+      val user = for {
+        gu <- googleUser
+        usr <- userService.getUser(gu)
+      } yield usr
+
+      logger.info(s"Get User from DB result: $user")
+
+      val newUser = for {
+        nu <- handleNewUser(user,googleUser)
+      } yield nu
+
+      logger.info(s"handleNewUser result: $newUser")
+
+      newUser match {
+        case Right(u) => {
+          logger.info(s"Sucessful login for ${u.goingok_id.toString} [${u.pseudonym}]")
+          val url = if(registeredUser(u)) { "/profile"} else { "/register" }
+          Redirect(url).withSession("user" -> u.goingok_id.toString)
         }
-      case _ => Future.failed(new ProviderException(s"Cannot authenticate with google"))
-    }).recover {
-      case e: ProviderException =>
-        logger.error("Unexpected provider error", e)
-        Redirect(routes.ApplicationController.index()).flashing("error" -> "could.not.authenticate")
+        case Left(e) => {
+          logger.error(s"ERROR: ${e.getMessage}")
+          if(e.getMessage.contains(UserService.NOT_REGISTERED_ERROR)) {
+            Redirect("")
+          }
+
+          Redirect("/").withNewSession
+        }
+        case _ => {
+          logger.error("A problem occured during the authentication process.")
+          Redirect("/").withNewSession
+        }
+      }
+
+
+
     }
   }
+
+  private def handleNewUser(user:Either[Throwable,User],googleUser:Either[Throwable,GoogleUser]):Either[Throwable,User] = user match {
+    case Right(usr) => Right(usr)
+    case Left(e) => {
+      if(e.getMessage.contains("ResultSet exhausted;")) {
+        logger.warn("This user appears to be logging in for the first time. Create new GoingOK User")
+        for {
+          gu <- googleUser
+          usr <- userService.createUser(gu)
+        } yield usr
+      } else {
+        Left(e)
+      }
+    }
+  }
+
+  private def registeredUser(user:User):Boolean = user.group_code.nonEmpty &&
+    !user.group_code.contains("none") &&
+    user.register_timestamp.nonEmpty
+
+//  private def checkRegistration(user:User) :Either[Throwable,User] = if(user.group_code.isEmpty || user.group_code.contains("none")) {
+//    Left(new Exception(UserService.NOT_REGISTERED_ERROR))
+//  } else {
+//    Right(user)
+//  }
+
 }
+

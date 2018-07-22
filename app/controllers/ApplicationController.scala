@@ -1,51 +1,60 @@
 package controllers
 
-import auth.DefaultEnv
-import com.mohiva.play.silhouette.api.actions.{SecuredErrorHandler, SecuredRequest, UserAwareRequest}
-import com.mohiva.play.silhouette.api.{LogoutEvent, Silhouette}
+//import auth.DefaultEnv
+//import com.mohiva.play.silhouette.api.Silhouette
+//import com.mohiva.play.silhouette.api.actions.UserAwareRequest
+import com.google.api.client.googleapis.auth.oauth2.GoogleBrowserClientRequestUrl
 import javax.inject.Inject
+import org.goingok.server.data.models.HealthStatus
+//import play.api.libs.json.Json
 import play.api.mvc._
-import views.{HelpPage, HomePage, ProfilePage}
+import views.{HelpPage, HomePage}
+
+import scala.collection.JavaConverters._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ApplicationController @Inject()(components: ControllerComponents, silhouette: Silhouette[DefaultEnv])
+class ApplicationController @Inject()(components: ControllerComponents) //, silhouette: Silhouette[DefaultEnv])
                                      (implicit ec: ExecutionContext, assets: AssetsFinder) extends AbstractController(components) {
 
 
-  val errorHandler = new SecuredErrorHandler {
-    override def onNotAuthenticated(implicit request: RequestHeader) = {
-      Future.successful(Redirect(routes.ApplicationController.index()))
-    }
-    override def onNotAuthorized(implicit request: RequestHeader) = {
-      Future.successful(Forbidden("local.not.authorized"))
-    }
+  def index: Action[AnyContent] = Action {
+    val page = HomePage.render("GoingOK :: home")
+    Ok(page)
   }
 
-  def index = silhouette.UserAwareAction.async {
-    implicit request: UserAwareRequest[DefaultEnv,AnyContent] => {
-      val page = HomePage.render("GoingOK :: home",request.identity)
-      Future.successful(Ok(page))
-    }
+
+
+
+//  def index :Action[AnyContent] = silhouette.UserAwareAction.async {
+//    implicit request: UserAwareRequest[DefaultEnv,AnyContent] => {
+//      val page = HomePage.render("GoingOK :: home",request.identity)
+//      Future.successful(Ok(page))
+//    }
+//  }
+
+  def health :Action[AnyContent] = Action {
+    val healthMessage = HealthStatus(200)
+    //Ok(Json.toJson(healthMessage))
+    Ok(healthMessage.toString)
   }
 
-  def help = silhouette.UserAwareAction.async {
-    implicit request: UserAwareRequest[DefaultEnv,AnyContent] => {
-      val page = HelpPage.render("GoingOK :: help",request.identity)
-      Future.successful(Ok(page))
-    }
+  def version :Action[AnyContent] = Action {
+    Ok("temporarily disabled")
+    //Ok(Json.toJson(ServerInfo(BuildInfo.name,BuildInfo.version,BuildInfo.builtAtString)))
   }
 
-  def profile = silhouette.SecuredAction(errorHandler).async { implicit request: SecuredRequest[DefaultEnv, AnyContent] =>
+  def help: Action[AnyContent] = Action { Ok("not implemented") }
 
-    val page = ProfilePage.render("GoingOK :: profile",Some(request.identity))
-        Future.successful(Ok(page))
-      }
+//  def help :Action[AnyContent] = silhouette.UserAwareAction.async {
+//    implicit request: UserAwareRequest[DefaultEnv,AnyContent] => {
+//      val page = HelpPage.render("GoingOK :: help",request.identity)
+//      Future.successful(Ok(page))
+//    }
+//  }
 
 
-  def signOut = silhouette.SecuredAction.async { implicit request: SecuredRequest[DefaultEnv, AnyContent] =>
-    val result = Redirect(routes.ApplicationController.index())
-    silhouette.env.eventBus.publish(LogoutEvent(request.identity, request))
-    silhouette.env.authenticatorService.discard(request.authenticator, result)
-  }
+
+
+
 }

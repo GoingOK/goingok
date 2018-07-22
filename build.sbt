@@ -16,217 +16,161 @@
 
 import LocalSbtSettings._
 
-//Project details
+scalacOptions += "-Ypartial-unification" // 2.11.9+
+scalacOptions += "-target:jvm-1.8"
 
 lazy val projectName = "goingok"
-lazy val projectOrg = "org.goingok"
-lazy val projectVersion = "4.1.0"
-lazy val projectScalaVersion = "2.12.6"
+lazy val projectVersion = "4.1.5"
+lazy val projectOrganisation = "org.goingok"
 
-lazy val serverName = "goingok"
-lazy val clientName = "clientJS"
-lazy val sharedName = "sharedJS"
+lazy val serverName = s"${projectName}_server"
+lazy val clientName = s"${projectName}_client"
+lazy val sharedName = s"${projectName}_shared"
 
-lazy val serverVersion = projectVersion
-lazy val clientVersion = projectVersion
-lazy val sharedVersion = projectVersion
+//Versions
+scalaVersion in ThisBuild := "2.12.6"
+
+lazy val vScalaTags = "0.6.7"
+lazy val vUpickle = "0.6.6"
+lazy val vGoogleClientApi = "1.23.0"
+lazy val vDoobie = "0.5.3"
+
+lazy val vScalaJsDom = "0.9.6"
+lazy val vWebpack = "4.10.2"
+lazy val vWebpackDevServer = "3.1.4"
+lazy val vSjsBootstrap = "2.3.2"
+
+lazy val vBootstrap = "4.1.1"
+lazy val vJquery = "3.2.1"
+lazy val vPopper = "1.14.3"
+lazy val vD3 = "5.4.0"
+
+lazy val vScalaTest = "3.0.5"
+
+//Settings
+val sharedSettings = Seq(
+  organization := projectOrganisation,
+  version := projectVersion
+)
 
 //Dependencies
 
-lazy val playJsonVersion = "2.6.9"
-lazy val scalaTagsVersion = "0.6.7"
-lazy val playSilhouetteVersion = "5.0.4"
+val playDeps = Seq(ws, guice, ehcache) //, specs2 % Test)
 
-lazy val scalatestVersion = "3.0.5"
-lazy val scalatestPlayVersion = "3.1.2"
-
-lazy val googleClientApiVersion = "1.23.0"
-lazy val postgresDriverVersion = "42.2.2"
-lazy val json4sVersion = "3.5.3"
-lazy val slickVersion = "3.2.1"
-lazy val slickpgVersion = "0.16.1"
-lazy val playSlickVersion = "3.0.3"
-
-lazy val scalaJsDomVersion = "0.9.5"
-lazy val scalaJsD3Version = "0.3.4"
-lazy val scalaJsBootstrapVersion = "2.3.1"
-
-val generalDependencies = Seq(
-  "com.typesafe.play" %% "play-json" % playJsonVersion,
-  "com.lihaoyi" %% "scalatags" % scalaTagsVersion,
-   //,
-  //"com.atlassian.jwt" % "jwt-core" % "1.6.1",
-  //"com.atlassian.jwt" % "jwt-api" % "1.6.1"
+val generalDeps = Seq(
+  "com.typesafe" % "config" % "1.3.2",
+  "com.lihaoyi" %% "scalatags" % vScalaTags, //Using ScalaTags instead of Twirl
+  "com.lihaoyi" %% "upickle" % vUpickle //Using uJson for main JSON
 )
 
-val silhouetteDependencies = Seq(
-  "com.mohiva" %% "play-silhouette" % playSilhouetteVersion,
-  "com.mohiva" %% "play-silhouette-password-bcrypt" % playSilhouetteVersion,
-  "com.mohiva" %% "play-silhouette-persistence" % playSilhouetteVersion,
-  "com.mohiva" %% "play-silhouette-crypto-jca" % playSilhouetteVersion,
-  "net.codingwell" %% "scala-guice" % "4.1.0",
-  "com.iheart" %% "ficus" % "1.4.1",
-  "com.mohiva" %% "play-silhouette-testkit" % playSilhouetteVersion % "test",
-  "javax.xml.bind" % "jaxb-api" % "2.3.0",
-  "net.minidev" % "json-smart" % "2.3"
+val authDeps = Seq(
+    "com.google.api-client" % "google-api-client" % vGoogleClientApi,
 )
 
-val dbDependencies = Seq(
-  "org.postgresql" % "postgresql" % postgresDriverVersion,
-  "com.typesafe.play" %% "play-slick" % playSlickVersion,
-  "com.github.tminglei" %% "slick-pg" % slickpgVersion exclude("org.postgresql","postgresql"), //provided by postgresql
-  "com.github.tminglei" %% "slick-pg_play-json" % slickpgVersion
-
+val dbDeps = Seq(
+  "org.tpolecat" %% "doobie-core" % vDoobie,
+  "org.tpolecat" %% "doobie-postgres"  % vDoobie, // Postgres driver 42.2.2 + type mappings
+  "org.tpolecat" %% "doobie-scalatest" % "0.5.3"  // ScalaTest support for typechecking statements.
 )
 
-val googleDependencies = Seq(
-  "com.google.api-client" % "google-api-client" % googleClientApiVersion
+val testDeps = Seq(
+  "org.scalactic" %% "scalactic" % vScalaTest,
+  "org.scalatest" %% "scalatest" % vScalaTest % "test"
 )
 
-val testDependencies = Seq(
-  "org.scalactic" %% "scalactic" % scalatestVersion,
-  "org.scalatest" %% "scalatest" % scalatestVersion % "test",
-  "org.scalatestplus.play" %% "scalatestplus-play" % scalatestPlayVersion % "test" //,
-  //"com.typesafe.akka" % "akka-stream-testkit_2.12" % akkaStreamVersion
-)
-
-
-//Modules
-
-lazy val commonSettings = Seq(
-  scalaVersion := projectScalaVersion,
-  organization := projectOrg
-)
-
-lazy val play = (project in file("."))
+lazy val goingok = project.in(file("."))
+  .dependsOn(server,client)
+  .aggregate(server,client)
   .settings(
-    commonSettings,
-    name := projectName,
-    version := projectVersion,
-    scalaJSProjects := Seq(clientJS),
+    sharedSettings,
+    libraryDependencies ++= playDeps,
+    libraryDependencies ++= generalDeps,
+    libraryDependencies ++= authDeps,
+    libraryDependencies ++= testDeps,
+
+    resolvers += Resolver.sonatypeRepo("snapshots"),
+    //resolvers += Resolver.sonatypeRepo("releases"),
+
+    scalaJSProjects := Seq(client),
     pipelineStages in Assets := Seq(scalaJSPipeline),
-    pipelineStages := Seq(digest, gzip),
-    compile in Compile := ((compile in Compile) dependsOn scalaJSPipeline).value,
-    libraryDependencies ++= silhouetteDependencies,
-    libraryDependencies ++= Seq(ws, guice, ehcache, specs2 % Test),
-    WebKeys.packagePrefix in Assets := "public/",
-    managedClasspath in Runtime += (packageBin in Assets).value,
+
     dockerExposedPorts := Seq(9000,80), // sbt docker:publishLocal
     dockerRepository := Some(s"$dockerRepoURI"),
     defaultLinuxInstallLocation in Docker := "/opt/docker",
     dockerExposedVolumes := Seq("/opt/docker/logs"),
-    dockerBaseImage := "openjdk:9-jdk"
-  ).enablePlugins(PlayScala,WebScalaJSBundlerPlugin,SbtWeb)
-  .dependsOn(server,sharedJvm)
+    dockerBaseImage := "openjdk:8-jdk"
+  ).enablePlugins(PlayScala)
+  .enablePlugins(WebScalaJSBundlerPlugin)
+  .enablePlugins(SbtWeb)
 
-lazy val server = (project in file(serverName))
+lazy val server = project.in(file(serverName))
   .settings(
-    resolvers += Resolver.bintrayRepo("nlytx", "nlytx-nlp"),
-    //resolvers += Resolver.sonatypeRepo("releases"),
-    resolvers += Resolver.jcenterRepo,
-    libraryDependencies ++= generalDependencies ++ dbDependencies ++ googleDependencies ++ testDependencies,
+    sharedSettings,
+    libraryDependencies ++= generalDeps,
+    libraryDependencies ++= dbDeps,
+    libraryDependencies ++= authDeps,
+    libraryDependencies ++= testDeps,
+    libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.0",
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
-    buildInfoPackage := projectOrg,
+    buildInfoPackage := projectOrganisation,
     buildInfoOptions += BuildInfoOption.BuildTime,
   ).enablePlugins(BuildInfoPlugin)
-  .dependsOn(sharedJvm)
 
-//lazy val goingok_server = (project in file(serverName))
-//  .settings(
-//    commonSettings,
-//    name := serverName,
-//    version := serverVersion,
-//    scalaJSProjects := Seq(goingok_client),
-//    pipelineStages in Assets := Seq(scalaJSPipeline),
-//    pipelineStages := Seq(digest, gzip),
-//    compile in Compile := ((compile in Compile) dependsOn scalaJSPipeline).value,
-//    libraryDependencies ++= Seq(ws, guice),
-//    libraryDependencies ++= generalDependencies ++ dbDependencies ++ googleDependencies ++ testDependencies,
-//    WebKeys.packagePrefix in Assets := "public/",
-//    managedClasspath in Runtime += (packageBin in Assets).value,
-//    PlayKeys.playMonitoredFiles ++= (sourceDirectories in (Compile, TwirlKeys.compileTemplates)).value,
-//    buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
-//    buildInfoPackage := projectOrg,
-//    buildInfoOptions += BuildInfoOption.BuildTime
-//  ).enablePlugins(PlayScala,BuildInfoPlugin)
-//  .disablePlugins(PlayLayoutPlugin)
-//  .dependsOn(sharedJvm)
-
-lazy val clientJS = (project in file(clientName))
+lazy val client = project.in(file(clientName))
   .settings(
-    commonSettings,
-    name := clientName,
-    version := clientVersion,
+    sharedSettings,
     scalaJSUseMainModuleInitializer := true,
+    webpackBundlingMode := BundlingMode.LibraryAndApplication(), //Needed for top level exports
+    version in webpack := vWebpack, // Needed for version 4 webpack
+    version in startWebpackDevServer := vWebpackDevServer, // Needed for version 4 webpack
     libraryDependencies ++= Seq(
-      "org.scala-js" %%% "scalajs-dom" % scalaJsDomVersion,
-      "org.singlespaced" %%% "scalajs-d3" % scalaJsD3Version,
-      "com.github.karasiq" %%% "scalajs-bootstrap-v4" % "2.3.1",
-      "me.shadaj" %%% "slinky-core" % "0.4.2", // core React functionality, no React DOM
-      "me.shadaj" %%% "slinky-web" % "0.4.2" // React DOM, HTML and SVG tags
+      "org.scala-js" %%% "scalajs-dom" % vScalaJsDom,
+      "org.singlespaced" %%% "scalajs-d3" % "0.3.4",
+      "org.querki" %%% "jquery-facade" % "1.2",
+      "com.github.karasiq" %%% "scalajs-bootstrap-v4" % vSjsBootstrap,
+      "com.lihaoyi" %%% "scalatags" % vScalaTags, //Using ScalaTags instead of Twirl
+      "com.lihaoyi" %%% "upickle" % vUpickle, //Using uJson for main JSON
+      "me.shadaj" %%% "slinky-core" % "0.4.3", // core React functionality, no React DOM
+      "me.shadaj" %%% "slinky-web" % "0.4.3", // React DOM, HTML and SVG tags
+      "org.scalactic" %%% "scalactic" % vScalaTest,
+      "org.scalatest" %%% "scalatest" % vScalaTest % "test"
     ),
     npmDependencies in Compile ++= Seq(
-      "bootstrap" -> "4.1.1",
-      //"font-awesome5" -> "1.0.5",
-      "d3" -> "5.4.0",
-      "react" -> "16.2.0",
-      "react-dom" -> "16.2.0"
+      "bootstrap" -> vBootstrap,
+      "jquery" -> vJquery, //used by bootstrap
+      "popper.js" -> vPopper, //used by bootstrap
+      "d3" -> vD3,
+      "react" -> "16.4.1",
+      "react-dom" -> "16.4.1"
     )
-  ).enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin, ScalaJSWeb).
-  dependsOn(sharedJs)
-
-lazy val sharedJS = (crossProject.crossType(CrossType.Pure) in file(sharedName))
-  .settings(
-    commonSettings,
-    libraryDependencies ++= Seq("com.lihaoyi" %%% "scalatags" % scalaTagsVersion)
-  )
-
-lazy val sharedJvm = sharedJS.jvm
-lazy val sharedJs = sharedJS.js
+  ).enablePlugins(ScalaJSPlugin)
+  .enablePlugins(ScalaJSBundlerPlugin, ScalaJSWeb)
 
 
+//
+//scalacOptions in (Compile, doc) ++= Seq("-doc-root-content", baseDirectory.value+"/src/main/scala/root-doc.md")
+//
+////Set the environment variable for hosts allowed in testing
+//fork in Test := true
+//envVars in Test := Map("GOINGOK_HOSTS" -> "localhost")
+//
+////Documentation - run ;paradox;copyDocs
+//enablePlugins(ParadoxPlugin) //Generate documentation with Paradox
+//paradoxTheme := Some(builtinParadoxTheme("generic"))
+//paradoxProperties in Compile ++= Map(
+//  "github.base_url" -> s"$githubBaseUrl",
+//  "scaladoc.api.base_url" -> s"$scaladocApiBaseUrl"
+//)
+////Task for copying to root level docs folder (for GitHub pages)
+//val copyDocsTask = TaskKey[Unit]("copyDocs","copies paradox docs to /docs directory")
+//copyDocsTask := {
+//  val docSource = new File("target/paradox/site/main")
+//  val apiSource = new File("target/scala-2.12/api")
+//  val docDest = new File("docs")
+//  val apiDest = new File("docs/api")
+//  //if(docDest.exists) IO.delete(docDest)
+//  IO.copyDirectory(docSource,docDest,overwrite=true,preserveLastModified=true)
+//  IO.copyDirectory(apiSource,apiDest,overwrite=true,preserveLastModified=true)
+//}
+//
 
-
-// loads the server project at sbt startup
-//onLoad in Global := (onLoad in Global).value andThen {s: State => s"project $serverName" :: s}
-
-
-/*
-
-scalacOptions in (Compile, doc) ++= Seq("-doc-root-content", baseDirectory.value+"/src/main/scala/root-doc.md")
-
-//Set the environment variable for hosts allowed in testing
-fork in Test := true
-envVars in Test := Map("GOINGOK_HOSTS" -> "localhost")
-
-//Documentation - run ;paradox;copyDocs
-enablePlugins(ParadoxPlugin) //Generate documentation with Paradox
-paradoxTheme := Some(builtinParadoxTheme("generic"))
-paradoxProperties in Compile ++= Map(
-  "github.base_url" -> s"$githubBaseUrl",
-  "scaladoc.api.base_url" -> s"$scaladocApiBaseUrl"
-)
-//Task for copying to root level docs folder (for GitHub pages)
-val copyDocsTask = TaskKey[Unit]("copyDocs","copies paradox docs to /docs directory")
-copyDocsTask := {
-  val docSource = new File("target/paradox/site/main")
-  val apiSource = new File("target/scala-2.12/api")
-  val docDest = new File("docs")
-  val apiDest = new File("docs/api")
-  //if(docDest.exists) IO.delete(docDest)
-  IO.copyDirectory(docSource,docDest,overwrite=true,preserveLastModified=true)
-  IO.copyDirectory(apiSource,apiDest,overwrite=true,preserveLastModified=true)
-}
-
-enablePlugins(JavaAppPackaging) // sbt universal:packageZipTarball
-dockerExposedPorts := Seq(9000) // sbt docker:publishLocal
-dockerRepository := Some(s"$dockerRepoURI")
-defaultLinuxInstallLocation in Docker := "/opt/docker"
-dockerExposedVolumes := Seq("/opt/docker/logs")
-dockerBaseImage := "openjdk:9-jdk"
-javaOptions in Universal ++= Seq(
-  // -J params will be added as jvm parameters
-  "-J-Xmx4g",
-  "-J-Xms2g"
-)
-*/

@@ -1,3 +1,10 @@
+#slider-group {
+  border-color: #FFFFFF;
+  padding-bottom: 1em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+}
+
 #describe {
   font-family: "DejaVu Sans", Arial, SansSerif;
   font-size: 11pt;
