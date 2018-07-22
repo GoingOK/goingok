@@ -11,11 +11,9 @@ import views.{ProfilePage, RegisterPage}
 import scala.concurrent.{ExecutionContext, Future}
 
 class RegisterController @Inject()(components: ControllerComponents, userService:UserService)
-                                  (implicit ec: ExecutionContext, assets: AssetsFinder) extends AbstractController(components) {
+                                  (implicit ec: ExecutionContext, assets: AssetsFinder)
+  extends AbstractController(components) with GoingOkController {
 
-  val logger: Logger = Logger(this.getClass)
-
-  private val UNAUTHORIZED_MESSAGE = "You need to login to GoingOK to access this page"
 
   def register: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     request.session.get("user").map { uid =>
