@@ -2,6 +2,7 @@ package views
 
 import java.util.UUID
 
+import org.goingok.server.Config
 import org.goingok.server.data.{Profile, UiMessage, models}
 import scalatags.Text.all._
 import scalatags.Text.{TypedTag, tags}
@@ -16,7 +17,7 @@ object ProfilePage extends GenericPage {
 
 
   def page(titleStr: String,message:Option[UiMessage],profile:Profile = Profile()): TypedTag[String] = {
-    val signedIn = profile.user.nonEmpty
+
     val name:Option[String] = for {
       u <- profile.user
       gc = u.group_code
@@ -28,7 +29,7 @@ object ProfilePage extends GenericPage {
     tags.html(
       Includes.headContent(titleStr),
       tags.body(
-        NavBar.main(NavParams(signedIn,displayName=name, page="profile")),
+        NavBar.main(NavParams(profile.user.nonEmpty,displayName = name,baseUrl = Config.string("app.baseurl"),"profile")),
         div(id := "profile-content",`class` := "container-fluid",
           showMessage(message),
           div( id := "reflectchart-content", `class` := "row",
