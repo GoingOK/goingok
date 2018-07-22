@@ -55,7 +55,7 @@ class ProfileController @Inject()(components: ControllerComponents,profileServic
           None
         }
 
-        val reflections = profileService.getReflections(goingok_id)
+        val reflections = profileService.getReflections(goingok_id).map(_.reverse)
 
         if(user.getOrElse(User(UUID.randomUUID())).group_code!="none") {
           val page = ProfilePage.page("GoingOK :: profile", message, Profile(user, reflections))
