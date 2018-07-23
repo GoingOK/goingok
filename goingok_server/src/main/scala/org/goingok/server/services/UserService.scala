@@ -42,7 +42,7 @@ class UserService {
 
   def isGroupCodeValid(code:String):Either[Throwable,Boolean] = for {
     gc <- ds.getGroupCode(code)
-  } yield gc.group_code.contentEquals(code)
+  } yield gc.group_code.toLowerCase.contentEquals(code.toLowerCase)
 
 
   def addGroupCodeToUser(code:String,goingok_id:UUID):Either[Throwable,Int] = for {
