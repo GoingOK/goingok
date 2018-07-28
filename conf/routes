@@ -1,0 +1,32 @@
+
+# General application routes
+GET     /                       controllers.ApplicationController.index
+GET     /health                 controllers.ApplicationController.health
+GET     /version                controllers.ApplicationController.version
+GET     /help                   controllers.ApplicationController.help
+
+
+GET     /googleAuth             controllers.AuthController.googleAuth
+GET     /signin                 controllers.AuthController.signin
+GET     /signout                controllers.AuthController.signout
+
+GET     /register               controllers.RegisterController.register
++ nocsrf
+POST    /registerWithGroup               controllers.RegisterController.registerWithGroup
+
+GET     /profile                controllers.ProfileController.profile
++ nocsrf
+POST     /profile         controllers.ProfileController.profile
+
+GET     /analytics              controllers.AnalyticsController.analytics
+
+GET     /admin                  controllers.AdminController.admin
+GET     /admin/pseudonyms       controllers.AdminController.pseudonymAdder
+
+#GET     /profile/records/csv    controllers.ProfileController.reflectionsCsv
+
+#POST    /profile/reflection     controllers.ProfileController.saveReflection
+
+# Assets
+GET /assets/*file               controllers.Assets.at(file)
+GET /versionedAssets/*file      controllers.Assets.versioned(file)

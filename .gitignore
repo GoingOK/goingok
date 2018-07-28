@@ -1,8 +1,8 @@
 *.class
 *.log
+*.DS_Store
 .idea/*
 goingok.iml
-src/main/resources/application.conf
 project/LocalSbtSettings.scala
 /src/main/public/css/bootstrap.css
 /src/main/public/css/bootstrap-reboot.css
@@ -26,3 +26,14 @@ project/LocalSbtSettings.scala
 /src/main/public/js/bootstrap.min.js.map
 /src/main/resources/application-bkp.conf
 
+/clientJS/target/
+/project/target/
+/target/
+/public/javascripts/client-fastOptJS-entrypoint.js
+/public/javascripts/client-fastOptJS-bundle.js
+/public/javascripts/d3.min.js
+/public/javascripts/client-fastOptJS.js
+/public/javascripts/client-fastOptJS-loader.js
+/public/javascripts/d3Test.js
+/public/javascripts/client-fastOptJS.js.map
+/public/javascripts/client-fastOptJS-bundle.js.map
