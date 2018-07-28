@@ -18,6 +18,8 @@ GET     /profile                controllers.ProfileController.profile
 + nocsrf
 POST     /profile         controllers.ProfileController.profile
 
+GET     /analytics              controllers.AnalyticsController.analytics
+
 GET     /admin                  controllers.AdminController.admin
 GET     /admin/pseudonyms       controllers.AdminController.pseudonymAdder
 

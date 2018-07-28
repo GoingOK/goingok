@@ -17,7 +17,7 @@ object HelpPage extends GenericPage {
     tags.html(
       Includes.headContent(titleStr),
       tags.body(
-        NavBar.main(NavParams(user.nonEmpty,displayName = None,baseUrl = Config.string("app.baseurl"),"help")),
+        NavBar.main(NavParams(user,Config.baseUrl,Some("help"))),
         HelpContent.mainContainer,
         script(src:=bundleUrl)
       )

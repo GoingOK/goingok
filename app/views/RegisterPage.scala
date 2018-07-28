@@ -15,7 +15,7 @@ object RegisterPage extends GenericPage {
     tags.html(
       Includes.headContent(titleStr),
       tags.body(
-        NavBar.main(NavParams(user.nonEmpty,displayName = None,baseUrl = Config.string("app.baseurl"),"register")),
+        NavBar.main(NavParams(user,Config.baseUrl,Some("register"))),
         div(id := "register-content",`class` := "container-fluid",
           div(`class` := "row justify-content-md-center align-items-center",
             div(`class` := "col-sm-5",

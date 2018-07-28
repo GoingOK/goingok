@@ -11,7 +11,11 @@ import java.util.UUID
 import com.typesafe.scalalogging.Logger
 import doobie.util.meta.AdvancedMeta
 import org.goingok.server.Config
+import org.goingok.server.data.DbResults
+import org.goingok.server.data.DbResults.Result
 import org.goingok.server.data.models._
+
+import scala.collection.immutable.HashMap
 
 class DataService {
 
@@ -123,4 +127,21 @@ class DataService {
     runQuery(query)
   }
 
+  def countUsers:Either[Throwable,DbResults.Result] = {
+    val query = sql"""SELECT group_code, COUNT(*)
+                      FROM users
+                      GROUP BY group_code
+                      ORDER BY group_code
+      """.query[(String,Int)]
+    runQuery(query.to[Seq]).map(r => DbResults.GroupedUserCounts(r))
+  }
+
+  def countReflections:Either[Throwable,DbResults.Result] = {
+    val query = sql"""select u.group_code, count(*)
+                     from users u,reflections r
+                     where u.goingok_id = r.goingok_id
+                     group by group_code
+      """.query[(String, Int)]
+    runQuery(query.to[Seq]).map(r => DbResults.GroupedReflectionCounts(r))
+  }
 }

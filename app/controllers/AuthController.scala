@@ -35,7 +35,7 @@ class AuthController @Inject()(components: ControllerComponents,authService:Goog
         gu <- authService.parseAuthCode(code.get)
       } yield gu
 
-      logger.info(s"Get GoogleUser from Google result: $googleUser")
+      logger.info(s"Get GoogleUser from Google result: ${googleUser.isRight}")
 
       val user = for {
         gu <- googleUser

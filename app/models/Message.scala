@@ -1,0 +1,5 @@
+package models
+
+trait Message {
+
+}
