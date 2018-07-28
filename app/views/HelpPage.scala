@@ -1,5 +1,6 @@
 package views
 
+import org.goingok.server.Config
 import org.goingok.server.data.models.User
 import scalatags.Text.all._
 import scalatags.Text.{TypedTag, tags}
@@ -16,7 +17,7 @@ object HelpPage extends GenericPage {
     tags.html(
       Includes.headContent(titleStr),
       tags.body(
-        NavBar.main(NavParams(signedIn,page="help",displayName = None)),
+        NavBar.main(NavParams(user,Config.baseUrl,Some("help"))),
         HelpContent.mainContainer,
         script(src:=bundleUrl)
       )

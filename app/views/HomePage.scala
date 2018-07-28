@@ -1,5 +1,6 @@
 package views
 
+import org.goingok.server.Config
 import org.goingok.server.data.models.User
 import scalatags.Text.all._
 import scalatags.Text.{TypedTag, tags}
@@ -12,13 +13,12 @@ import views.components.{HomeContent, NavBar}
 object HomePage extends GenericPage {
 
   override def page(titleStr: String, user: Option[User]=None,message:String=""): TypedTag[String] = {
-    val signedIn = user.nonEmpty
     tags.html(
       attr("itemscope") := "",
       attr("itemtype") := "http://schema.org/Article",
       Includes.headContent(titleStr),
       tags.body(
-        NavBar.main(NavParams(signedIn,displayName = None)),
+        NavBar.main(NavParams(user,Config.baseUrl,Some("home"))),
         HomeContent.mainContainer,
         script(src:=bundleUrl)
       )

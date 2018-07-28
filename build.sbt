@@ -20,7 +20,7 @@ scalacOptions += "-Ypartial-unification" // 2.11.9+
 scalacOptions += "-target:jvm-1.8"
 
 lazy val projectName = "goingok"
-lazy val projectVersion = "4.1.5"
+lazy val projectVersion = "4.1.7"
 lazy val projectOrganisation = "org.goingok"
 
 lazy val serverName = s"${projectName}_server"
@@ -60,7 +60,8 @@ val playDeps = Seq(ws, guice, ehcache) //, specs2 % Test)
 val generalDeps = Seq(
   "com.typesafe" % "config" % "1.3.2",
   "com.lihaoyi" %% "scalatags" % vScalaTags, //Using ScalaTags instead of Twirl
-  "com.lihaoyi" %% "upickle" % vUpickle //Using uJson for main JSON
+  "com.lihaoyi" %% "upickle" % vUpickle, //Using uJson for main JSON
+  "io.nlytx" %% "nlytx-nlp-commons" % "1.0.0"
 )
 
 val authDeps = Seq(
@@ -89,6 +90,7 @@ lazy val goingok = project.in(file("."))
     libraryDependencies ++= testDeps,
 
     resolvers += Resolver.sonatypeRepo("snapshots"),
+    resolvers += Resolver.bintrayRepo("nlytx", "nlytx-nlp"),
     //resolvers += Resolver.sonatypeRepo("releases"),
 
     scalaJSProjects := Seq(client),
