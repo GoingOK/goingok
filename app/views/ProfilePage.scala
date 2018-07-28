@@ -54,13 +54,6 @@ object ProfilePage extends GenericPage {
     )
   }
 
-  private def showMessage(message:Option[UiMessage]): TypedTag[String] = message match {
-    case Some(msg) => div(id:="message",`class`:=s"alert alert-${msg.style}",attr("role"):="alert",msg.text)
-    case None => div()
-  }
-
-
-
   private def createChart(data:Option[Vector[models.ReflectionEntry]]) = {
     val refs = data.getOrElse(Vector()).toList
     val chartData:List[ujson.Js.Obj] = refs.map(r => ujson.Js.Obj("timestamp" -> r.bneZonedDateTime.toOffsetDateTime.toString, "point" -> r.reflection.point))
