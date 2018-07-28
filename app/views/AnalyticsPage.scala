@@ -13,18 +13,18 @@ object AnalyticsPage extends GenericPage {
 
   def page(titleStr: String,message:Option[UiMessage],user:Option[User]=None,analytics:Analytics): TypedTag[String] = {
 
-    val name:Option[String] = for {
-      u <- user
-      gc = u.group_code
-      p <- u.pseudonym
-    } yield s"$p@$gc"
+//    val name:Option[String] = for {
+//      u <- user
+//      gc = u.group_code
+//      p <- u.pseudonym
+//    } yield s"$p@$gc"
 
 
 
     tags.html(
       Includes.headContent(titleStr),
       tags.body(
-        NavBar.main(NavParams(user.nonEmpty,displayName = name,baseUrl = Config.string("app.baseurl"),"analytics")),
+        NavBar.main(NavParams(user,Config.baseUrl,Some("analytics"))),
         div(id := "analytics-content",`class` := "container-fluid",
           showMessage(message),
           div(`class`:="row",

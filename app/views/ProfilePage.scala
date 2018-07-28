@@ -18,18 +18,12 @@ object ProfilePage extends GenericPage {
 
   def page(titleStr: String,message:Option[UiMessage],profile:Profile = Profile()): TypedTag[String] = {
 
-    val name:Option[String] = for {
-      u <- profile.user
-      gc = u.group_code
-      p <- u.pseudonym
-    } yield s"$p@$gc"
-
     //profile.user.map(u => (u.group_code+"_"+u.pseudonym))
 
     tags.html(
       Includes.headContent(titleStr),
       tags.body(
-        NavBar.main(NavParams(profile.user.nonEmpty,displayName = name,baseUrl = Config.string("app.baseurl"),"profile")),
+        NavBar.main(NavParams(profile.user,Config.baseUrl,Some("profile"))),
         div(id := "profile-content",`class` := "container-fluid",
           showMessage(message),
           div( id := "reflectchart-content", `class` := "row",

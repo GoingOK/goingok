@@ -18,7 +18,7 @@ object HomePage extends GenericPage {
       attr("itemtype") := "http://schema.org/Article",
       Includes.headContent(titleStr),
       tags.body(
-        NavBar.main(NavParams(user.nonEmpty,displayName = None,baseUrl = Config.string("app.baseurl"),"home")),
+        NavBar.main(NavParams(user,Config.baseUrl,Some("home"))),
         HomeContent.mainContainer,
         script(src:=bundleUrl)
       )
