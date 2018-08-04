@@ -20,7 +20,7 @@ scalacOptions += "-Ypartial-unification" // 2.11.9+
 scalacOptions += "-target:jvm-1.8"
 
 lazy val projectName = "goingok"
-lazy val projectVersion = "4.1.7"
+lazy val projectVersion = "4.2.0-M1"
 lazy val projectOrganisation = "org.goingok"
 
 lazy val serverName = s"${projectName}_server"
@@ -100,10 +100,23 @@ lazy val goingok = project.in(file("."))
     dockerRepository := Some(s"$dockerRepoURI"),
     defaultLinuxInstallLocation in Docker := "/opt/docker",
     dockerExposedVolumes := Seq("/opt/docker/logs"),
-    dockerBaseImage := "openjdk:8-jdk"
+    dockerBaseImage := "openjdk:8-jdk",
+
+      // sbt-site needs to know where to find the paradox site
+      sourceDirectory in Paradox := baseDirectory.value / "documentation",
+      // paradox needs a theme
+      ParadoxMaterialThemePlugin.paradoxMaterialThemeSettings(Paradox),
+      paradoxProperties in Compile ++= Map(
+        "github.base_url" -> s"$githubBaseUrl",
+        "scaladoc.api.base_url" -> s"$scaladocApiBaseUrl"
+      ),
+      // Puts unified scaladocs into target/api
+      siteSubdirName in ScalaUnidoc := "api",
+      addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), siteSubdirName in ScalaUnidoc)
   ).enablePlugins(PlayScala)
   .enablePlugins(WebScalaJSBundlerPlugin)
   .enablePlugins(SbtWeb)
+  .enablePlugins(ParadoxSitePlugin, ParadoxMaterialThemePlugin,SiteScaladocPlugin,ScalaUnidocPlugin) // Documentation plugins
 
 lazy val server = project.in(file(serverName))
   .settings(
@@ -148,31 +161,14 @@ lazy val client = project.in(file(clientName))
   ).enablePlugins(ScalaJSPlugin)
   .enablePlugins(ScalaJSBundlerPlugin, ScalaJSWeb)
 
+//Documentation
+//Task for building docs and copying to root level docs folder (for GitHub pages)
+val updateDocsTask = TaskKey[Unit]("updateDocs","copies paradox docs to /docs directory")
 
-//
-//scalacOptions in (Compile, doc) ++= Seq("-doc-root-content", baseDirectory.value+"/src/main/scala/root-doc.md")
-//
-////Set the environment variable for hosts allowed in testing
-//fork in Test := true
-//envVars in Test := Map("GOINGOK_HOSTS" -> "localhost")
-//
-////Documentation - run ;paradox;copyDocs
-//enablePlugins(ParadoxPlugin) //Generate documentation with Paradox
-//paradoxTheme := Some(builtinParadoxTheme("generic"))
-//paradoxProperties in Compile ++= Map(
-//  "github.base_url" -> s"$githubBaseUrl",
-//  "scaladoc.api.base_url" -> s"$scaladocApiBaseUrl"
-//)
-////Task for copying to root level docs folder (for GitHub pages)
-//val copyDocsTask = TaskKey[Unit]("copyDocs","copies paradox docs to /docs directory")
-//copyDocsTask := {
-//  val docSource = new File("target/paradox/site/main")
-//  val apiSource = new File("target/scala-2.12/api")
-//  val docDest = new File("docs")
-//  val apiDest = new File("docs/api")
-//  //if(docDest.exists) IO.delete(docDest)
-//  IO.copyDirectory(docSource,docDest,overwrite=true,preserveLastModified=true)
-//  IO.copyDirectory(apiSource,apiDest,overwrite=true,preserveLastModified=true)
-//}
-//
+updateDocsTask := {
+  val siteResult = makeSite.value
+  val docSource = new File("target/site")
+  val docDest = new File("docs")
+  IO.copyDirectory(docSource,docDest,overwrite=true,preserveLastModified=true)
+}
 
