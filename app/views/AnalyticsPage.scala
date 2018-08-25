@@ -35,7 +35,22 @@ object AnalyticsPage extends GenericPage {
               card("Groups",basicTable(hideGroups(analytics.reflectionCounts),List("Group Code","No. Reflections")))
             ),
             div(`class`:="col",
-              card("Stay tuned...",div("More analytics to come soon."))
+              card("Download Reflections",
+                div(
+                  div("qut-ifn600-182 [",
+                    a(href:="/analytics/csv?group=qut-ifn600-182","all"),",",
+                    a(href:="#","last week"),
+                    "]"),
+                  div("qut-edn610-182 [",
+                    a(href:="/analytics/csv?group=qut-edn610-182","all"),",",
+                    a(href:="#","last week"),
+                    "]"),
+                  div("qut-eun122-182 [",
+                    a(href:="/analytics/csv?group=qut-eun122-182","all"),",",
+                    a(href:="#","last week"),
+                    "]"),
+                )
+              )
             )
           )
         ),

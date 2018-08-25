@@ -19,6 +19,7 @@ GET     /profile                controllers.ProfileController.profile
 POST     /profile         controllers.ProfileController.profile
 
 GET     /analytics              controllers.AnalyticsController.analytics
+GET     /analytics/csv          controllers.AnalyticsController.reflectionsCsv
 
 GET     /admin                  controllers.AdminController.admin
 GET     /admin/pseudonyms       controllers.AdminController.pseudonymAdder
