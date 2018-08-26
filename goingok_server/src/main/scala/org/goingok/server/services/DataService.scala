@@ -80,6 +80,32 @@ class DataService {
     runQuery(query.to[Vector])
   }
 
+  def getPermission(goingok_id:UUID,group_code:String): Either[Throwable,DbResults.Result] = {
+    val query = sql"""select permission
+                      from group_permissions
+                      where goingok_id=$goingok_id::uuid
+                      and group_code=$group_code""".query[String].unique
+    runQuery(query).map(r => DbResults.Permission(r))
+  }
+
+  def getReflectionsForGroup(group_code:String): Either[Throwable,DbResults.Result] = {
+    val query = sql"""select timestamp, point, text
+                  from reflections r, users u
+                  where r.goingok_id = u.goingok_id
+                  and u.group_code=$group_code""".query[ReflectionEntry]
+
+    runQuery(query.to[Seq]).map(r => DbResults.GroupedReflections(r))
+  }
+
+  def getReflectionsForGroupWithRange(group_code:String,start:String,end:String): Either[Throwable,DbResults.Result] = {
+    val query = sql"""select timestamp, point, text
+                  from reflections r, users u
+                  where r.goingok_id = u.goingok_id
+                  and u.group_code=$group_code
+                  and timestamp >=$start
+                  and timestamp <=$end""".query[ReflectionEntry]
+    runQuery(query.to[Seq]).map(r => DbResults.GroupedReflections(r))
+  }
 
   def getGroupCode(code:String): Either[Throwable,GroupCode] = {
     val query = sql"""select * from group_codes
