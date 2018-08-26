@@ -31,20 +31,7 @@ object AnalyticsPage extends GenericPage {
             ),
             div(`class`:="col",
               card("Download Reflections",
-                div(
-                  div("qut-ifn600-182 [",
-                    a(href:="/analytics/csv?group=qut-ifn600-182","all"),",",
-                    a(href:="#","last week"),
-                    "]"),
-                  div("qut-edn610-182 [",
-                    a(href:="/analytics/csv?group=qut-edn610-182","all"),",",
-                    a(href:="#","last week"),
-                    "]"),
-                  div("qut-eun122-182 [",
-                    a(href:="/analytics/csv?group=qut-eun122-182","all"),",",
-                    a(href:="#","last week"),
-                    "]"),
-                )
+                div()
               )
             )
           )
