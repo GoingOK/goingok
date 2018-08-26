@@ -3,7 +3,6 @@
 *.DS_Store
 .idea/*
 goingok.iml
-src/main/resources/application.conf
 project/LocalSbtSettings.scala
 /src/main/public/css/bootstrap.css
 /src/main/public/css/bootstrap-reboot.css

@@ -34,20 +34,23 @@ class UserService {
 
   def getNewPseudonym:Either[Throwable,String] = {
     logger.warn("Getting new pseudonym")
-    Right("no-pseuodnym-yet")
+    for {
+      p <- ds.getNextPseudonym
+      i <- ds.updatePseudonym(p)
+    } yield p
   }
 
   def isGroupCodeValid(code:String):Either[Throwable,Boolean] = for {
     gc <- ds.getGroupCode(code)
-  } yield gc.group_code.contentEquals(code)
+  } yield gc.group_code.toLowerCase.contentEquals(code.toLowerCase)
 
 
   def addGroupCodeToUser(code:String,goingok_id:UUID):Either[Throwable,Int] = for {
     rows <- ds.updateCodeForUser(code:String,goingok_id:UUID)
   } yield rows
 
-
   private def printAndReturn[A](message:A):A = { logger.debug(message.toString); message }
+
 
 
 

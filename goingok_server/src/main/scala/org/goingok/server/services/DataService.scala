@@ -3,6 +3,7 @@ package org.goingok.server.services
 import java.time.LocalDateTime
 
 import cats.effect._
+import cats.implicits._
 import doobie._
 import doobie.implicits._
 import java.util.UUID
@@ -10,7 +11,11 @@ import java.util.UUID
 import com.typesafe.scalalogging.Logger
 import doobie.util.meta.AdvancedMeta
 import org.goingok.server.Config
+import org.goingok.server.data.DbResults
+import org.goingok.server.data.DbResults.Result
 import org.goingok.server.data.models._
+
+import scala.collection.immutable.HashMap
 
 class DataService {
 
@@ -75,6 +80,32 @@ class DataService {
     runQuery(query.to[Vector])
   }
 
+  def getPermission(goingok_id:UUID,group_code:String): Either[Throwable,DbResults.Result] = {
+    val query = sql"""select permission
+                      from group_permissions
+                      where goingok_id=$goingok_id::uuid
+                      and group_code=$group_code""".query[String].unique
+    runQuery(query).map(r => DbResults.Permission(r))
+  }
+
+  def getReflectionsForGroup(group_code:String): Either[Throwable,DbResults.Result] = {
+    val query = sql"""select timestamp, point, text
+                  from reflections r, users u
+                  where r.goingok_id = u.goingok_id
+                  and u.group_code=$group_code""".query[ReflectionEntry]
+
+    runQuery(query.to[Seq]).map(r => DbResults.GroupedReflections(r))
+  }
+
+  def getReflectionsForGroupWithRange(group_code:String,start:String,end:String): Either[Throwable,DbResults.Result] = {
+    val query = sql"""select timestamp, point, text
+                  from reflections r, users u
+                  where r.goingok_id = u.goingok_id
+                  and u.group_code=$group_code
+                  and timestamp >=$start
+                  and timestamp <=$end""".query[ReflectionEntry]
+    runQuery(query.to[Seq]).map(r => DbResults.GroupedReflections(r))
+  }
 
   def getGroupCode(code:String): Either[Throwable,GroupCode] = {
     val query = sql"""select * from group_codes
@@ -101,5 +132,42 @@ class DataService {
     runQuery(query)
   }
 
+  def getAllPseudonyms: Either[Throwable,Vector[String]] = {
+    val query = sql"""select pseudonym from pseudonyms""".query[String]
+    runQuery(query.to[Vector])
+  }
 
+  def insertPseudonyms(pseudocodes:List[String]): Either[Throwable, Int] = {
+    val query = "insert into pseudonyms (pseudonym) values (?)"
+    val batch = Update[String](query).updateMany(pseudocodes)
+    runQuery(batch)
+  }
+
+  def getNextPseudonym: Either[Throwable,String] = {
+    val query = sql"""select pseudonym from pseudonyms where allocated is not true limit 1""".query[String].unique
+    runQuery(query)
+  }
+
+  def updatePseudonym(pseudonym:String): Either[Throwable,Int] = {
+    val query = sql"""update pseudonyms set allocated = true where pseudonym = $pseudonym""".update.run
+    runQuery(query)
+  }
+
+  def countUsers:Either[Throwable,DbResults.Result] = {
+    val query = sql"""SELECT group_code, COUNT(*)
+                      FROM users
+                      GROUP BY group_code
+                      ORDER BY group_code
+      """.query[(String,Int)]
+    runQuery(query.to[Seq]).map(r => DbResults.GroupedUserCounts(r))
+  }
+
+  def countReflections:Either[Throwable,DbResults.Result] = {
+    val query = sql"""select u.group_code, count(*)
+                     from users u,reflections r
+                     where u.goingok_id = r.goingok_id
+                     group by group_code
+      """.query[(String, Int)]
+    runQuery(query.to[Seq]).map(r => DbResults.GroupedReflectionCounts(r))
+  }
 }

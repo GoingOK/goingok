@@ -1,5 +1,6 @@
 package views
 
+import org.goingok.server.data.UiMessage
 import org.goingok.server.data.models.User
 import play.twirl.api.Html
 import scalatags.Text
@@ -17,5 +18,10 @@ trait GenericPage {
   def bundleUrl: String = Seq("client-opt-bundle.js", "client-fastopt-bundle.js")
     .find(name => getClass.getResource(s"/public/$name") != null)
     .map(name => controllers.routes.Assets.versioned(s"$name").url).getOrElse("BUNDLE_NOT_FOUND")
+
+  def showMessage(message:Option[UiMessage]): TypedTag[String] = message match {
+    case Some(msg) => div(id:="message",`class`:=s"alert alert-${msg.style}",attr("role"):="alert",msg.text)
+    case None => div()
+  }
 
 }

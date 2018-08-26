@@ -1,8 +1,5 @@
 package controllers
 
-//import auth.DefaultEnv
-//import com.mohiva.play.silhouette.api.Silhouette
-//import com.mohiva.play.silhouette.api.actions.{SecuredErrorHandler, SecuredRequest}
 import java.util.UUID
 
 import javax.inject.Inject
@@ -17,11 +14,10 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 class ProfileController @Inject()(components: ControllerComponents,profileService:ProfileService)
-                                 (implicit ec: ExecutionContext, assets: AssetsFinder) extends AbstractController(components) {
+                                 (implicit ec: ExecutionContext, assets: AssetsFinder)
+  extends AbstractController(components) with GoingOkController {
 
-  val logger: Logger = Logger(this.getClass)
 
-  private val UNAUTHORIZED_MESSAGE = "You need to login to GoingOK to access this page"
 
 
     private val dummyUid = UUID.randomUUID()
@@ -59,7 +55,7 @@ class ProfileController @Inject()(components: ControllerComponents,profileServic
           None
         }
 
-        val reflections = profileService.getReflections(goingok_id)
+        val reflections = profileService.getReflections(goingok_id).map(_.reverse)
 
         if(user.getOrElse(User(UUID.randomUUID())).group_code!="none") {
           val page = ProfilePage.page("GoingOK :: profile", message, Profile(user, reflections))

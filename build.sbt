@@ -20,7 +20,7 @@ scalacOptions += "-Ypartial-unification" // 2.11.9+
 scalacOptions += "-target:jvm-1.8"
 
 lazy val projectName = "goingok"
-lazy val projectVersion = "4.1.5"
+lazy val projectVersion = "4.2.0-M2.01"
 lazy val projectOrganisation = "org.goingok"
 
 lazy val serverName = s"${projectName}_server"
@@ -32,8 +32,10 @@ scalaVersion in ThisBuild := "2.12.6"
 
 lazy val vScalaTags = "0.6.7"
 lazy val vUpickle = "0.6.6"
-lazy val vGoogleClientApi = "1.23.0"
+lazy val vGoogleClientApi = "1.25.0"
 lazy val vDoobie = "0.5.3"
+lazy val vConfig = "1.3.3"
+lazy val vNlpCommons = "1.0.0"
 
 lazy val vScalaJsDom = "0.9.6"
 lazy val vWebpack = "4.10.2"
@@ -58,9 +60,10 @@ val sharedSettings = Seq(
 val playDeps = Seq(ws, guice, ehcache) //, specs2 % Test)
 
 val generalDeps = Seq(
-  "com.typesafe" % "config" % "1.3.2",
+  "com.typesafe" % "config" % vConfig,
   "com.lihaoyi" %% "scalatags" % vScalaTags, //Using ScalaTags instead of Twirl
-  "com.lihaoyi" %% "upickle" % vUpickle //Using uJson for main JSON
+  "com.lihaoyi" %% "upickle" % vUpickle, //Using uJson for main JSON
+  "io.nlytx" %% "nlytx-nlp-commons" % vNlpCommons
 )
 
 val authDeps = Seq(
@@ -89,6 +92,7 @@ lazy val goingok = project.in(file("."))
     libraryDependencies ++= testDeps,
 
     resolvers += Resolver.sonatypeRepo("snapshots"),
+    resolvers += Resolver.bintrayRepo("nlytx", "nlytx-nlp"),
     //resolvers += Resolver.sonatypeRepo("releases"),
 
     scalaJSProjects := Seq(client),
@@ -98,10 +102,23 @@ lazy val goingok = project.in(file("."))
     dockerRepository := Some(s"$dockerRepoURI"),
     defaultLinuxInstallLocation in Docker := "/opt/docker",
     dockerExposedVolumes := Seq("/opt/docker/logs"),
-    dockerBaseImage := "openjdk:8-jdk"
+    dockerBaseImage := "openjdk:8-jdk",
+
+      // sbt-site needs to know where to find the paradox site
+      sourceDirectory in Paradox := baseDirectory.value / "documentation",
+      // paradox needs a theme
+      ParadoxMaterialThemePlugin.paradoxMaterialThemeSettings(Paradox),
+      paradoxProperties in Compile ++= Map(
+        "github.base_url" -> s"$githubBaseUrl",
+        "scaladoc.api.base_url" -> s"$scaladocApiBaseUrl"
+      ),
+      // Puts unified scaladocs into target/api
+      siteSubdirName in ScalaUnidoc := "api",
+      addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), siteSubdirName in ScalaUnidoc)
   ).enablePlugins(PlayScala)
   .enablePlugins(WebScalaJSBundlerPlugin)
   .enablePlugins(SbtWeb)
+  .enablePlugins(ParadoxSitePlugin, ParadoxMaterialThemePlugin,SiteScaladocPlugin,ScalaUnidocPlugin) // Documentation plugins
 
 lazy val server = project.in(file(serverName))
   .settings(
@@ -146,31 +163,14 @@ lazy val client = project.in(file(clientName))
   ).enablePlugins(ScalaJSPlugin)
   .enablePlugins(ScalaJSBundlerPlugin, ScalaJSWeb)
 
+//Documentation
+//Task for building docs and copying to root level docs folder (for GitHub pages)
+val updateDocsTask = TaskKey[Unit]("updateDocs","copies paradox docs to /docs directory")
 
-//
-//scalacOptions in (Compile, doc) ++= Seq("-doc-root-content", baseDirectory.value+"/src/main/scala/root-doc.md")
-//
-////Set the environment variable for hosts allowed in testing
-//fork in Test := true
-//envVars in Test := Map("GOINGOK_HOSTS" -> "localhost")
-//
-////Documentation - run ;paradox;copyDocs
-//enablePlugins(ParadoxPlugin) //Generate documentation with Paradox
-//paradoxTheme := Some(builtinParadoxTheme("generic"))
-//paradoxProperties in Compile ++= Map(
-//  "github.base_url" -> s"$githubBaseUrl",
-//  "scaladoc.api.base_url" -> s"$scaladocApiBaseUrl"
-//)
-////Task for copying to root level docs folder (for GitHub pages)
-//val copyDocsTask = TaskKey[Unit]("copyDocs","copies paradox docs to /docs directory")
-//copyDocsTask := {
-//  val docSource = new File("target/paradox/site/main")
-//  val apiSource = new File("target/scala-2.12/api")
-//  val docDest = new File("docs")
-//  val apiDest = new File("docs/api")
-//  //if(docDest.exists) IO.delete(docDest)
-//  IO.copyDirectory(docSource,docDest,overwrite=true,preserveLastModified=true)
-//  IO.copyDirectory(apiSource,apiDest,overwrite=true,preserveLastModified=true)
-//}
-//
+updateDocsTask := {
+  val siteResult = makeSite.value
+  val docSource = new File("target/site")
+  val docDest = new File("docs")
+  IO.copyDirectory(docSource,docDest,overwrite=true,preserveLastModified=true)
+}
 
