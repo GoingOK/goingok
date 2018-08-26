@@ -20,7 +20,7 @@ scalacOptions += "-Ypartial-unification" // 2.11.9+
 scalacOptions += "-target:jvm-1.8"
 
 lazy val projectName = "goingok"
-lazy val projectVersion = "4.2.0-M1"
+lazy val projectVersion = "4.2.0-M2.01"
 lazy val projectOrganisation = "org.goingok"
 
 lazy val serverName = s"${projectName}_server"
@@ -32,8 +32,10 @@ scalaVersion in ThisBuild := "2.12.6"
 
 lazy val vScalaTags = "0.6.7"
 lazy val vUpickle = "0.6.6"
-lazy val vGoogleClientApi = "1.23.0"
+lazy val vGoogleClientApi = "1.25.0"
 lazy val vDoobie = "0.5.3"
+lazy val vConfig = "1.3.3"
+lazy val vNlpCommons = "1.0.0"
 
 lazy val vScalaJsDom = "0.9.6"
 lazy val vWebpack = "4.10.2"
@@ -58,10 +60,10 @@ val sharedSettings = Seq(
 val playDeps = Seq(ws, guice, ehcache) //, specs2 % Test)
 
 val generalDeps = Seq(
-  "com.typesafe" % "config" % "1.3.2",
+  "com.typesafe" % "config" % vConfig,
   "com.lihaoyi" %% "scalatags" % vScalaTags, //Using ScalaTags instead of Twirl
   "com.lihaoyi" %% "upickle" % vUpickle, //Using uJson for main JSON
-  "io.nlytx" %% "nlytx-nlp-commons" % "1.0.0"
+  "io.nlytx" %% "nlytx-nlp-commons" % vNlpCommons
 )
 
 val authDeps = Seq(
