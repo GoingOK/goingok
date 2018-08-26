@@ -1,5 +1,7 @@
 package views
 
+import java.time.LocalDate
+
 import org.goingok.server.Config
 import org.goingok.server.data.models.User
 import org.goingok.server.data.{Analytics, Profile, UiMessage}
@@ -30,7 +32,7 @@ object AnalyticsPage extends GenericPage {
               card("Download reflections",basicTable(TypedTagStringTable(downloadLinks(mergedCounts)),List("Groups","all","last week")))
             ),
             div(`class`:="col",
-              card("Download Reflections",
+              card("...",
                 div()
               )
             )
@@ -51,7 +53,10 @@ object AnalyticsPage extends GenericPage {
 
   private def downloadLinks(mergedCounts:Seq[(String,Int,Int)]):Seq[(String,TypedTag[String],TypedTag[String])] = {
     mergedCounts.map { case (group, uc, rc) =>
-      (group,a(href:=s"/analytics/csv?group=$group","all"),a(href:="#","last week"))
+      val allLink = s"/analytics/csv?group=$group"
+      val weekLink = allLink + "&range=week"
+      val date = LocalDate.now().toString
+      (group,a(href:=allLink,s"all ($rc)"),a(href:=weekLink,s"ending $date"))
     }
   }
 

@@ -1,6 +1,8 @@
 package org.goingok.server.services
 
-import java.util.UUID
+import java.time.{DayOfWeek, LocalDate}
+import java.time.temporal.{Temporal, TemporalAdjusters}
+import java.util.{Date, UUID}
 
 import com.typesafe.scalalogging.Logger
 import org.goingok.server.data.DbResults
@@ -34,19 +36,36 @@ class AnalyticsService {
     }
   }
 
-  def reflectionsForGroupCSV(group:String): Option[String] = ds.getReflectionsForGroup(group) match {
-    case Right(result:DbResults.GroupedReflections) => {
-      logger.info(s"reflections found: ${result.value.size}")
-      val header = "TIMESTAMP,REF_POINT,REF_TEXT\n"
-      val lines = result.value.map{re =>
-        val text = re.reflection.text.replaceAll("\"","'").replaceAll("[\\n\\r]+"," ")
-        s""""${re.timestamp}",${re.reflection.point},"${text}""""
-      }.mkString("\n")
-      Some(header+lines)
+  def reflectionsForGroupCSV(group:String,range:Option[String]=None): Option[String] = {
+    val result  = if(range.isEmpty) {
+      logger.info(s"getting all reflections for: $group")
+      ds.getReflectionsForGroup(group) // all reflections
+    } else {
+      range match {
+        case Some("week") =>
+          logger.info(s"getting previous week's reflections for: $group")
+          val now = LocalDate.now()
+          val end = now.`with`(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY))
+          val start = end.`with`(TemporalAdjusters.previous(DayOfWeek.SUNDAY))
+          logger.info(s"date range: $start - $end")
+          ds.getReflectionsForGroupWithRange(group,start.toString,end.toString)
+        case _ => Left(new Exception("Range is not valid"))
+      }
     }
-    case Left(err) => {
-      logger.error(err.getMessage)
-      None
+    result match {
+      case Right(result:DbResults.GroupedReflections) => {
+        logger.info(s"reflections found: ${result.value.size}")
+        val header = "TIMESTAMP,REF_POINT,REF_TEXT\n"
+        val lines = result.value.map{re =>
+          val text = re.reflection.text.replaceAll("\"","'").replaceAll("[\\n\\r]+"," ")
+          s""""${re.timestamp}",${re.reflection.point},"${text}""""
+        }.mkString("\n")
+        Some(header+lines)
+      }
+      case Left(err) => {
+        logger.error(err.getMessage)
+        None
+      }
     }
   }
 

@@ -43,9 +43,12 @@ class AnalyticsController @Inject()(components: ControllerComponents, profileSer
   }
 
   private val makeCSV = (user:User, request:Request[AnyContent]) => {
-    val group = request.queryString.getOrElse("group",Vector("")).head
+    val query = request.queryString
+
+    val group = query.getOrElse("group",Vector("")).head
+    val range = for(r <- query.get("range").map(_.head)) yield r
     val response =if(analyticsService.hasPermission(user.goingok_id,group,Permissions.Sensitive)) {
-      analyticsService.reflectionsForGroupCSV(group).getOrElse("no data")
+      analyticsService.reflectionsForGroupCSV(group,range).getOrElse("no data")
     } else {
       "Not Permitted"
     }
