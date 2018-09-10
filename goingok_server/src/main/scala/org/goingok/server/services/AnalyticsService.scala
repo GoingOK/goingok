@@ -14,10 +14,12 @@ class AnalyticsService {
 
   val ds = new DataService
 
+
   def groupedUserCounts: Option[Seq[(String,Int)]] = ds.countUsers match {
     case Right(result:DbResults.GroupedUserCounts) => {
       logger.info(s"user count result: ${result.value.toString}")
-      Some(result.value)
+
+      Some(hideGroups(result.value))
     }
     case Left(err) => {
       logger.error(err.getMessage)
@@ -28,12 +30,16 @@ class AnalyticsService {
   def groupedReflectionCounts: Option[Seq[(String,Int)]] = ds.countReflections match {
     case Right(result:DbResults.GroupedReflectionCounts) => {
       logger.info(s"reflection count result: ${result.value.toString}")
-      Some(result.value)
+      Some(hideGroups(result.value))
     }
     case Left(err) => {
       logger.error(err.getMessage)
       None
     }
+  }
+
+  private def hideGroups(groupCounts:Seq[(String,Int)]):Seq[(String,Int)] = groupCounts.filterNot { case (group, count) =>
+      group.contains("staff") || group.contains("admin") || group.contains("none")
   }
 
   def reflectionsForGroupCSV(group:String,range:Option[String]=None): Option[String] = {

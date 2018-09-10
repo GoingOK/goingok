@@ -30,7 +30,7 @@ class AdminController @Inject()(components: ControllerComponents,adminService:Ad
       case Some(uuid) => {
         adminService.getAdminUser(uuid) match {
           case Right(usr) => {
-            adminService.createPseudonyms(500) match {
+            adminService.createPseudonyms(1000) match {
               case Right(num) => Future.successful(Ok(s"Created $num pseudonyms"))
               case Left(error) => Future.successful(Ok(error.getMessage))
             }

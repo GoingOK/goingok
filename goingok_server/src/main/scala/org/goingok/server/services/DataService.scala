@@ -167,6 +167,7 @@ class DataService {
                      from users u,reflections r
                      where u.goingok_id = r.goingok_id
                      group by group_code
+                     order by group_code
       """.query[(String, Int)]
     runQuery(query.to[Seq]).map(r => DbResults.GroupedReflectionCounts(r))
   }

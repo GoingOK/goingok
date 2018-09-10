@@ -20,7 +20,7 @@ scalacOptions += "-Ypartial-unification" // 2.11.9+
 scalacOptions += "-target:jvm-1.8"
 
 lazy val projectName = "goingok"
-lazy val projectVersion = "4.2.0-M2.01"
+lazy val projectVersion = "4.2.0-M2.02"
 lazy val projectOrganisation = "org.goingok"
 
 lazy val serverName = s"${projectName}_server"
@@ -35,12 +35,12 @@ lazy val vUpickle = "0.6.6"
 lazy val vGoogleClientApi = "1.25.0"
 lazy val vDoobie = "0.5.3"
 lazy val vConfig = "1.3.3"
-lazy val vNlpCommons = "1.0.0"
+lazy val vNlpCommons = "1.1.2"
 
 lazy val vScalaJsDom = "0.9.6"
 lazy val vWebpack = "4.10.2"
 lazy val vWebpackDevServer = "3.1.4"
-lazy val vSjsBootstrap = "2.3.2"
+lazy val vSjsBootstrap = "2.3.3"
 
 lazy val vBootstrap = "4.1.1"
 lazy val vJquery = "3.2.1"
