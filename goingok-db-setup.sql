@@ -263,6 +263,14 @@ ALTER TABLE ONLY public.users
 GRANT ALL ON SCHEMA public TO postgres;
 GRANT ALL ON SCHEMA public TO PUBLIC;
 
+--
+-- Insert initial data to allow login
+--
+
+INSERT INTO public.group_codes VALUES ('none',NULL,NULL);
+INSERT INTO public.group_codes VALUES ('first_group',NULL,NULL);
+INSERT INTO public.pseudonyms VALUES('first_pseudo',FALSE);
+
 
 --
 -- PostgreSQL database dump complete
