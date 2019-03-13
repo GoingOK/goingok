@@ -27,7 +27,7 @@ class AnalyticsService {
     }
   }
 
-  def groupedReflectionCounts: Option[Seq[(String,Int)]] = ds.countReflections match {
+  def groupedReflectionCounts(goingok_id:UUID): Option[Seq[(String,Int)]] = ds.countReflections(goingok_id) match {
     case Right(result:DbResults.GroupedReflectionCounts) => {
       logger.info(s"reflection count result: ${result.value.toString}")
       Some(hideGroups(result.value))

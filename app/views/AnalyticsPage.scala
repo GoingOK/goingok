@@ -59,10 +59,10 @@ object AnalyticsPage extends GenericPage {
     }
   }
 
-  private def card(heading:String,content:TypedTag[String]) = div(`class`:="card",
-    h5(`class`:="card-header",heading),
-    div(`class`:="card-body",content)
-  )
+//  private def card(heading:String,content:TypedTag[String]) = div(`class`:="card",
+//    h5(`class`:="card-header",heading),
+//    div(`class`:="card-body",content)
+//  )
 
 
   sealed trait TableValues

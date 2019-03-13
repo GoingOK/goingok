@@ -15,6 +15,11 @@ trait GenericPage {
 
   def page(titleStr:String,user:Option[User],message:String) :Text.TypedTag[String] = tags.html(head(tags2.title(titleStr)))
 
+  def card(heading:String,content:TypedTag[String]) = div(`class`:="card",
+    h5(`class`:="card-header",heading),
+    div(`class`:="card-body",content)
+  )
+
   def bundleUrl: String = Seq("client-opt-bundle.js", "client-fastopt-bundle.js")
     .find(name => getClass.getResource(s"/public/$name") != null)
     .map(name => controllers.routes.Assets.versioned(s"$name").url).getOrElse("BUNDLE_NOT_FOUND")

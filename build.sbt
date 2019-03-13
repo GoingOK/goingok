@@ -17,10 +17,10 @@
 import LocalSbtSettings._
 
 scalacOptions += "-Ypartial-unification" // 2.11.9+
-scalacOptions += "-target:jvm-1.8"
+//scalacOptions += "-target:jvm-1.8"
 
 lazy val projectName = "goingok"
-lazy val projectVersion = "4.2.0-M2.02"
+lazy val projectVersion = "4.2.0-M2.06"
 lazy val projectOrganisation = "org.goingok"
 
 lazy val serverName = s"${projectName}_server"
@@ -28,7 +28,10 @@ lazy val clientName = s"${projectName}_client"
 lazy val sharedName = s"${projectName}_shared"
 
 //Versions
-scalaVersion in ThisBuild := "2.12.6"
+scalaVersion in ThisBuild := "2.12.8"
+
+//resolvers in ThisBuild += "nlytx bintray" at "https://dl.bintray.com/nlytx/nlytx-nlp"
+resolvers in ThisBuild += Resolver.bintrayRepo("nlytx", "nlytx-nlp")
 
 lazy val vScalaTags = "0.6.7"
 lazy val vUpickle = "0.6.6"
@@ -44,7 +47,7 @@ lazy val vSjsBootstrap = "2.3.3"
 
 lazy val vBootstrap = "4.1.1"
 lazy val vJquery = "3.2.1"
-lazy val vPopper = "1.14.3"
+lazy val vPopper = "1.14.4"
 lazy val vD3 = "5.4.0"
 
 lazy val vScalaTest = "3.0.5"
@@ -81,6 +84,8 @@ val testDeps = Seq(
   "org.scalatest" %% "scalatest" % vScalaTest % "test"
 )
 
+
+
 lazy val goingok = project.in(file("."))
   .dependsOn(server,client)
   .aggregate(server,client)
@@ -90,9 +95,7 @@ lazy val goingok = project.in(file("."))
     libraryDependencies ++= generalDeps,
     libraryDependencies ++= authDeps,
     libraryDependencies ++= testDeps,
-
     resolvers += Resolver.sonatypeRepo("snapshots"),
-    resolvers += Resolver.bintrayRepo("nlytx", "nlytx-nlp"),
     //resolvers += Resolver.sonatypeRepo("releases"),
 
     scalaJSProjects := Seq(client),
@@ -102,7 +105,7 @@ lazy val goingok = project.in(file("."))
     dockerRepository := Some(s"$dockerRepoURI"),
     defaultLinuxInstallLocation in Docker := "/opt/docker",
     dockerExposedVolumes := Seq("/opt/docker/logs"),
-    dockerBaseImage := "openjdk:8-jdk",
+    dockerBaseImage := "openjdk:11-jdk",
 
       // sbt-site needs to know where to find the paradox site
       sourceDirectory in Paradox := baseDirectory.value / "documentation",

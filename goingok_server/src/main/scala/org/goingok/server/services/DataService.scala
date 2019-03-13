@@ -75,7 +75,8 @@ class DataService {
   def getReflectionsForUser(goingokId:UUID): Either[Throwable,Vector[ReflectionEntry]] = {
     val query = sql"""select timestamp, point, text
                   from reflections
-                  where goingok_id=$goingokId""".query[ReflectionEntry]
+                  where goingok_id=$goingokId
+                  order by timestamp desc""".query[ReflectionEntry]
 
     runQuery(query.to[Vector])
   }
@@ -113,6 +114,12 @@ class DataService {
     runQuery(query)
   }
 
+  def getAllGroupCodes: Either[Throwable,DbResults.Result] = {
+    val query = sql"""select * from group_codes""".query[GroupCode]
+    runQuery(query.to[Seq]).map(r => DbResults.GroupCodes(r))
+  }
+
+
   def updateCodeForUser(code:String,goingok_id:UUID): Either[Throwable,Int] = {
     val time = LocalDateTime.now().toString
     val query = sql"""update users
@@ -130,6 +137,21 @@ class DataService {
                 """.update.run
 
     runQuery(query)
+  }
+
+  def insertGroup(groupCode:String,goingok_id:UUID): Either[Throwable,Int] = {
+    val time = LocalDateTime.now().toString
+    val query = sql"""insert into group_codes (group_code, created_timestamp, owner_goingok_id)
+                    values ($groupCode,$time,$goingok_id)
+                """.update.run
+    runQuery(query)
+  }
+
+  def getPseudonymCounts: Either[Throwable,DbResults.Result] = {
+    val query = sql"""select allocated,count(pseudonym) from pseudonyms
+                      group by allocated
+                      """.query[(Option[String],Int)]
+    runQuery(query.to[Seq]).map(r => DbResults.GroupedPseudonymCounts(r))
   }
 
   def getAllPseudonyms: Either[Throwable,Vector[String]] = {
@@ -162,12 +184,17 @@ class DataService {
     runQuery(query.to[Seq]).map(r => DbResults.GroupedUserCounts(r))
   }
 
-  def countReflections:Either[Throwable,DbResults.Result] = {
+  def countReflections(goingok_id:UUID):Either[Throwable,DbResults.Result] = {
     val query = sql"""select u.group_code, count(*)
                      from users u,reflections r
                      where u.goingok_id = r.goingok_id
-                     group by group_code
-                     order by group_code
+                     and u.group_code in (
+                      select p.group_code
+                      from group_permissions p
+                      where p.goingok_id=$goingok_id
+                     )
+                     group by u.group_code
+                     order by u.group_code
       """.query[(String, Int)]
     runQuery(query.to[Seq]).map(r => DbResults.GroupedReflectionCounts(r))
   }

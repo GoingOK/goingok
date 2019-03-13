@@ -20,12 +20,17 @@ object NavBar {
       case Some(user) => user.supervisor
       case None => false
     }
+    val isAdministrator:Boolean = navParams.user match {
+      case Some(user) => user.admin
+      case None => false
+    }
     val displayName:String = navParams.user match {
       case Some(user) => s"${user.pseudonym.getOrElse("noPseudonym")}@${user.group_code}"
       case None => ""
     }
     val linkDisabled:String = if(!isSignedIn) "disabled" else ""
     val analyticsDisabled:String = if(!(isSignedIn && isCurator)) "disabled" else ""
+    val adminDisabled:String = if(!(isSignedIn && isAdministrator)) "disabled" else ""
 
 
     def pageActive(thisPage:String):String = navParams.page match {
@@ -50,7 +55,8 @@ object NavBar {
         // Left items
         ul(id:="main-menu", `class`:="navbar-nav mr-auto")(
           li(`class`:="nav-item")(a(`class`:=s"nav-link $linkDisabled ${pageActive("profile")}",if(isSignedIn) { href:="/profile"} else "")("Profile")),
-          li(`class`:="nav-item")(a(`class`:=s"nav-link $analyticsDisabled ${pageActive("analytics")}",if(isSignedIn && isCurator) { href:="/analytics"} else "")("Analytics"))
+          li(`class`:="nav-item")(a(`class`:=s"nav-link $analyticsDisabled ${pageActive("analytics")}",if(isSignedIn && isCurator) { href:="/analytics"} else "")("Analytics")),
+          li(`class`:="nav-item")(a(`class`:=s"nav-link $adminDisabled ${pageActive("admin")}",if(isSignedIn && isAdministrator) { href:="/admin"} else "")("Admin"))
         ),
         // Centre items
         ul(`class`:="nav navbar-nav mx-auto")(
