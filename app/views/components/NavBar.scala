@@ -32,6 +32,9 @@ object NavBar {
     val analyticsDisabled:String = if(!(isSignedIn && isCurator)) "disabled" else ""
     val adminDisabled:String = if(!(isSignedIn && isAdministrator)) "disabled" else ""
 
+    val homeUrl = navParams.baseUrl.getOrElse("http://goingok.org")
+
+
 
     def pageActive(thisPage:String):String = navParams.page match {
       case Some(page) if page.contentEquals(thisPage) => "active"
@@ -39,8 +42,9 @@ object NavBar {
     }
 
     tag("nav")(name:="nav",id:="main-nav-bar",`class`:="navbar navbar-dark navbar-expand-lg")(
+
       // GoingOK Logo
-      a(`class`:="navbar-brand goingok-font",href:=s"${navParams.baseUrl}")(
+      a(`class`:="navbar-brand goingok-font",href:=s"${homeUrl}")(
         img(id:="logo", src:=routes.Assets.versioned("images/GoingOK_Logo_small_transparent.png").url)
       ),
       // Collapsed Nav button
@@ -54,9 +58,27 @@ object NavBar {
       div(`class`:="collapse navbar-collapse", id:="navbarSupportedContent")(
         // Left items
         ul(id:="main-menu", `class`:="navbar-nav mr-auto")(
-          li(`class`:="nav-item")(a(`class`:=s"nav-link $linkDisabled ${pageActive("profile")}",if(isSignedIn) { href:="/profile"} else "")("Profile")),
-          li(`class`:="nav-item")(a(`class`:=s"nav-link $analyticsDisabled ${pageActive("analytics")}",if(isSignedIn && isCurator) { href:="/analytics"} else "")("Analytics")),
-          li(`class`:="nav-item")(a(`class`:=s"nav-link $adminDisabled ${pageActive("admin")}",if(isSignedIn && isAdministrator) { href:="/admin"} else "")("Admin"))
+
+          //Profile link - Only renders if logged in
+          if(isSignedIn){
+            li(`class`:="nav-item")(
+              a(`class`:=s"nav-link $linkDisabled ${pageActive("profile")}",href:="/profile")("Profile")
+            )
+          } else {" "},
+
+          // Analytics link - Only renders if signed in and is a curator
+          if(isSignedIn && isCurator){
+            li(`class`:="nav-item")(
+              a(`class`:=s"nav-link $analyticsDisabled ${pageActive("analytics")}",href:="/analytics")("Analytics")
+            )
+          } else {" "},
+
+          //Admin link - Only renders if logged in and is admin
+          if(isSignedIn && isAdministrator) {
+            li(`class`:="nav-item")(
+              a(`class`:=s"nav-link $adminDisabled ${pageActive("admin")}",href:="/admin")("Admin")
+            )
+          } else {" "},
         ),
         // Centre items
         ul(`class`:="nav navbar-nav mx-auto")(
