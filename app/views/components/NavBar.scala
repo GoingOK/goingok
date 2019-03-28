@@ -44,9 +44,18 @@ object NavBar {
     tag("nav")(name:="nav",id:="main-nav-bar",`class`:="navbar navbar-dark navbar-expand-lg")(
 
       // GoingOK Logo
-      a(`class`:="navbar-brand goingok-font",href:=s"${homeUrl}")(
-        img(id:="logo", src:=routes.Assets.versioned("images/GoingOK_Logo_small_transparent.png").url)
-      ),
+      if(isSignedIn){
+        a(`class`:="navbar-brand goingok-font",href:="/profile")(
+          img(id:="logo", src:=routes.Assets.versioned("images/GoingOK_Logo_small_transparent.png").url)
+        )
+      } else {
+        a(`class`:="navbar-brand goingok-font",href:=s"${homeUrl}")(
+          img(id:="logo", src:=routes.Assets.versioned("images/GoingOK_Logo_small_transparent.png").url)
+        )
+      },
+
+
+
       // Collapsed Nav button
       button(`class`:="navbar-toggler", `type`:="button",
         attr("data-toggle"):="collapse", attr("data-target"):="#navbarSupportedContent",
