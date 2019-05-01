@@ -5,6 +5,7 @@ GET     /                       controllers.ApplicationController.index
 GET     /health                 controllers.ApplicationController.health
 GET     /version                controllers.ApplicationController.version
 GET     /help                   controllers.ApplicationController.help
+GET     /demo                   controllers.ApplicationController.demo
 
 
 GET     /googleAuth             controllers.AuthController.googleAuth

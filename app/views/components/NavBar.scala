@@ -54,19 +54,21 @@ object NavBar {
         )
       },
 
-
-
       // Collapsed Nav button
       button(`class`:="navbar-toggler", `type`:="button",
-        attr("data-toggle"):="collapse", attr("data-target"):="#navbarSupportedContent",
-        attr("aria-controls"):="navbarSupportedContent", attr("aria-expanded"):="false", attr("aria-label"):="Toggle navigation")
+        attr("data-toggle"):="collapse",
+        attr("data-target"):="#navbarSupportedContent",
+        attr("aria-controls"):="navbarSupportedContent",
+        attr("aria-expanded"):="false",
+        attr("aria-label"):="Toggle navigation")
       (
-        span(`class`:="fas fa-bars")
+        span(`class`:="fas fa-bars dark-blue-text")
       ),
+
       // Main Nav content
       div(`class`:="collapse navbar-collapse", id:="navbarSupportedContent")(
         // Left items
-        ul(id:="main-menu", `class`:="navbar-nav mr-auto")(
+        ul(id:="main-menu", `class`:="nav navbar-nav mr-auto")(
 
           //Profile link - Only renders if logged in
           if(isSignedIn){
@@ -100,12 +102,12 @@ object NavBar {
         ul(`class`:="nav navbar-nav ml-auto")(
           li(`class`:="nav-item")(
             //button( id:="signinButton","Sign in with Google"),
-//            script(raw(
-//              """
-//                |$('#signinButton').click(function() {
-//                |    auth2.grantOfflineAccess().then(signInCallback);
-//                |  });
-//              """.stripMargin))
+            //            script(raw(
+            //              """
+            //                |$('#signinButton').click(function() {
+            //                |    auth2.grantOfflineAccess().then(signInCallback);
+            //                |  });
+            //              """.stripMargin))
             if(isSignedIn) {
               a(`class`:="nav-link",href:="/signout")("Sign Out")
             } else {
@@ -118,6 +120,10 @@ object NavBar {
           )
         )
       )
+
+
+
+
 
     )
   }
