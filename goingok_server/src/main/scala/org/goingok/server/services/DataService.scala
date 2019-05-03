@@ -21,11 +21,11 @@ class DataService {
 
   val logger = Logger(this.getClass)
 
-  private val driver = Config.string("db.driver")
-  private val url = Config.string("db.url")
-  private val user = Config.string("db.user")
-  private val password = Config.string("db.password")
-  private val db = Transactor.fromDriverManager[IO](driver,url,user,password)
+  private lazy val driver = Config.string("db.driver")
+  private lazy val url = Config.string("db.url")
+  private lazy val user = Config.string("db.user")
+  private lazy val password = Config.string("db.password")
+  private lazy val db = Transactor.fromDriverManager[IO](driver,url,user,password)
 
   private implicit val uuidImplicit:AdvancedMeta[UUID] =  doobie.postgres.implicits.UuidType
 

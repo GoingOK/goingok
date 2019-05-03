@@ -7,7 +7,7 @@ import scalatags.Text.{TypedTag, tags, tags2}
 object Includes {
   import scalatags.Text.all._ // scalastyle:ignore
 
-  val googleClientId = Config.string("google.client.id")
+  lazy val googleClientId = Config.stringOpt("google.client.id")
 
   def headContent(titleStr:String) = tags.head(
     tags2.title(titleStr),
