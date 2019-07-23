@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ivy-report.xsl"?>
+<ivy-report version="1.0">
+	<info
+		organisation="org.goingok"
+		module="docs_2.12"
+		revision="4.2.0-M2.08"
+		conf="paradox-theme"
+		confs="compile, runtime, test, provided, optional, web-assets, web-assets-test, web-plugin, paradox-theme, compile-internal, runtime-internal, test-internal, plugin, pom, scala-tool"
+		date="20190723155134"/>
+	<dependencies>
+		<module organisation="com.lightbend.paradox" name="paradox-theme-generic">
+			<revision name="0.5.5" status="release" pubdate="20190522225013" resolver="sbt-chain" artresolver="sbt-chain" homepage="https://developer.lightbend.com/docs/paradox/current/" downloaded="false" searched="false" default="false" conf="default, compile, runtime, default(compile), master" position="0">
+				<license name="Apache-2.0" url="http://www.apache.org/licenses/LICENSE-2.0.html"/>
+				<metadata-artifact status="no" details="" size="2896" time="0" location="/Users/gibsonap/.ivy2/cache/com.lightbend.paradox/paradox-theme-generic/ivy-0.5.5.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/com/lightbend/paradox/paradox-theme-generic/0.5.5/paradox-theme-generic-0.5.5.pom"/>
+				<caller organisation="org.goingok" name="docs_2.12" conf="paradox-theme" rev="0.5.5" rev-constraint-default="0.5.5" rev-constraint-dynamic="0.5.5" callerrev="4.2.0-M2.08"/>
+				<artifacts>
+					<artifact name="paradox-theme-generic" type="jar" ext="jar" status="no" details="" size="95661" time="0" location="/Users/gibsonap/.ivy2/cache/com.lightbend.paradox/paradox-theme-generic/jars/paradox-theme-generic-0.5.5.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/com/lightbend/paradox/paradox-theme-generic/0.5.5/paradox-theme-generic-0.5.5.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+	</dependencies>
+</ivy-report>
