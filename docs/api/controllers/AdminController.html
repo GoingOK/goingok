@@ -240,9 +240,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="controllers.AdminController#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(components:play.api.mvc.ControllerComponents,adminService:org.goingok.server.services.AdminService)(implicitec:scala.concurrent.ExecutionContext,implicitassets:controllers.AssetsFinder):controllers.AdminController"></a><a id="&lt;init&gt;:AdminController"></a>
+      <a id="&lt;init&gt;(components:play.api.mvc.ControllerComponents,profileService:org.goingok.server.services.ProfileService,adminService:org.goingok.server.services.AdminService)(implicitec:scala.concurrent.ExecutionContext,implicitassets:controllers.AssetsFinder):controllers.AdminController"></a><a id="&lt;init&gt;:AdminController"></a>
       <span class="permalink">
-      <a href="../controllers/AdminController.html#&lt;init&gt;(components:play.api.mvc.ControllerComponents,adminService:org.goingok.server.services.AdminService)(implicitec:scala.concurrent.ExecutionContext,implicitassets:controllers.AssetsFinder):controllers.AdminController" title="Permalink">
+      <a href="../controllers/AdminController.html#&lt;init&gt;(components:play.api.mvc.ControllerComponents,profileService:org.goingok.server.services.ProfileService,adminService:org.goingok.server.services.AdminService)(implicitec:scala.concurrent.ExecutionContext,implicitassets:controllers.AssetsFinder):controllers.AdminController" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -251,7 +251,7 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">AdminController</span><span class="params">(<span name="components">components: <span class="extype" name="play.api.mvc.ControllerComponents">ControllerComponents</span></span>, <span name="adminService">adminService: <a href="../org/goingok/server/services/AdminService.html" class="extype" name="org.goingok.server.services.AdminService">AdminService</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ec">ec: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>, <span name="assets">assets: <span class="extype" name="controllers.AssetsFinder">AssetsFinder</span></span>)</span>
+        <span class="name">AdminController</span><span class="params">(<span name="components">components: <span class="extype" name="play.api.mvc.ControllerComponents">ControllerComponents</span></span>, <span name="profileService">profileService: <a href="../org/goingok/server/services/ProfileService.html" class="extype" name="org.goingok.server.services.ProfileService">ProfileService</a></span>, <span name="adminService">adminService: <a href="../org/goingok/server/services/AdminService.html" class="extype" name="org.goingok.server.services.AdminService">AdminService</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ec">ec: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>, <span name="assets">assets: <span class="extype" name="controllers.AssetsFinder">AssetsFinder</span></span>)</span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Annotations</dt><dd>
@@ -908,6 +908,38 @@
       </span>
       <span class="symbol">
         <span class="name">CONTENT_RANGE</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>HeaderNames</dd></dl></div>
+    </li><li name="play.api.http.HeaderNames#CONTENT_SECURITY_POLICY" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="CONTENT_SECURITY_POLICY:String"></a>
+      <span class="permalink">
+      <a href="../controllers/AdminController.html#CONTENT_SECURITY_POLICY:String" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">CONTENT_SECURITY_POLICY</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>HeaderNames</dd></dl></div>
+    </li><li name="play.api.http.HeaderNames#CONTENT_SECURITY_POLICY_REPORT_ONLY" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="CONTENT_SECURITY_POLICY_REPORT_ONLY:String"></a>
+      <span class="permalink">
+      <a href="../controllers/AdminController.html#CONTENT_SECURITY_POLICY_REPORT_ONLY:String" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">CONTENT_SECURITY_POLICY_REPORT_ONLY</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>HeaderNames</dd></dl></div>
@@ -1919,6 +1951,22 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Results</dd></dl></div>
+    </li><li name="play.api.http.Status#NETWORK_AUTHENTICATION_REQUIRED" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="NETWORK_AUTHENTICATION_REQUIRED:Int"></a>
+      <span class="permalink">
+      <a href="../controllers/AdminController.html#NETWORK_AUTHENTICATION_REQUIRED:Int" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">NETWORK_AUTHENTICATION_REQUIRED</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Status</dd></dl></div>
     </li><li name="play.api.http.Status#NON_AUTHORITATIVE_INFORMATION" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="NON_AUTHORITATIVE_INFORMATION:Int"></a>
       <span class="permalink">
@@ -2015,6 +2063,22 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Status</dd></dl></div>
+    </li><li name="play.api.mvc.Results#NetworkAuthenticationRequired" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="NetworkAuthenticationRequired:Results.this.Status"></a><a id="NetworkAuthenticationRequired:Status"></a>
+      <span class="permalink">
+      <a href="../controllers/AdminController.html#NetworkAuthenticationRequired:Results.this.Status" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">NetworkAuthenticationRequired</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.AdminController.Status">Status</a></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Results</dd></dl></div>
     </li><li name="play.api.mvc.Results#NoContent" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="NoContent:play.api.mvc.Result"></a><a id="NoContent:Result"></a>
       <span class="permalink">
@@ -2239,6 +2303,22 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Status</dd></dl></div>
+    </li><li name="play.api.http.Status#PRECONDITION_REQUIRED" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="PRECONDITION_REQUIRED:Int"></a>
+      <span class="permalink">
+      <a href="../controllers/AdminController.html#PRECONDITION_REQUIRED:Int" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">PRECONDITION_REQUIRED</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Status</dd></dl></div>
     </li><li name="play.api.http.HeaderNames#PROXY_AUTHENTICATE" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="PROXY_AUTHENTICATE:String"></a>
       <span class="permalink">
@@ -2351,6 +2431,22 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Results</dd></dl></div>
+    </li><li name="play.api.mvc.Results#PreconditionRequired" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="PreconditionRequired:Results.this.Status"></a><a id="PreconditionRequired:Status"></a>
+      <span class="permalink">
+      <a href="../controllers/AdminController.html#PreconditionRequired:Results.this.Status" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">PreconditionRequired</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.AdminController.Status">Status</a></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Results</dd></dl></div>
     </li><li name="play.api.http.HeaderNames#RANGE" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="RANGE:String"></a>
       <span class="permalink">
@@ -2383,6 +2479,22 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>HeaderNames</dd></dl></div>
+    </li><li name="play.api.http.HeaderNames#REFERRER_POLICY" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="REFERRER_POLICY:String"></a>
+      <span class="permalink">
+      <a href="../controllers/AdminController.html#REFERRER_POLICY:String" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">REFERRER_POLICY</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>HeaderNames</dd></dl></div>
     </li><li name="play.api.http.Status#REQUESTED_RANGE_NOT_SATISFIABLE" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="REQUESTED_RANGE_NOT_SATISFIABLE:Int"></a>
       <span class="permalink">
@@ -2412,6 +2524,22 @@
       </span>
       <span class="symbol">
         <span class="name">REQUEST_ENTITY_TOO_LARGE</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Status</dd></dl></div>
+    </li><li name="play.api.http.Status#REQUEST_HEADER_FIELDS_TOO_LARGE" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="REQUEST_HEADER_FIELDS_TOO_LARGE:Int"></a>
+      <span class="permalink">
+      <a href="../controllers/AdminController.html#REQUEST_HEADER_FIELDS_TOO_LARGE:Int" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">REQUEST_HEADER_FIELDS_TOO_LARGE</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Status</dd></dl></div>
@@ -2540,6 +2668,22 @@
       </span>
       <span class="symbol">
         <span class="name">Redirect</span><span class="params">(<span name="url">url: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="status">status: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="play.api.mvc.Result">Result</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Results</dd></dl></div>
+    </li><li name="play.api.mvc.Results#RequestHeaderFieldsTooLarge" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="RequestHeaderFieldsTooLarge:Results.this.Status"></a><a id="RequestHeaderFieldsTooLarge:Status"></a>
+      <span class="permalink">
+      <a href="../controllers/AdminController.html#RequestHeaderFieldsTooLarge:Results.this.Status" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">RequestHeaderFieldsTooLarge</span><span class="result">: <a href="#StatusextendsResult" class="extmbr" name="controllers.AdminController.Status">Status</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Results</dd></dl></div>
@@ -3183,6 +3327,38 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ContentTypes</dd></dl></div>
+    </li><li name="play.api.http.HeaderNames#X_CONTENT_SECURITY_POLICY_NONCE_HEADER" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="X_CONTENT_SECURITY_POLICY_NONCE_HEADER:String"></a>
+      <span class="permalink">
+      <a href="../controllers/AdminController.html#X_CONTENT_SECURITY_POLICY_NONCE_HEADER:String" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">X_CONTENT_SECURITY_POLICY_NONCE_HEADER</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>HeaderNames</dd></dl></div>
+    </li><li name="play.api.http.HeaderNames#X_CONTENT_TYPE_OPTIONS" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="X_CONTENT_TYPE_OPTIONS:String"></a>
+      <span class="permalink">
+      <a href="../controllers/AdminController.html#X_CONTENT_TYPE_OPTIONS:String" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">X_CONTENT_TYPE_OPTIONS</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>HeaderNames</dd></dl></div>
     </li><li name="play.api.http.HeaderNames#X_FORWARDED_FOR" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="X_FORWARDED_FOR:String"></a>
       <span class="permalink">
@@ -3247,6 +3423,38 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>HeaderNames</dd></dl></div>
+    </li><li name="play.api.http.HeaderNames#X_FRAME_OPTIONS" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="X_FRAME_OPTIONS:String"></a>
+      <span class="permalink">
+      <a href="../controllers/AdminController.html#X_FRAME_OPTIONS:String" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">X_FRAME_OPTIONS</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>HeaderNames</dd></dl></div>
+    </li><li name="play.api.http.HeaderNames#X_PERMITTED_CROSS_DOMAIN_POLICIES" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="X_PERMITTED_CROSS_DOMAIN_POLICIES:String"></a>
+      <span class="permalink">
+      <a href="../controllers/AdminController.html#X_PERMITTED_CROSS_DOMAIN_POLICIES:String" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">X_PERMITTED_CROSS_DOMAIN_POLICIES</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>HeaderNames</dd></dl></div>
     </li><li name="play.api.http.HeaderNames#X_REQUESTED_WITH" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="X_REQUESTED_WITH:String"></a>
       <span class="permalink">
@@ -3263,6 +3471,54 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>HeaderNames</dd></dl></div>
+    </li><li name="play.api.http.HeaderNames#X_XSS_PROTECTION" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="X_XSS_PROTECTION:String"></a>
+      <span class="permalink">
+      <a href="../controllers/AdminController.html#X_XSS_PROTECTION:String" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">X_XSS_PROTECTION</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>HeaderNames</dd></dl></div>
+    </li><li name="controllers.AdminController#addGroup" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="addGroup:play.api.mvc.Action[play.api.mvc.AnyContent]"></a><a id="addGroup:Action[AnyContent]"></a>
+      <span class="permalink">
+      <a href="../controllers/AdminController.html#addGroup:play.api.mvc.Action[play.api.mvc.AnyContent]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">addGroup</span><span class="result">: <span class="extype" name="play.api.mvc.Action">Action</span>[<span class="extype" name="play.api.mvc.AnyContent">AnyContent</span>]</span>
+      </span>
+      
+      
+    </li><li name="controllers.AdminController#addPseudonyms" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="addPseudonyms:play.api.mvc.Action[play.api.mvc.AnyContent]"></a><a id="addPseudonyms:Action[AnyContent]"></a>
+      <span class="permalink">
+      <a href="../controllers/AdminController.html#addPseudonyms:play.api.mvc.Action[play.api.mvc.AnyContent]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">addPseudonyms</span><span class="result">: <span class="extype" name="play.api.mvc.Action">Action</span>[<span class="extype" name="play.api.mvc.AnyContent">AnyContent</span>]</span>
+      </span>
+      
+      
     </li><li name="controllers.AdminController#admin" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="admin:play.api.mvc.Action[play.api.mvc.AnyContent]"></a><a id="admin:Action[AnyContent]"></a>
       <span class="permalink">
@@ -3312,6 +3568,8 @@
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../java/lang/index.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@native</span><span class="args">()</span>
+              
+                <span class="name">@HotSpotIntrinsicCandidate</span><span class="args">()</span>
               
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -3399,28 +3657,6 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>BaseControllerHelpers</dd></dl></div>
-    </li><li name="scala.AnyRef#finalize" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="finalize():Unit"></a>
-      <span class="permalink">
-      <a href="../controllers/AdminController.html#finalize():Unit" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
-      </span>
-      
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../java/lang/index.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
-                <span class="name">@throws</span><span class="args">(<span>
-      
-      <span class="symbol">classOf[java.lang.Throwable]</span>
-    </span>)</span>
-              
-        </dd></dl></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <span class="permalink">
@@ -3438,6 +3674,8 @@
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd><dt>Annotations</dt><dd>
                 <span class="name">@native</span><span class="args">()</span>
+              
+                <span class="name">@HotSpotIntrinsicCandidate</span><span class="args">()</span>
               
         </dd></dl></div>
     </li><li name="scala.AnyRef#hashCode" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
@@ -3457,6 +3695,8 @@
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd><dt>Annotations</dt><dd>
                 <span class="name">@native</span><span class="args">()</span>
+              
+                <span class="name">@HotSpotIntrinsicCandidate</span><span class="args">()</span>
               
         </dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
@@ -3541,6 +3781,8 @@
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@native</span><span class="args">()</span>
               
+                <span class="name">@HotSpotIntrinsicCandidate</span><span class="args">()</span>
+              
         </dd></dl></div>
     </li><li name="scala.AnyRef#notifyAll" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notifyAll():Unit"></a>
@@ -3560,6 +3802,8 @@
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@native</span><span class="args">()</span>
               
+                <span class="name">@HotSpotIntrinsicCandidate</span><span class="args">()</span>
+              
         </dd></dl></div>
     </li><li name="play.api.mvc.BaseControllerHelpers#parse" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="parse:play.api.mvc.PlayBodyParsers"></a><a id="parse:PlayBodyParsers"></a>
@@ -3577,22 +3821,6 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>BaseControllerHelpers</dd></dl></div>
-    </li><li name="controllers.AdminController#pseudonymAdder" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="pseudonymAdder:play.api.mvc.Action[play.api.mvc.AnyContent]"></a><a id="pseudonymAdder:Action[AnyContent]"></a>
-      <span class="permalink">
-      <a href="../controllers/AdminController.html#pseudonymAdder:play.api.mvc.Action[play.api.mvc.AnyContent]" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">pseudonymAdder</span><span class="result">: <span class="extype" name="play.api.mvc.Action">Action</span>[<span class="extype" name="play.api.mvc.AnyContent">AnyContent</span>]</span>
-      </span>
-      
-      
     </li><li name="play.api.mvc.RequestImplicits#request2flash" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="request2flash(implicitrequest:play.api.mvc.RequestHeader):play.api.mvc.Flash"></a><a id="request2flash(RequestHeader):Flash"></a>
       <span class="permalink">
@@ -3674,28 +3902,6 @@
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="wait():Unit"></a>
-      <span class="permalink">
-      <a href="../controllers/AdminController.html#wait():Unit" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">wait</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
-      </span>
-      
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
-                <span class="name">@throws</span><span class="args">(<span>
-      
-      <span class="defval" name="classOf[java.lang.InterruptedException]">...</span>
-    </span>)</span>
-              
-        </dd></dl></div>
-    </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait(x$1:Long,x$2:Int):Unit"></a><a id="wait(Long,Int):Unit"></a>
       <span class="permalink">
       <a href="../controllers/AdminController.html#wait(x$1:Long,x$2:Int):Unit" title="Permalink">
@@ -3735,6 +3941,28 @@
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@native</span><span class="args">()</span>
               
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.InterruptedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="wait():Unit"></a>
+      <span class="permalink">
+      <a href="../controllers/AdminController.html#wait():Unit" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
       <span class="defval" name="classOf[java.lang.InterruptedException]">...</span>
@@ -3803,6 +4031,32 @@
                 <span class="name">@deprecated</span>
               
         </dd><dt>Deprecated</dt><dd class="cmt"><p><i>(Since version 2.6.0)</i> Use TooManyRequests instead</p></dd></dl></div>
+    </li><li name="scala.AnyRef#finalize" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="finalize():Unit"></a>
+      <span class="permalink">
+      <a href="../controllers/AdminController.html#finalize():Unit" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name deprecated" title="Deprecated: (Since version ) see corresponding Javadoc for more information.">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../java/lang/index.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@Deprecated</span>
+              
+                <span class="name">@deprecated</span>
+              
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="symbol">classOf[java.lang.Throwable]</span>
+    </span>)</span>
+              
+        </dd><dt>Deprecated</dt><dd class="cmt"><p><i>(Since version )</i> see corresponding Javadoc for more information.</p></dd></dl></div>
     </li></ol>
             </div>
         </div>

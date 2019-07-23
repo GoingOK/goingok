@@ -21,11 +21,11 @@ class DataService {
 
   val logger = Logger(this.getClass)
 
-  private val driver = Config.string("db.driver")
-  private val url = Config.string("db.url")
-  private val user = Config.string("db.user")
-  private val password = Config.string("db.password")
-  private val db = Transactor.fromDriverManager[IO](driver,url,user,password)
+  private lazy val driver = Config.string("db.driver")
+  private lazy val url = Config.string("db.url")
+  private lazy val user = Config.string("db.user")
+  private lazy val password = Config.string("db.password")
+  private lazy val db = Transactor.fromDriverManager[IO](driver,url,user,password)
 
   private implicit val uuidImplicit:AdvancedMeta[UUID] =  doobie.postgres.implicits.UuidType
 
@@ -75,17 +75,50 @@ class DataService {
   def getReflectionsForUser(goingokId:UUID): Either[Throwable,Vector[ReflectionEntry]] = {
     val query = sql"""select timestamp, point, text
                   from reflections
-                  where goingok_id=$goingokId""".query[ReflectionEntry]
+                  where goingok_id=$goingokId
+                  order by timestamp desc""".query[ReflectionEntry]
 
     runQuery(query.to[Vector])
   }
 
+  def getPermission(goingok_id:UUID,group_code:String): Either[Throwable,DbResults.Result] = {
+    val query = sql"""select permission
+                      from group_permissions
+                      where goingok_id=$goingok_id::uuid
+                      and group_code=$group_code""".query[String].unique
+    runQuery(query).map(r => DbResults.Permission(r))
+  }
+
+  def getReflectionsForGroup(group_code:String): Either[Throwable,DbResults.Result] = {
+    val query = sql"""select timestamp, point, text
+                  from reflections r, users u
+                  where r.goingok_id = u.goingok_id
+                  and u.group_code=$group_code""".query[ReflectionEntry]
+
+    runQuery(query.to[Seq]).map(r => DbResults.GroupedReflections(r))
+  }
+
+  def getReflectionsForGroupWithRange(group_code:String,start:String,end:String): Either[Throwable,DbResults.Result] = {
+    val query = sql"""select timestamp, point, text
+                  from reflections r, users u
+                  where r.goingok_id = u.goingok_id
+                  and u.group_code=$group_code
+                  and timestamp >=$start
+                  and timestamp <=$end""".query[ReflectionEntry]
+    runQuery(query.to[Seq]).map(r => DbResults.GroupedReflections(r))
+  }
 
   def getGroupCode(code:String): Either[Throwable,GroupCode] = {
     val query = sql"""select * from group_codes
                       where group_code=$code""".query[GroupCode].unique
     runQuery(query)
   }
+
+  def getAllGroupCodes: Either[Throwable,DbResults.Result] = {
+    val query = sql"""select * from group_codes""".query[GroupCode]
+    runQuery(query.to[Seq]).map(r => DbResults.GroupCodes(r))
+  }
+
 
   def updateCodeForUser(code:String,goingok_id:UUID): Either[Throwable,Int] = {
     val time = LocalDateTime.now().toString
@@ -104,6 +137,21 @@ class DataService {
                 """.update.run
 
     runQuery(query)
+  }
+
+  def insertGroup(groupCode:String,goingok_id:UUID): Either[Throwable,Int] = {
+    val time = LocalDateTime.now().toString
+    val query = sql"""insert into group_codes (group_code, created_timestamp, owner_goingok_id)
+                    values ($groupCode,$time,$goingok_id)
+                """.update.run
+    runQuery(query)
+  }
+
+  def getPseudonymCounts: Either[Throwable,DbResults.Result] = {
+    val query = sql"""select allocated,count(pseudonym) from pseudonyms
+                      group by allocated
+                      """.query[(Option[String],Int)]
+    runQuery(query.to[Seq]).map(r => DbResults.GroupedPseudonymCounts(r))
   }
 
   def getAllPseudonyms: Either[Throwable,Vector[String]] = {
@@ -136,11 +184,17 @@ class DataService {
     runQuery(query.to[Seq]).map(r => DbResults.GroupedUserCounts(r))
   }
 
-  def countReflections:Either[Throwable,DbResults.Result] = {
+  def countReflections(goingok_id:UUID):Either[Throwable,DbResults.Result] = {
     val query = sql"""select u.group_code, count(*)
                      from users u,reflections r
                      where u.goingok_id = r.goingok_id
-                     group by group_code
+                     and u.group_code in (
+                      select p.group_code
+                      from group_permissions p
+                      where p.goingok_id=$goingok_id
+                     )
+                     group by u.group_code
+                     order by u.group_code
       """.query[(String, Int)]
     runQuery(query.to[Seq]).map(r => DbResults.GroupedReflectionCounts(r))
   }

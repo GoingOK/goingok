@@ -22,6 +22,24 @@ object ReflectionEntry {
     script(raw(validationScript))
   )
 
+  def demoDisplay(sliderPoint:Double=0.0) = form( `class` := "needs-validation", action:="/profile", method:="POST", attr("novalidate"):="",
+    div( `class` := "row",
+      div( `class` :="col",
+        this.slider(sliderPoint)
+      )
+    ),
+    hr(),
+    div(`class`:="form-group",
+      label(attr("for"):="describe","Describe how you are going..."),
+      textarea(`class`:="form-control", id := "describe", name := "reflection-text", rows := "10", attr("required"):=""),
+      div(`class`:="invalid-feedback",b("Please write something about how you are going.")),
+    ),
+    div(`class`:="form-group",
+      input(`type`:="submit", value:="save disabled in demo", `class`:="btn btn-success", disabled)
+    ),
+    //script(raw(validationScript))
+  )
+
   private def slider(point:Double) = div(id:="slider-group",`class`:="form-group",
     div(`class`:="d-flex justify-content-between",
       div( `class` := "p-2", "Distressed"),

@@ -4,7 +4,7 @@ import java.util.UUID
 
 import javax.inject.Inject
 import org.goingok.server.data.models.{ReflectionData, User}
-import org.goingok.server.data.{Analytics, Profile, Reflection, UiMessage}
+import org.goingok.server.data._
 import org.goingok.server.services.{AnalyticsService, ProfileService}
 import play.api.mvc._
 import views.{AnalyticsPage, ProfilePage}
@@ -16,29 +16,50 @@ class AnalyticsController @Inject()(components: ControllerComponents, profileSer
                                    (implicit ec: ExecutionContext, assets: AssetsFinder)
   extends AbstractController(components) with GoingOkController {
 
-  def analytics: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
-    Future {
-      val user:Option[User] = for {
-        uid <- request.session.get("user")
-        u <- profileService.getUser(UUID.fromString(uid))
-        if u.supervisor
-      } yield u
+  def analytics: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] => authorise(request,makePage)}
 
-      user match {
-        case Some(usr) => makePage(usr)
-        case None => Unauthorized(UNAUTHORIZED_MESSAGE)
-      }
+  def reflectionsCsv: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] => authorise(request,makeCSV)}
 
+  private def authorise(request:Request[AnyContent],pageMaker:(User,Request[AnyContent])=>Result) = Future {
+    val user: Option[User] = for {
+      uid <- request.session.get("user")
+      u <- profileService.getUser(UUID.fromString(uid))
+      if u.supervisor
+    } yield u
+
+    user match {
+      case Some(usr) => pageMaker(usr,request)
+      case None => Unauthorized(UNAUTHORIZED_MESSAGE)
     }
+
   }
 
-  private def makePage(user:User) = {
+  private val makePage = (user: User,request:Request[AnyContent]) => {
     val userCounts = analyticsService.groupedUserCounts.getOrElse(Seq())
-    val reflectionCounts = analyticsService.groupedReflectionCounts.getOrElse(Seq())
-    val message = Some(UiMessage(s"This page is a work in progress. For now, there are only basic stats here. More coming soon.","info"))
-    val page = AnalyticsPage.page("GoingOK :: analytics", message,Some(user),Analytics(userCounts,reflectionCounts))
+    val reflectionCounts = analyticsService.groupedReflectionCounts(user.goingok_id).getOrElse(Seq())
+    val message = Some(UiMessage(s"This page is a work in progress. For now, there are only basic stats here. More coming soon.", "info"))
+    val page = AnalyticsPage.page("GoingOK :: analytics", message, Some(user), Analytics(userCounts, reflectionCounts))
     Ok(AnalyticsPage.getHtml(page))
   }
+
+  private val makeCSV = (user:User, request:Request[AnyContent]) => {
+    val query = request.queryString
+
+    val group = query.getOrElse("group",Vector("")).head
+    val range = for(r <- query.get("range").map(_.head)) yield r
+    val response =if(analyticsService.hasPermission(user.goingok_id,group,Permissions.Sensitive)) {
+      analyticsService.reflectionsForGroupCSV(group,range).getOrElse("no data")
+    } else {
+      "Not Permitted"
+    }
+    Ok(response)
+  }
+
+
+
+
+}
+
 //    request.session.get("user").map { uid =>
 //      Future {
 //        val goingok_id = UUID.fromString(uid)
@@ -105,16 +126,3 @@ class AnalyticsController @Inject()(components: ControllerComponents, profileSer
 //  }.toEither
 
 
-//  def reflectionsCsv :Action[AnyContent] = silhouette.SecuredAction(errorHandler).async { implicit request: SecuredRequest[DefaultEnv, AnyContent] =>
-//
-////      Logger.info("Getting reflections CSV for: " + uid)
-////      clientService.getReflectionsCsvForGoingokId(uid).map { reflectionsStr =>
-////        if(uid.nonEmpty) { Ok(reflectionsStr) }
-////        else { Unauthorized("You are not authorised to access these reflections. ") }
-////      }
-//
-//    Future.successful(OK())
-//  }
-
-
-}
