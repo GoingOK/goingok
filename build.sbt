@@ -46,10 +46,11 @@ lazy val vNlpCommons = "1.1.2"
 lazy val vScalaJsDom = "0.9.7"
 lazy val vWebpack = "4.10.2"
 lazy val vWebpackDevServer = "3.1.4"
-lazy val vSjsBootstrap = "2.3.5"
+//lazy val vSjsBootstrap = "2.3.5"
+//lazy val vBootstrapNative = "1.2.7"
 
 lazy val vReact = "16.4.1"
-lazy val vBootstrap = "4.1.1"
+//lazy val vBootstrap = "4.1.1"
 lazy val vJquery = "3.2.1"
 lazy val vPopper = "1.14.4"
 lazy val vD3 = "5.9.7"
@@ -152,9 +153,6 @@ lazy val client = project.in(file(clientName))
     version in startWebpackDevServer := vWebpackDevServer, // Needed for version 4 webpack
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % vScalaJsDom,
-      "org.singlespaced" %%% "scalajs-d3" % vSjsD3,
-      "org.querki" %%% "jquery-facade" % "1.2",
-      "com.github.karasiq" %%% "scalajs-bootstrap-v4" % vSjsBootstrap,
       "com.lihaoyi" %%% "scalatags" % vScalaTags, //Using ScalaTags instead of Twirl
       "com.lihaoyi" %%% "upickle" % vUpickle, //Using uJson for main JSON
       "me.shadaj" %%% "slinky-core" % vSlinky, // core React functionality, no React DOM
@@ -162,10 +160,7 @@ lazy val client = project.in(file(clientName))
       "org.scalactic" %%% "scalactic" % vScalaTest,
       "org.scalatest" %%% "scalatest" % vScalaTest % "test"
     ),
-    npmDependencies in Compile ++= Seq(
-      "bootstrap" -> vBootstrap,
-      "jquery" -> vJquery, //used by bootstrap
-      "popper.js" -> vPopper, //used by bootstrap
+    npmDependencies in Compile ++= Seq( //Only managing libraries that are used by ScalaJS, others are in public/javascripts and loaded in Includes (views)
       "d3" -> vD3,
       "react" -> vReact,
       "react-dom" -> vReact
