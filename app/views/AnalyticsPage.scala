@@ -44,9 +44,8 @@ object AnalyticsPage extends GenericPage {
   }
 
   private def merge(userCounts:Seq[(String,Int)],reflectionCounts:Seq[(String,Int)]):Seq[(String,Int,Int)] = {
-    val hiddenGroups = List("qut-admin","qut-staff","none")
     val ucs = userCounts.toMap
-    reflectionCounts.filterNot(rc => hiddenGroups.contains(rc._1)).map{ case (group,rc) =>
+    reflectionCounts.map{ case (group,rc) =>
       (group,ucs.getOrElse(group,0),rc)
     }
   }
@@ -60,10 +59,10 @@ object AnalyticsPage extends GenericPage {
     }
   }
 
-  private def card(heading:String,content:TypedTag[String]) = div(`class`:="card",
-    h5(`class`:="card-header",heading),
-    div(`class`:="card-body",content)
-  )
+//  private def card(heading:String,content:TypedTag[String]) = div(`class`:="card",
+//    h5(`class`:="card-header",heading),
+//    div(`class`:="card-body",content)
+//  )
 
 
   sealed trait TableValues

@@ -2,6 +2,8 @@
 *.log
 *.DS_Store
 .idea/*
+.bloop/*
+.metals/*
 goingok.iml
 project/LocalSbtSettings.scala
 /src/main/public/css/bootstrap.css
@@ -37,3 +39,9 @@ project/LocalSbtSettings.scala
 /public/javascripts/d3Test.js
 /public/javascripts/client-fastOptJS.js.map
 /public/javascripts/client-fastOptJS-bundle.js.map
+
+project/project/target/
+
+goingok_server/target/
+
+goingok_client/target/

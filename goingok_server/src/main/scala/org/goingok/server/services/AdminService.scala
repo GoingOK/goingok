@@ -4,7 +4,8 @@ import java.util.UUID
 
 import com.typesafe.scalalogging.Logger
 import io.nlytx.commons.privacy.Anonymiser
-import org.goingok.server.data.models.User
+import org.goingok.server.data.DbResults
+import org.goingok.server.data.models.{GroupCode, User}
 
 
 class AdminService {
@@ -12,6 +13,42 @@ class AdminService {
   val logger: Logger = Logger(this.getClass)
 
   val ds = new DataService()
+
+  def groupInfo: Seq[(String, Int)] = ds.getAllGroupCodes match {
+    case Right(result:DbResults.GroupCodes) => {
+      logger.info(s"Get groups result: ${result.value.toString}")
+      result.value.map(g => (g.toString,-1))
+    }
+    case Left(err) => {
+      logger.error(err.getMessage)
+      Seq((err.getMessage,-1))
+    }
+  }
+
+  def userInfo: Seq[(String,Int)] = ds.getPseudonymCounts match {
+    case Right(result:DbResults.GroupedPseudonymCounts) => {
+      logger.info(s"Pseudonym count result: ${result.value.toString}")
+      result.value.map { t =>
+        val a = t._1 match {
+          case Some(s) => if (s=="t") "allocated" else "not allocated"
+          case None => "not allocated"
+        }
+        (a,t._2)
+      }
+    }
+    case Left(err) => {
+      logger.error(err.getMessage)
+      Seq((err.getMessage,-1))
+    }
+  }
+
+
+  def addGroup(groupCode:String,goingokId:UUID): Either[Throwable,Int] = {
+    for {
+      g <- ds.insertGroup(groupCode,goingokId)
+    } yield g
+  }
+
 
   def createPseudonyms(num:Int): Either[Throwable,Int] = {
     for {

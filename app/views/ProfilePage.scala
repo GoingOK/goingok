@@ -24,6 +24,8 @@ object ProfilePage extends GenericPage {
       Includes.headContent(titleStr),
       tags.body(
         NavBar.main(NavParams(profile.user,Config.baseUrl,Some("profile"))),
+
+
         div(id := "profile-content",`class` := "container-fluid",
           showMessage(message),
           div( id := "reflectchart-content", `class` := "row",
@@ -34,7 +36,7 @@ object ProfilePage extends GenericPage {
           div( id := "main-content", `class` := "row",
             div( id := "main-left-column", `class` := "col-sm-8",
               Includes.panel("reflection-entry","fas fa-edit","Enter a reflection",ReflectionEntry.display(sliderStartPoint)),
-              Includes.panel("reflection-list", "fas fa-list-alt", "Past reflections", ReflectionList.display(profile.reflections))
+              Includes.panel("reflection-list", "fas fa-list-alt", "Past reflections", ReflectionList.display(profile.reflections.map(_.reverse)))
             ),
             div( id := "main-right-column", `class` := "col-sm-4",
               Includes.panel("message-list", "fas fa-envelope", "Messages", MessagesList.display())
