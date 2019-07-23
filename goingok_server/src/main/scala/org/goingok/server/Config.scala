@@ -1,5 +1,6 @@
 package org.goingok.server
 
+import com.sun.org.apache.xerces.internal.xs.StringList
 import com.typesafe.config.ConfigFactory
 
 import scala.util.Try
@@ -12,4 +13,12 @@ object Config {
   def int(path:String):Int = config.getInt(path)
 
   lazy val baseUrl:Option[String] = stringOpt("app.baseurl")
+  lazy val dbUrl:Option[String] = stringOpt("db.url")
+  lazy val googleClientSecret:Option[String] = stringOpt("google.client.secret")
+  lazy val goingokSecret:Option[String] = stringOpt("play.http.secret.key")
+  lazy val googleRedirectUrl:Option[String] = stringOpt("google.redirect.url")
+  lazy val googleClientId:Option[String] = stringOpt("google.client.id")
+  lazy val dbUser:Option[String] = stringOpt("db.user")
+  lazy val dbSecret:Option[String] = stringOpt("db.password")
+
 }
