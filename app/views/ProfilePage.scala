@@ -24,6 +24,8 @@ object ProfilePage extends GenericPage {
       Includes.headContent(titleStr),
       tags.body(
         NavBar.main(NavParams(profile.user,Config.baseUrl,Some("profile"))),
+
+
         div(id := "profile-content",`class` := "container-fluid",
           showMessage(message),
           div( id := "reflectchart-content", `class` := "row",

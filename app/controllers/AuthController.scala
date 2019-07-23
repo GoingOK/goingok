@@ -15,10 +15,10 @@ class AuthController @Inject()(components: ControllerComponents,authService:Goog
 
   val logger: Logger = Logger(this.getClass)
 
-  private val baseUrl = Config.string("app.baseurl")
-  private val clientid = Config.string("google.client.id")
-  private val secret = Config.string("google.client.secret")
-  private val redirectUrl = Config.string("google.redirect.url")
+  private lazy val baseUrl = Config.string("app.baseurl")
+  private lazy val clientid = Config.string("google.client.id")
+  private lazy val secret = Config.string("google.client.secret")
+  private lazy val redirectUrl = Config.string("google.redirect.url")
 
   def signin: Action[AnyContent] = Action {
     Redirect(authService.url)

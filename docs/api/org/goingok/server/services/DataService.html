@@ -350,9 +350,9 @@
               
         </dd></dl></div>
     </li><li name="org.goingok.server.services.DataService#countReflections" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="countReflections:Either[Throwable,org.goingok.server.data.DbResults.Result]"></a><a id="countReflections:Either[Throwable,Result]"></a>
+      <a id="countReflections(goingok_id:java.util.UUID):Either[Throwable,org.goingok.server.data.DbResults.Result]"></a><a id="countReflections(UUID):Either[Throwable,Result]"></a>
       <span class="permalink">
-      <a href="../../../../org/goingok/server/services/DataService.html#countReflections:Either[Throwable,org.goingok.server.data.DbResults.Result]" title="Permalink">
+      <a href="../../../../org/goingok/server/services/DataService.html#countReflections(goingok_id:java.util.UUID):Either[Throwable,org.goingok.server.data.DbResults.Result]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -361,7 +361,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">countReflections</span><span class="result">: <span class="extype" name="scala.Either">Either</span>[<span class="extype" name="scala.Throwable">Throwable</span>, <a href="../data/DbResults$$Result.html" class="extype" name="org.goingok.server.data.DbResults.Result">Result</a>]</span>
+        <span class="name">countReflections</span><span class="params">(<span name="goingok_id">goingok_id: <span class="extype" name="java.util.UUID">UUID</span></span>)</span><span class="result">: <span class="extype" name="scala.Either">Either</span>[<span class="extype" name="scala.Throwable">Throwable</span>, <a href="../data/DbResults$$Result.html" class="extype" name="org.goingok.server.data.DbResults.Result">Result</a>]</span>
       </span>
       
       
@@ -435,6 +435,22 @@
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="org.goingok.server.services.DataService#getAllGroupCodes" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="getAllGroupCodes:Either[Throwable,org.goingok.server.data.DbResults.Result]"></a><a id="getAllGroupCodes:Either[Throwable,Result]"></a>
+      <span class="permalink">
+      <a href="../../../../org/goingok/server/services/DataService.html#getAllGroupCodes:Either[Throwable,org.goingok.server.data.DbResults.Result]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">getAllGroupCodes</span><span class="result">: <span class="extype" name="scala.Either">Either</span>[<span class="extype" name="scala.Throwable">Throwable</span>, <a href="../data/DbResults$$Result.html" class="extype" name="org.goingok.server.data.DbResults.Result">Result</a>]</span>
+      </span>
+      
+      
     </li><li name="org.goingok.server.services.DataService#getAllPseudonyms" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="getAllPseudonyms:Either[Throwable,Vector[String]]"></a>
       <span class="permalink">
@@ -499,6 +515,70 @@
       </span>
       <span class="symbol">
         <span class="name">getNextPseudonym</span><span class="result">: <span class="extype" name="scala.Either">Either</span>[<span class="extype" name="scala.Throwable">Throwable</span>, <span class="extype" name="scala.Predef.String">String</span>]</span>
+      </span>
+      
+      
+    </li><li name="org.goingok.server.services.DataService#getPermission" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="getPermission(goingok_id:java.util.UUID,group_code:String):Either[Throwable,org.goingok.server.data.DbResults.Result]"></a><a id="getPermission(UUID,String):Either[Throwable,Result]"></a>
+      <span class="permalink">
+      <a href="../../../../org/goingok/server/services/DataService.html#getPermission(goingok_id:java.util.UUID,group_code:String):Either[Throwable,org.goingok.server.data.DbResults.Result]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">getPermission</span><span class="params">(<span name="goingok_id">goingok_id: <span class="extype" name="java.util.UUID">UUID</span></span>, <span name="group_code">group_code: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Either">Either</span>[<span class="extype" name="scala.Throwable">Throwable</span>, <a href="../data/DbResults$$Result.html" class="extype" name="org.goingok.server.data.DbResults.Result">Result</a>]</span>
+      </span>
+      
+      
+    </li><li name="org.goingok.server.services.DataService#getPseudonymCounts" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="getPseudonymCounts:Either[Throwable,org.goingok.server.data.DbResults.Result]"></a><a id="getPseudonymCounts:Either[Throwable,Result]"></a>
+      <span class="permalink">
+      <a href="../../../../org/goingok/server/services/DataService.html#getPseudonymCounts:Either[Throwable,org.goingok.server.data.DbResults.Result]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">getPseudonymCounts</span><span class="result">: <span class="extype" name="scala.Either">Either</span>[<span class="extype" name="scala.Throwable">Throwable</span>, <a href="../data/DbResults$$Result.html" class="extype" name="org.goingok.server.data.DbResults.Result">Result</a>]</span>
+      </span>
+      
+      
+    </li><li name="org.goingok.server.services.DataService#getReflectionsForGroup" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="getReflectionsForGroup(group_code:String):Either[Throwable,org.goingok.server.data.DbResults.Result]"></a><a id="getReflectionsForGroup(String):Either[Throwable,Result]"></a>
+      <span class="permalink">
+      <a href="../../../../org/goingok/server/services/DataService.html#getReflectionsForGroup(group_code:String):Either[Throwable,org.goingok.server.data.DbResults.Result]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">getReflectionsForGroup</span><span class="params">(<span name="group_code">group_code: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Either">Either</span>[<span class="extype" name="scala.Throwable">Throwable</span>, <a href="../data/DbResults$$Result.html" class="extype" name="org.goingok.server.data.DbResults.Result">Result</a>]</span>
+      </span>
+      
+      
+    </li><li name="org.goingok.server.services.DataService#getReflectionsForGroupWithRange" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="getReflectionsForGroupWithRange(group_code:String,start:String,end:String):Either[Throwable,org.goingok.server.data.DbResults.Result]"></a><a id="getReflectionsForGroupWithRange(String,String,String):Either[Throwable,Result]"></a>
+      <span class="permalink">
+      <a href="../../../../org/goingok/server/services/DataService.html#getReflectionsForGroupWithRange(group_code:String,start:String,end:String):Either[Throwable,org.goingok.server.data.DbResults.Result]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">getReflectionsForGroupWithRange</span><span class="params">(<span name="group_code">group_code: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="start">start: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="end">end: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Either">Either</span>[<span class="extype" name="scala.Throwable">Throwable</span>, <a href="../data/DbResults$$Result.html" class="extype" name="org.goingok.server.data.DbResults.Result">Result</a>]</span>
       </span>
       
       
@@ -569,6 +649,22 @@
                 <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
+    </li><li name="org.goingok.server.services.DataService#insertGroup" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="insertGroup(groupCode:String,goingok_id:java.util.UUID):Either[Throwable,Int]"></a><a id="insertGroup(String,UUID):Either[Throwable,Int]"></a>
+      <span class="permalink">
+      <a href="../../../../org/goingok/server/services/DataService.html#insertGroup(groupCode:String,goingok_id:java.util.UUID):Either[Throwable,Int]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">insertGroup</span><span class="params">(<span name="groupCode">groupCode: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="goingok_id">goingok_id: <span class="extype" name="java.util.UUID">UUID</span></span>)</span><span class="result">: <span class="extype" name="scala.Either">Either</span>[<span class="extype" name="scala.Throwable">Throwable</span>, <span class="extype" name="scala.Int">Int</span>]</span>
+      </span>
+      
+      
     </li><li name="org.goingok.server.services.DataService#insertNewUser" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="insertNewUser(user:org.goingok.server.data.models.User):Either[Throwable,java.util.UUID]"></a><a id="insertNewUser(User):Either[Throwable,UUID]"></a>
       <span class="permalink">

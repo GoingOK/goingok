@@ -439,9 +439,9 @@
               
         </dd></dl></div>
     </li><li name="org.goingok.server.services.AnalyticsService#groupedReflectionCounts" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="groupedReflectionCounts:Option[Seq[(String,Int)]]"></a>
+      <a id="groupedReflectionCounts(goingok_id:java.util.UUID):Option[Seq[(String,Int)]]"></a><a id="groupedReflectionCounts(UUID):Option[Seq[(String,Int)]]"></a>
       <span class="permalink">
-      <a href="../../../../org/goingok/server/services/AnalyticsService.html#groupedReflectionCounts:Option[Seq[(String,Int)]]" title="Permalink">
+      <a href="../../../../org/goingok/server/services/AnalyticsService.html#groupedReflectionCounts(goingok_id:java.util.UUID):Option[Seq[(String,Int)]]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -450,7 +450,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">groupedReflectionCounts</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Seq">Seq</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Int">Int</span>)]]</span>
+        <span class="name">groupedReflectionCounts</span><span class="params">(<span name="goingok_id">goingok_id: <span class="extype" name="java.util.UUID">UUID</span></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Seq">Seq</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Int">Int</span>)]]</span>
       </span>
       
       
@@ -467,6 +467,22 @@
       </span>
       <span class="symbol">
         <span class="name">groupedUserCounts</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Seq">Seq</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Int">Int</span>)]]</span>
+      </span>
+      
+      
+    </li><li name="org.goingok.server.services.AnalyticsService#hasPermission" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="hasPermission(goingok_id:java.util.UUID,group_code:String,permission:org.goingok.server.data.Permissions.Permission):Boolean"></a><a id="hasPermission(UUID,String,Permission):Boolean"></a>
+      <span class="permalink">
+      <a href="../../../../org/goingok/server/services/AnalyticsService.html#hasPermission(goingok_id:java.util.UUID,group_code:String,permission:org.goingok.server.data.Permissions.Permission):Boolean" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">hasPermission</span><span class="params">(<span name="goingok_id">goingok_id: <span class="extype" name="java.util.UUID">UUID</span></span>, <span name="group_code">group_code: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="permission">permission: <a href="../data/Permissions$$Permission.html" class="extype" name="org.goingok.server.data.Permissions.Permission">Permission</a></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       
       
@@ -575,6 +591,22 @@
                 <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
+    </li><li name="org.goingok.server.services.AnalyticsService#reflectionsForGroupCSV" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="reflectionsForGroupCSV(group:String,range:Option[String]):Option[String]"></a><a id="reflectionsForGroupCSV(String,Option[String]):Option[String]"></a>
+      <span class="permalink">
+      <a href="../../../../org/goingok/server/services/AnalyticsService.html#reflectionsForGroupCSV(group:String,range:Option[String]):Option[String]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">reflectionsForGroupCSV</span><span class="params">(<span name="group">group: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="range">range: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">None</span></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+      </span>
+      
+      
     </li><li name="scala.AnyRef#synchronized" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a><a id="synchronized[T0](⇒T0):T0"></a>
       <span class="permalink">

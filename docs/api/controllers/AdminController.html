@@ -240,9 +240,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="controllers.AdminController#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(components:play.api.mvc.ControllerComponents,adminService:org.goingok.server.services.AdminService)(implicitec:scala.concurrent.ExecutionContext,implicitassets:controllers.AssetsFinder):controllers.AdminController"></a><a id="&lt;init&gt;:AdminController"></a>
+      <a id="&lt;init&gt;(components:play.api.mvc.ControllerComponents,profileService:org.goingok.server.services.ProfileService,adminService:org.goingok.server.services.AdminService)(implicitec:scala.concurrent.ExecutionContext,implicitassets:controllers.AssetsFinder):controllers.AdminController"></a><a id="&lt;init&gt;:AdminController"></a>
       <span class="permalink">
-      <a href="../controllers/AdminController.html#&lt;init&gt;(components:play.api.mvc.ControllerComponents,adminService:org.goingok.server.services.AdminService)(implicitec:scala.concurrent.ExecutionContext,implicitassets:controllers.AssetsFinder):controllers.AdminController" title="Permalink">
+      <a href="../controllers/AdminController.html#&lt;init&gt;(components:play.api.mvc.ControllerComponents,profileService:org.goingok.server.services.ProfileService,adminService:org.goingok.server.services.AdminService)(implicitec:scala.concurrent.ExecutionContext,implicitassets:controllers.AssetsFinder):controllers.AdminController" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -251,7 +251,7 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">AdminController</span><span class="params">(<span name="components">components: <span class="extype" name="play.api.mvc.ControllerComponents">ControllerComponents</span></span>, <span name="adminService">adminService: <a href="../org/goingok/server/services/AdminService.html" class="extype" name="org.goingok.server.services.AdminService">AdminService</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ec">ec: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>, <span name="assets">assets: <span class="extype" name="controllers.AssetsFinder">AssetsFinder</span></span>)</span>
+        <span class="name">AdminController</span><span class="params">(<span name="components">components: <span class="extype" name="play.api.mvc.ControllerComponents">ControllerComponents</span></span>, <span name="profileService">profileService: <a href="../org/goingok/server/services/ProfileService.html" class="extype" name="org.goingok.server.services.ProfileService">ProfileService</a></span>, <span name="adminService">adminService: <a href="../org/goingok/server/services/AdminService.html" class="extype" name="org.goingok.server.services.AdminService">AdminService</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ec">ec: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>, <span name="assets">assets: <span class="extype" name="controllers.AssetsFinder">AssetsFinder</span></span>)</span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Annotations</dt><dd>
@@ -2415,6 +2415,22 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Status</dd></dl></div>
+    </li><li name="play.api.http.Status#REQUEST_HEADER_FIELDS_TOO_LARGE" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="REQUEST_HEADER_FIELDS_TOO_LARGE:Int(431)"></a>
+      <span class="permalink">
+      <a href="../controllers/AdminController.html#REQUEST_HEADER_FIELDS_TOO_LARGE:Int(431)" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">REQUEST_HEADER_FIELDS_TOO_LARGE</span><span class="result">: Int(431)</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Status</dd></dl></div>
     </li><li name="play.api.http.Status#REQUEST_TIMEOUT" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="REQUEST_TIMEOUT:Int"></a>
       <span class="permalink">
@@ -3263,6 +3279,38 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>HeaderNames</dd></dl></div>
+    </li><li name="controllers.AdminController#addGroup" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="addGroup:play.api.mvc.Action[play.api.mvc.AnyContent]"></a><a id="addGroup:Action[AnyContent]"></a>
+      <span class="permalink">
+      <a href="../controllers/AdminController.html#addGroup:play.api.mvc.Action[play.api.mvc.AnyContent]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">addGroup</span><span class="result">: <span class="extype" name="play.api.mvc.Action">Action</span>[<span class="extype" name="play.api.mvc.AnyContent">AnyContent</span>]</span>
+      </span>
+      
+      
+    </li><li name="controllers.AdminController#addPseudonyms" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="addPseudonyms:play.api.mvc.Action[play.api.mvc.AnyContent]"></a><a id="addPseudonyms:Action[AnyContent]"></a>
+      <span class="permalink">
+      <a href="../controllers/AdminController.html#addPseudonyms:play.api.mvc.Action[play.api.mvc.AnyContent]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">addPseudonyms</span><span class="result">: <span class="extype" name="play.api.mvc.Action">Action</span>[<span class="extype" name="play.api.mvc.AnyContent">AnyContent</span>]</span>
+      </span>
+      
+      
     </li><li name="controllers.AdminController#admin" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="admin:play.api.mvc.Action[play.api.mvc.AnyContent]"></a><a id="admin:Action[AnyContent]"></a>
       <span class="permalink">
@@ -3577,22 +3625,6 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>BaseControllerHelpers</dd></dl></div>
-    </li><li name="controllers.AdminController#pseudonymAdder" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="pseudonymAdder:play.api.mvc.Action[play.api.mvc.AnyContent]"></a><a id="pseudonymAdder:Action[AnyContent]"></a>
-      <span class="permalink">
-      <a href="../controllers/AdminController.html#pseudonymAdder:play.api.mvc.Action[play.api.mvc.AnyContent]" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">pseudonymAdder</span><span class="result">: <span class="extype" name="play.api.mvc.Action">Action</span>[<span class="extype" name="play.api.mvc.AnyContent">AnyContent</span>]</span>
-      </span>
-      
-      
     </li><li name="play.api.mvc.RequestImplicits#request2flash" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="request2flash(implicitrequest:play.api.mvc.RequestHeader):play.api.mvc.Flash"></a><a id="request2flash(RequestHeader):Flash"></a>
       <span class="permalink">
