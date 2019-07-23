@@ -1,9 +1,11 @@
 
 # General application routes
 GET     /                       controllers.ApplicationController.index
++anyhost
 GET     /health                 controllers.ApplicationController.health
 GET     /version                controllers.ApplicationController.version
 GET     /help                   controllers.ApplicationController.help
+GET     /demo                   controllers.ApplicationController.demo
 
 
 GET     /googleAuth             controllers.AuthController.googleAuth
@@ -22,7 +24,10 @@ GET     /analytics              controllers.AnalyticsController.analytics
 GET     /analytics/csv          controllers.AnalyticsController.reflectionsCsv
 
 GET     /admin                  controllers.AdminController.admin
-GET     /admin/pseudonyms       controllers.AdminController.pseudonymAdder
++nocsrf
+POST    /admin/addGroup         controllers.AdminController.addGroup
++nocsrf
+POST    /admin/addPseudonyms    controllers.AdminController.addPseudonyms
 
 #GET     /profile/records/csv    controllers.ProfileController.reflectionsCsv
 
