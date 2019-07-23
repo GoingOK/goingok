@@ -20,7 +20,7 @@ scalacOptions += "-Ypartial-unification" // 2.11.9+
 //scalacOptions += "-target:jvm-1.8"
 
 lazy val projectName = "goingok"
-lazy val projectVersion = "4.2.0-M2.06"
+lazy val projectVersion = "4.2.0-M2.08"
 lazy val projectOrganisation = "org.goingok"
 
 lazy val serverName = s"${projectName}_server"
@@ -99,7 +99,7 @@ lazy val goingok = project.in(file("."))
     //resolvers += Resolver.sonatypeRepo("releases"),
 
     scalaJSProjects := Seq(client),
-    pipelineStages in Assets := Seq(scalaJSPipeline),
+    pipelineStages in Assets := Seq(scalaJSPipeline), //Needed for WebScalaJsBundler
 
     dockerExposedPorts := Seq(9000,80), // sbt docker:publishLocal
     dockerRepository := Some(s"$dockerRepoURI"),
@@ -107,21 +107,34 @@ lazy val goingok = project.in(file("."))
     dockerExposedVolumes := Seq("/opt/docker/logs"),
     dockerBaseImage := "openjdk:11-jdk",
 
-      // sbt-site needs to know where to find the paradox site
-      sourceDirectory in Paradox := baseDirectory.value / "documentation",
-      // paradox needs a theme
-      ParadoxMaterialThemePlugin.paradoxMaterialThemeSettings(Paradox),
-      paradoxProperties in Compile ++= Map(
-        "github.base_url" -> s"$githubBaseUrl",
-        "scaladoc.api.base_url" -> s"$scaladocApiBaseUrl"
-      ),
+//      // sbt-site needs to know where to find the paradox site
+//      sourceDirectory in Paradox := baseDirectory.value / "documentation",
+//      // paradox needs a theme
+//      ParadoxMaterialThemePlugin.paradoxMaterialThemeSettings(Paradox),
+//      paradoxProperties in Compile ++= Map(
+//        "github.base_url" -> s"$githubBaseUrl",
+//        "scaladoc.api.base_url" -> s"$scaladocApiBaseUrl"
+//      ),
+    
       // Puts unified scaladocs into target/api
       siteSubdirName in ScalaUnidoc := "api",
       addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), siteSubdirName in ScalaUnidoc)
   ).enablePlugins(PlayScala)
   .enablePlugins(WebScalaJSBundlerPlugin)
-  .enablePlugins(SbtWeb)
-  .enablePlugins(ParadoxSitePlugin, ParadoxMaterialThemePlugin,SiteScaladocPlugin,ScalaUnidocPlugin) // Documentation plugins
+  //.enablePlugins(SbtWeb)
+  .enablePlugins(SiteScaladocPlugin,ScalaUnidocPlugin)
+
+lazy val docs = (project in file("project_docs"))
+  .settings(
+    sharedSettings,
+    publishArtifact := false,
+    // sbt-site needs to know where to find the paradox site
+    paradoxTheme := Some(builtinParadoxTheme("generic")),
+    paradoxProperties ++= Map(
+      "github.base_url" -> s"$githubBaseUrl",
+      "scaladoc.api.base_url" -> s"$scaladocApiBaseUrl"
+    ),
+  ).enablePlugins(ParadoxSitePlugin)
 
 lazy val server = project.in(file(serverName))
   .settings(
@@ -164,7 +177,7 @@ lazy val client = project.in(file(clientName))
       "react-dom" -> "16.4.1"
     )
   ).enablePlugins(ScalaJSPlugin)
-  .enablePlugins(ScalaJSBundlerPlugin, ScalaJSWeb)
+  .enablePlugins(ScalaJSBundlerPlugin) //, ScalaJSWeb)
 
 //Documentation
 //Task for building docs and copying to root level docs folder (for GitHub pages)
@@ -172,8 +185,17 @@ val updateDocsTask = TaskKey[Unit]("updateDocs","copies paradox docs to /docs di
 
 updateDocsTask := {
   val siteResult = makeSite.value
-  val docSource = new File("target/site")
+  val apiSource = new File("target/site")
+  val paradoxSource = new File("project_docs/target/site")
   val docDest = new File("docs")
-  IO.copyDirectory(docSource,docDest,overwrite=true,preserveLastModified=true)
+  IO.copyDirectory(apiSource,docDest,overwrite=true,preserveLastModified=true)
+  IO.copyDirectory(paradoxSource,docDest,overwrite=true,preserveLastModified=true)
 }
+
+//updateDocsTask := {
+//  val siteResult = makeSite.value
+//  val docSource = new File("target/site")
+//  val docDest = new File("docs")
+//  IO.copyDirectory(docSource,docDest,overwrite=true,preserveLastModified=true)
+//}
 
