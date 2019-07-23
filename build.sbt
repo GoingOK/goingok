@@ -33,24 +33,29 @@ scalaVersion in ThisBuild := "2.12.8"
 //resolvers in ThisBuild += "nlytx bintray" at "https://dl.bintray.com/nlytx/nlytx-nlp"
 resolvers in ThisBuild += Resolver.bintrayRepo("nlytx", "nlytx-nlp")
 
-lazy val vScalaTags = "0.6.7"
-lazy val vUpickle = "0.6.6"
-lazy val vGoogleClientApi = "1.25.0"
-lazy val vDoobie = "0.5.3"
-lazy val vConfig = "1.3.3"
+lazy val vScalaTags = "0.7.0"
+lazy val vSlinky = "0.6.2"
+lazy val vSjsD3 = "0.3.4"
+
+lazy val vUpickle = "0.7.5"
+lazy val vGoogleClientApi = "1.30.2"
+lazy val vDoobie = "0.7.0"
+lazy val vConfig = "1.3.4"
 lazy val vNlpCommons = "1.1.2"
 
-lazy val vScalaJsDom = "0.9.6"
+lazy val vScalaJsDom = "0.9.7"
 lazy val vWebpack = "4.10.2"
 lazy val vWebpackDevServer = "3.1.4"
-lazy val vSjsBootstrap = "2.3.3"
+lazy val vSjsBootstrap = "2.3.5"
 
+lazy val vReact = "16.4.1"
 lazy val vBootstrap = "4.1.1"
 lazy val vJquery = "3.2.1"
 lazy val vPopper = "1.14.4"
-lazy val vD3 = "5.4.0"
+lazy val vD3 = "5.9.7"
 
-lazy val vScalaTest = "3.0.5"
+lazy val vScalaTest = "3.0.8"
+lazy val vScalaLogging = "3.9.2"
 
 //Settings
 val sharedSettings = Seq(
@@ -76,7 +81,7 @@ val authDeps = Seq(
 val dbDeps = Seq(
   "org.tpolecat" %% "doobie-core" % vDoobie,
   "org.tpolecat" %% "doobie-postgres"  % vDoobie, // Postgres driver 42.2.2 + type mappings
-  "org.tpolecat" %% "doobie-scalatest" % "0.5.3"  // ScalaTest support for typechecking statements.
+  "org.tpolecat" %% "doobie-scalatest" % vDoobie  // ScalaTest support for typechecking statements.
 )
 
 val testDeps = Seq(
@@ -106,22 +111,11 @@ lazy val goingok = project.in(file("."))
     defaultLinuxInstallLocation in Docker := "/opt/docker",
     dockerExposedVolumes := Seq("/opt/docker/logs"),
     dockerBaseImage := "openjdk:11-jdk",
-
-//      // sbt-site needs to know where to find the paradox site
-//      sourceDirectory in Paradox := baseDirectory.value / "documentation",
-//      // paradox needs a theme
-//      ParadoxMaterialThemePlugin.paradoxMaterialThemeSettings(Paradox),
-//      paradoxProperties in Compile ++= Map(
-//        "github.base_url" -> s"$githubBaseUrl",
-//        "scaladoc.api.base_url" -> s"$scaladocApiBaseUrl"
-//      ),
-    
-      // Puts unified scaladocs into target/api
-      siteSubdirName in ScalaUnidoc := "api",
-      addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), siteSubdirName in ScalaUnidoc)
+    // Puts unified scaladocs into target/api
+    siteSubdirName in ScalaUnidoc := "api",
+    addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), siteSubdirName in ScalaUnidoc)
   ).enablePlugins(PlayScala)
   .enablePlugins(WebScalaJSBundlerPlugin)
-  //.enablePlugins(SbtWeb)
   .enablePlugins(SiteScaladocPlugin,ScalaUnidocPlugin)
 
 lazy val docs = (project in file("project_docs"))
@@ -143,7 +137,7 @@ lazy val server = project.in(file(serverName))
     libraryDependencies ++= dbDeps,
     libraryDependencies ++= authDeps,
     libraryDependencies ++= testDeps,
-    libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.0",
+    libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % vScalaLogging,
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
     buildInfoPackage := projectOrganisation,
     buildInfoOptions += BuildInfoOption.BuildTime,
@@ -158,13 +152,13 @@ lazy val client = project.in(file(clientName))
     version in startWebpackDevServer := vWebpackDevServer, // Needed for version 4 webpack
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % vScalaJsDom,
-      "org.singlespaced" %%% "scalajs-d3" % "0.3.4",
+      "org.singlespaced" %%% "scalajs-d3" % vSjsD3,
       "org.querki" %%% "jquery-facade" % "1.2",
       "com.github.karasiq" %%% "scalajs-bootstrap-v4" % vSjsBootstrap,
       "com.lihaoyi" %%% "scalatags" % vScalaTags, //Using ScalaTags instead of Twirl
       "com.lihaoyi" %%% "upickle" % vUpickle, //Using uJson for main JSON
-      "me.shadaj" %%% "slinky-core" % "0.4.3", // core React functionality, no React DOM
-      "me.shadaj" %%% "slinky-web" % "0.4.3", // React DOM, HTML and SVG tags
+      "me.shadaj" %%% "slinky-core" % vSlinky, // core React functionality, no React DOM
+      "me.shadaj" %%% "slinky-web" % vSlinky, // React DOM, HTML and SVG tags
       "org.scalactic" %%% "scalactic" % vScalaTest,
       "org.scalatest" %%% "scalatest" % vScalaTest % "test"
     ),
@@ -173,8 +167,8 @@ lazy val client = project.in(file(clientName))
       "jquery" -> vJquery, //used by bootstrap
       "popper.js" -> vPopper, //used by bootstrap
       "d3" -> vD3,
-      "react" -> "16.4.1",
-      "react-dom" -> "16.4.1"
+      "react" -> vReact,
+      "react-dom" -> vReact
     )
   ).enablePlugins(ScalaJSPlugin)
   .enablePlugins(ScalaJSBundlerPlugin) //, ScalaJSWeb)
@@ -191,11 +185,4 @@ updateDocsTask := {
   IO.copyDirectory(apiSource,docDest,overwrite=true,preserveLastModified=true)
   IO.copyDirectory(paradoxSource,docDest,overwrite=true,preserveLastModified=true)
 }
-
-//updateDocsTask := {
-//  val siteResult = makeSite.value
-//  val docSource = new File("target/site")
-//  val docDest = new File("docs")
-//  IO.copyDirectory(docSource,docDest,overwrite=true,preserveLastModified=true)
-//}
 

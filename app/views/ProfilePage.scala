@@ -52,7 +52,7 @@ object ProfilePage extends GenericPage {
 
   private def createChart(data:Option[Vector[models.ReflectionEntry]]) = {
     val refs = data.getOrElse(Vector()).toList
-    val chartData:List[ujson.Js.Obj] = refs.map(r => ujson.Js.Obj("timestamp" -> r.bneZonedDateTime.toOffsetDateTime.toString, "point" -> r.reflection.point))
+    val chartData:List[ujson.Obj] = refs.map(r => ujson.Obj("timestamp" -> r.bneZonedDateTime.toOffsetDateTime.toString, "point" -> r.reflection.point))
     val entries:String = ujson.write(chartData)
     script(raw(s"org.goingok.client.Visualisation.rpChart($entries)"))
   }

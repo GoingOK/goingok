@@ -42,6 +42,8 @@ project/LocalSbtSettings.scala
 
 project/project/target/
 
+project_docs/target/
+
 goingok_server/target/
 
 goingok_client/target/
