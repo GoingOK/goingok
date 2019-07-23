@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ivy-report.xsl"?>
+<ivy-report version="1.0">
+	<info
+		organisation="org.goingok"
+		module="docs$sources"
+		revision="4.2.0-M2.08"
+		conf="web-plugin"
+		confs="compile, runtime, test, provided, optional, web-assets, web-assets-test, web-plugin, paradox-theme, compile-internal, runtime-internal, test-internal, plugin, pom, scala-tool"
+		date="20190723160059"/>
+	<dependencies>
+	</dependencies>
+</ivy-report>
