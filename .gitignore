@@ -39,6 +39,7 @@ project/LocalSbtSettings.scala
 /public/javascripts/d3Test.js
 /public/javascripts/client-fastOptJS.js.map
 /public/javascripts/client-fastOptJS-bundle.js.map
+/public/javascripts/bootstrap.*
 
 project/project/target/
 
