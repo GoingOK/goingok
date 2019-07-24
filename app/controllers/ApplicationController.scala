@@ -35,10 +35,10 @@ class ApplicationController @Inject()(components: ControllerComponents)
     //Ok(Json.toJson(ServerInfo(BuildInfo.name,BuildInfo.version,BuildInfo.builtAtString)))
   }
 
-  def help: Action[AnyContent] = Action {
-    val page = HelpPage.render("GoingOK :: help")
-    Ok(page)
-  }
+//  def help: Action[AnyContent] = Action {
+//    val page = HelpPage.render("GoingOK :: help")
+//    Ok(page)
+//  }
 
   def demo: Action[AnyContent] = Action {
     val page = DemoPage.render("GoingOK :: demo")
