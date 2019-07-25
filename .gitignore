@@ -48,3 +48,7 @@ project_docs/target/
 goingok_server/target/
 
 goingok_client/target/
+/public/javascripts/fa-regular.min.js
+/public/javascripts/fa-solid.min.js
+/public/stylesheets/fa-svg-with-js.css
+/public/javascripts/fontawesome.min.js
