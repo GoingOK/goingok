@@ -38,7 +38,7 @@ $navigation()$
 <header class="site-header expanded row">
 <div class="small-12 column">
 <a href="#" class="off-canvas-toggle hide-for-medium" data-toggle="off-canvas-menu">$menu()$</a>
-$title()$
+<img class="headerImage" src="$page.base$img/GoingOK_Logo_small_transparent.png" /><!-- $title()$ -->
 <!--
 <a href="https://www.example.com" class="logo show-for-medium">logo</a>
 -->
