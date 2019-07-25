@@ -1,11 +1,8 @@
 let d3 = require('d3');
-let bs = require('bootstrap')
 
 export function buildChart(entries) {
 
     let svg = null;
-
-    let bs_test = bs
 
     //let entries = [{timestamp:"2018-05-02T06:01:29.077Z",point:20},{timestamp:"2018-05-03T06:01:29.077Z",point:80},{timestamp:"2018-05-04T06:01:29.077Z",point:54}];
 
