@@ -10,6 +10,7 @@ Get started immediately with the [Quick Start](overview/quick_start.html)
 @@@ index
 * [About GoingOK](about.md)
 * [User Guides](user/index.md)
+* [Project Info](info/index.md)
 @@@
 
 ---
