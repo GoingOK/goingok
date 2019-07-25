@@ -453,6 +453,8 @@ small {
 .site-header {
   background: #0c0c0c;
   border-bottom: solid 1px #cccccc;
+  height: 60px;
+  line-height: 60px;
 }
 
 .site-header .title {
@@ -497,6 +499,13 @@ small {
   margin-top: 1rem;
   text-align: right;
   color: #000;
+}
+
+.headerImage {
+  height: 40px;
+  width: auto;
+  float: left;
+  margin-top: 12px;
 }
 
 /* page header */
