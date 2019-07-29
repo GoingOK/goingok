@@ -47,9 +47,11 @@ If you accept to allowing your de-identified data to be used for research, resea
 
 ### Get Started
 
+A short video on getting started with GoingOK is available on the [GoingOK YouTube Channel](https://www.youtube.com/channel/UCIZpMV2QDZGgyLp7cF7Am4w)
+
 #### Go to the website
 
-[https://goingok.org](http://goingok.org)
+Go to the website that you have been given to use GoingOK. Some current projects and their websites are listed on the main [https://goingok.org](http://goingok.org) page.
 
 #### Sign in
 
