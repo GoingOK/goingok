@@ -14,9 +14,9 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 /**
-  * Handles GoingOK user profile
-  * Saves new reflections
-  * Gets reflections data
+  * Handles GoingOK user profile,
+  * Saves new reflections,
+  * and gets reflections data
   * @param components
   * @param profileService
   * @param ec
