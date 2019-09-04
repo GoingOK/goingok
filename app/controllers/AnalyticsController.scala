@@ -12,14 +12,31 @@ import views.{AnalyticsPage, ProfilePage}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
+/**
+  * Displays GoingOK analytics dashboard for users with supervisor role
+  *
+  * @param components  [[play.api.mvc.ControllerComponents]]
+  * @param profileService  [[org.goingok.server.services.ProfileService]]
+  * @param analyticsService  [[org.goingok.server.services.AnalyticsService]]
+  * @param ec  [[scala.concurrent.ExecutionContext]]
+  * @param assets  [[controllers.AssetsFinder]]
+  */
 class AnalyticsController @Inject()(components: ControllerComponents, profileService:ProfileService, analyticsService:AnalyticsService)
                                    (implicit ec: ExecutionContext, assets: AssetsFinder)
   extends AbstractController(components) with GoingOkController {
 
+  /** Authorises user and calls [[controllers.AnalyticsController.makePage]] to create an HTML page of reflection analytics */
   def analytics: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] => authorise(request,makePage)}
 
+  /** Authorises user and calls [[controllers.AnalyticsController.makeCSV]] to create a CSV file of reflection analytics */
   def reflectionsCsv: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] => authorise(request,makeCSV)}
 
+  /**
+    * Validates user role is supervisor
+    * @param request HTTP requset
+    * @param pageMaker HTML page based on user info
+    * @return
+    */
   private def authorise(request:Request[AnyContent],pageMaker:(User,Request[AnyContent])=>Result) = Future {
     val user: Option[User] = for {
       uid <- request.session.get("user")

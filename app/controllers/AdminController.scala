@@ -11,18 +11,36 @@ import views.AdminPage
 
 import scala.concurrent.{ExecutionContext, Future}
 
+/**
+  * Validates admin credentials
+  * Displays admin profile
+  *
+  * @param components  [[play.api.mvc.ControllerComponents]]
+  * @param profileService  [[org.goingok.server.services.ProfileService]]
+  * @param adminService  [[org.goingok.server.services.AdminService]]
+  * @param ec  [[scala.concurrent.ExecutionContext]]
+  * @param assets  [[controllers.AssetsFinder]]
+  */
 class AdminController @Inject()(components: ControllerComponents,profileService:ProfileService,adminService:AdminService)
                                (implicit ec: ExecutionContext, assets: AssetsFinder)
   extends AbstractController(components) with GoingOkController {
 
+  /** Authorises user and calls [[controllers.AdminController.makePage]] to create an HTML page of reflection analytics */
   def admin: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] => authorise(request,makePage)}
 
+  /** Authorises user and calls [[controllers.AdminController.addNewGroup]] to add a new group */
   def addGroup: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] => authorise(request,addNewGroup)}
 
+  /** Authorises user and calls [[controllers.AdminController.addMorePseudonyms]] to add more pseudonyms */
   def addPseudonyms: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] => authorise(request,addMorePseudonyms)}
 
   //def reflectionsCsv: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] => authorise(request,makeCSV)}
 
+  /**
+    * Validates user info and authorizes if the user is an admin
+    * @param request the submitted HTTP request
+    * @param pageMaker page maker based on user info
+    */
   private def authorise(request:Request[AnyContent],pageMaker:(User,Request[AnyContent])=>Result) = Future {
     val user: Option[User] = for {
       uid <- request.session.get("user")
@@ -62,6 +80,12 @@ class AdminController @Inject()(components: ControllerComponents,profileService:
     makePageWithMessage(message,user)
   }
 
+  /**
+    * Creates an admin page with UI message
+    * @param message UI message to display
+    * @param user User info
+    * @return HTML admin page
+    */
   private def makePageWithMessage(message:Option[UiMessage],user:User): Result = {
     val groupInfo = adminService.groupInfo
     val userInfo = adminService.userInfo
