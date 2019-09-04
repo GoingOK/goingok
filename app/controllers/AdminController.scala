@@ -14,20 +14,23 @@ import scala.concurrent.{ExecutionContext, Future}
 /**
   * Validates admin credentials and renders admin profile
   *
-  * @param profileService   [[org.goingok.server.services.ProfileService]]
-  * @param adminService   [[org.goingok.server.services.AdminService]]
+  * @param components  [[play.api.mvc.ControllerComponents]]
+  * @param profileService  [[org.goingok.server.services.ProfileService]]
+  * @param adminService [[org.goingok.server.services.AdminService]]
+  * @param ec  [[scala.concurrent.ExecutionContext]]
+  * @param assets  [[controllers.AssetsFinder]]
   */
 class AdminController @Inject()(components: ControllerComponents,profileService:ProfileService,adminService:AdminService)
                                (implicit ec: ExecutionContext, assets: AssetsFinder)
   extends AbstractController(components) with GoingOkController {
 
-  /** Authorises user and calls [[controllers.AdminController.makePage]] to create an HTML page of reflection analytics */
+  /** Authorises user and calls 'pageMaker' to create an HTML page of reflection analytics */
   def admin: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] => authorise(request,makePage)}
 
-  /** Authorises user and calls [[controllers.AdminController.addNewGroup]] to add a new group */
+  /** Authorises user and calls 'pageMaker' to add a new group */
   def addGroup: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] => authorise(request,addNewGroup)}
 
-  /** Authorises user and calls [[controllers.AdminController.addMorePseudonyms]] to add more pseudonyms */
+  /** Authorises user and calls 'pageMaker' to add more pseudonyms */
   def addPseudonyms: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] => authorise(request,addMorePseudonyms)}
 
   //def reflectionsCsv: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] => authorise(request,makeCSV)}

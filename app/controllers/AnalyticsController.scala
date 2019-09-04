@@ -13,7 +13,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 /**
-  * Displays GoingOK analytics dashboard for users with supervisor role
+  * Renders GoingOK analytics dashboard for users with supervisor role
   *
   * @param components  [[play.api.mvc.ControllerComponents]]
   * @param profileService  [[org.goingok.server.services.ProfileService]]
@@ -25,10 +25,10 @@ class AnalyticsController @Inject()(components: ControllerComponents, profileSer
                                    (implicit ec: ExecutionContext, assets: AssetsFinder)
   extends AbstractController(components) with GoingOkController {
 
-  /** Authorises user and calls [[controllers.AnalyticsController.makePage]] to create an HTML page of reflection analytics */
+  /** Authorises user and calls 'pageMaker' to create an HTML file of reflection analytics */
   def analytics: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] => authorise(request,makePage)}
 
-  /** Authorises user and calls [[controllers.AnalyticsController.makeCSV]] to create a CSV file of reflection analytics */
+  /** Authorises user and calls 'pageMaker' to create a CSV file of reflection analytics */
   def reflectionsCsv: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] => authorise(request,makeCSV)}
 
   /**
