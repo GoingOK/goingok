@@ -12,14 +12,10 @@ import views.AdminPage
 import scala.concurrent.{ExecutionContext, Future}
 
 /**
-  * Validates admin credentials
-  * Displays admin profile
+  * Validates admin credentials and renders admin profile
   *
-  * @param components  [[play.api.mvc.ControllerComponents]]
-  * @param profileService  [[org.goingok.server.services.ProfileService]]
-  * @param adminService  [[org.goingok.server.services.AdminService]]
-  * @param ec  [[scala.concurrent.ExecutionContext]]
-  * @param assets  [[controllers.AssetsFinder]]
+  * @param profileService   [[org.goingok.server.services.ProfileService]]
+  * @param adminService   [[org.goingok.server.services.AdminService]]
   */
 class AdminController @Inject()(components: ControllerComponents,profileService:ProfileService,adminService:AdminService)
                                (implicit ec: ExecutionContext, assets: AssetsFinder)
@@ -81,7 +77,7 @@ class AdminController @Inject()(components: ControllerComponents,profileService:
   }
 
   /**
-    * Creates an admin page with UI message
+    * Renders an admin page with UI message
     * @param message UI message to display
     * @param user User info
     * @return HTML admin page
