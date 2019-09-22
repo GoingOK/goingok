@@ -5,6 +5,7 @@ import scalatags.Text.all._
 
 object ReflectionPointChart {
 
+  /** reflection point chart display */
   def display() :TypedTag[String] = {
 
     div(

@@ -8,6 +8,7 @@ import scalatags.Text.all._
 
 object ReflectionList {
 
+  /** List of reflections HTML display */
   def display(data:Option[Vector[models.ReflectionEntry]]=None) :TypedTag[String] = {
     val refs = data.getOrElse(List())
     div(id:="reflection-box",
@@ -23,6 +24,7 @@ object ReflectionList {
     )
   }
 
+  /** colour setting */
   def colour(num:Int): String = {
     val green = ((num/100.0)*220).toInt
     val blue = (((100-num)/100.0)*120).toInt
