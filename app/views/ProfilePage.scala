@@ -16,6 +16,7 @@ object ProfilePage extends GenericPage {
   private val sliderStartPoint:Double = 50.0
 
 
+  /** Displays HTML profile page */
   def page(titleStr: String,message:Option[UiMessage],profile:Profile = Profile()): TypedTag[String] = {
 
     //profile.user.map(u => (u.group_code+"_"+u.pseudonym))
@@ -50,6 +51,7 @@ object ProfilePage extends GenericPage {
     )
   }
 
+  /** Creates user chart */
   private def createChart(data:Option[Vector[models.ReflectionEntry]]) = {
     val refs = data.getOrElse(Vector()).toList
     val chartData:List[ujson.Js.Obj] = refs.map(r => ujson.Js.Obj("timestamp" -> r.bneZonedDateTime.toOffsetDateTime.toString, "point" -> r.reflection.point))

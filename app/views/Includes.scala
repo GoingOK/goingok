@@ -9,6 +9,7 @@ object Includes {
 
   lazy val googleClientId = Config.stringOpt("google.client.id")
 
+  /** creates HTML head content */
   def headContent(titleStr:String) = tags.head(
     tags2.title(titleStr),
     meta(charset := "utf-8"),
@@ -43,6 +44,7 @@ object Includes {
   //val d3Js = script(src := routes.Assets.versioned("javascripts/d3.min.js").url)
   val startRegister = script("$('#register-modal').modal({ keyboard: false })")
 
+  /** Creates HTML dev element for panels */
   def panel(idName:String,icon:String,title:String,content:TypedTag[String]):TypedTag[String] = div(id := idName, `class` := "card profile-panel",
     div(`class` := "card-header",
       span(`class` := icon), b(s" $title"),
