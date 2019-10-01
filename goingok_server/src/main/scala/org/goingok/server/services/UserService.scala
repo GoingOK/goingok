@@ -12,14 +12,28 @@ class UserService {
 
   val ds = new DataService
 
+  /**
+    * Gets GoingOK user from DB with google user info
+    * @param googleUser Google user
+    * @return GoingOK user
+    */
   def getUser(googleUser:GoogleUser):Either[Throwable, User] = for {
       u1 <- ds.getUserWithGoogleId(googleUser.gId)
   } yield u1
 
+  /**
+    * Gets GoingOK user from DB
+    * @param goingok_id GoingOK user ID
+    * @return GoingOK user
+    */
   def getUser(goingok_id:UUID):Either[Throwable,User] = for {
     usr <- ds.getUserForId(goingok_id)
   } yield usr
 
+  /**
+    * Creates new GoingOK user
+    * @param googleUser Google user
+    */
   def createUser(googleUser:GoogleUser):Either[Throwable,User] = {
     logger.warn("Creating new user")
     val user = for {
@@ -32,6 +46,7 @@ class UserService {
     user
   }
 
+  /** Gets new pseudonym */
   def getNewPseudonym:Either[Throwable,String] = {
     logger.warn("Getting new pseudonym")
     for {
@@ -40,11 +55,21 @@ class UserService {
     } yield p
   }
 
+  /**
+    * Checks group code validity
+    * @param code group code
+    * @return Boolean
+    */
   def isGroupCodeValid(code:String):Either[Throwable,Boolean] = for {
     gc <- ds.getGroupCode(code)
   } yield gc.group_code.toLowerCase.contentEquals(code.toLowerCase)
 
 
+  /**
+    * Adds group code to existing user
+    * @param code group code
+    * @param goingok_id GoingOK user ID
+    */
   def addGroupCodeToUser(code:String,goingok_id:UUID):Either[Throwable,Int] = for {
     rows <- ds.updateCodeForUser(code:String,goingok_id:UUID)
   } yield rows

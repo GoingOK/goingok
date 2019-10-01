@@ -31,6 +31,11 @@ class DataService {
 
   def runQuery[A](query:ConnectionIO[A]):Either[Throwable,A] = query.transact(db).attempt.unsafeRunSync
 
+  /**
+    * Gets GoingOK user by Google user ID
+    * @param googleId Google user ID
+    * @return GoingOK user
+    */
   def getUserWithGoogleId(googleId:String):Either[Throwable,User] = {
     val query = sql"""select * from users u, user_auths a
                       where u.goingok_id = a.goingok_id

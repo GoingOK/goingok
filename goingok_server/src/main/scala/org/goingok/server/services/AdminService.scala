@@ -7,13 +7,19 @@ import io.nlytx.commons.privacy.Anonymiser
 import org.goingok.server.data.DbResults
 import org.goingok.server.data.models.{GroupCode, User}
 
-
+/**
+  * Handles all administrator functionality
+  */
 class AdminService {
 
   val logger: Logger = Logger(this.getClass)
 
   val ds = new DataService()
 
+  /**
+    * Gets all groups codes from DB
+    * @return Sequence of group codes
+    */
   def groupInfo: Seq[(String, Int)] = ds.getAllGroupCodes match {
     case Right(result:DbResults.GroupCodes) => {
       logger.info(s"Get groups result: ${result.value.toString}")
@@ -25,6 +31,10 @@ class AdminService {
     }
   }
 
+  /**
+    * Gets all users pseudonyms from DB
+    * @return Sequence of pseudonyms
+    */
   def userInfo: Seq[(String,Int)] = ds.getPseudonymCounts match {
     case Right(result:DbResults.GroupedPseudonymCounts) => {
       logger.info(s"Pseudonym count result: ${result.value.toString}")
@@ -43,6 +53,11 @@ class AdminService {
   }
 
 
+  /**
+    * Adds new group and inserts it into DB
+    * @param groupCode user's group code
+    * @param goingokId user's GoingOk ID
+    */
   def addGroup(groupCode:String,goingokId:UUID): Either[Throwable,Int] = {
     for {
       g <- ds.insertGroup(groupCode,goingokId)
@@ -50,6 +65,10 @@ class AdminService {
   }
 
 
+  /**
+    * Creates new pseudonyms and inserts them into DB
+    * @param num number of pseudonyms to be created
+    */
   def createPseudonyms(num:Int): Either[Throwable,Int] = {
     for {
       ss <- ds.getAllPseudonyms.map(_.toSet)
@@ -59,6 +78,11 @@ class AdminService {
     } yield res
   }
 
+  /**
+    * Checks if a user has admin role and returns the user if true
+    * @param goingok_id GoingOk User ID
+    * @return GoingOk Admin User
+    */
   def getAdminUser(goingok_id:UUID): Either[Throwable, User] = {
     for {
       u <- ds.getUserForId(goingok_id)
@@ -67,6 +91,11 @@ class AdminService {
   }
 
 
+  /**
+    * Helper to check if a user has admin role
+    * @param user GoingOk user ID
+    * @return GoingOk admin user
+    */
   private def getAdminUser(user:User) = if(user.admin) {
     Right(user)
   } else {
