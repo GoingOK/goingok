@@ -251,7 +251,7 @@ class DataService {
   }
 
   /**
-    * Update a given pseudonym to be allocated
+    * Update a given pseudonym from 'not allocated' to 'allocated'
     * @param pseudonym
     * @return
     */
@@ -260,6 +260,10 @@ class DataService {
     runQuery(query)
   }
 
+  /**
+    * Counts all existing GoingOk users
+    * @return Sequence of users
+    */
   def countUsers:Either[Throwable,DbResults.Result] = {
     val query = sql"""SELECT group_code, COUNT(*)
                       FROM users
@@ -269,6 +273,11 @@ class DataService {
     runQuery(query.to[Seq]).map(r => DbResults.GroupedUserCounts(r))
   }
 
+  /**
+    * Counts all existing reflections
+    * @param goingok_id GoingOk user ID
+    * @return Sequence of reflections
+    */
   def countReflections(goingok_id:UUID):Either[Throwable,DbResults.Result] = {
     val query = sql"""select u.group_code, count(*)
                      from users u,reflections r
