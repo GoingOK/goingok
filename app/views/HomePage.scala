@@ -12,6 +12,7 @@ import views.components.{HomeContent, NavBar}
   */
 object HomePage extends GenericPage {
 
+  /** Displays home page */
   override def page(titleStr: String, user: Option[User]=None,message:String=""): TypedTag[String] = {
     tags.html(
       attr("itemscope") := "",

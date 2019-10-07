@@ -13,6 +13,7 @@ import views.components._ // scalastyle:ignore
 
 object AdminPage extends GenericPage {
 
+  /** Admin page HTML display */
   def page(titleStr: String,message:Option[UiMessage],user:Option[User]=None,adminData:AdminData): TypedTag[String] = {
 
 
@@ -41,10 +42,12 @@ object AdminPage extends GenericPage {
     )
   }
 
+  /** Group list HTML display */
   private def groupList(groupInfo:Seq[(String,Int)]):TypedTag[String] = {
     div(groupInfo.mkString("|"))
   }
 
+  /** Group form HTML display */
   private def groupForm:TypedTag[String] = {
     form(`class` := "needs-validation", action := "/admin/addGroup", method := "POST", attr("novalidate") := "",
       div(`class` := "form-group",
@@ -59,10 +62,12 @@ object AdminPage extends GenericPage {
     )
   }
 
+  /** Group form HTML display */
   private def userList(userInfo:Seq[(String,Int)]):TypedTag[String] = {
     div(userInfo.mkString("|"))
   }
 
+  /** User form HTML display */
   private def userForm:TypedTag[String] = {
     form(`class` := "needs-validation", action := "/admin/addPseudonyms", method := "POST", attr("novalidate") := "",
       div(`class` := "form-group text-center",
