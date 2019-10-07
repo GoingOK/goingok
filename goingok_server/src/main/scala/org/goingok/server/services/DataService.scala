@@ -2,20 +2,26 @@ package org.goingok.server.services
 
 import java.time.LocalDateTime
 
-import cats.effect._
+import cats._
+import cats.data._
+import cats.effect.IO
 import cats.implicits._
 import doobie._
 import doobie.implicits._
+import doobie.util.ExecutionContexts
 import java.util.UUID
+import doobie.postgres._
+import doobie.postgres.implicits._
 
 import com.typesafe.scalalogging.Logger
-import doobie.util.meta.AdvancedMeta
+//import doobie.util.
 import org.goingok.server.Config
 import org.goingok.server.data.DbResults
 import org.goingok.server.data.DbResults.Result
 import org.goingok.server.data.models._
 
 import scala.collection.immutable.HashMap
+
 
 class DataService {
 
@@ -25,9 +31,13 @@ class DataService {
   private lazy val url = Config.string("db.url")
   private lazy val user = Config.string("db.user")
   private lazy val password = Config.string("db.password")
+
+  // We need a ContextShift[IO] before we can construct a Transactor[IO]. The passed ExecutionContext
+  // is where nonblocking operations will be executed. For testing here we're using a synchronous EC.
+  implicit val cs = IO.contextShift(ExecutionContexts.synchronous)
   private lazy val db = Transactor.fromDriverManager[IO](driver,url,user,password)
 
-  private implicit val uuidImplicit:AdvancedMeta[UUID] =  doobie.postgres.implicits.UuidType
+  //private implicit val uuidImplicit:AdvancedMeta[UUID] =  doobie.postgres.implicits.UuidType
 
   def runQuery[A](query:ConnectionIO[A]):Either[Throwable,A] = query.transact(db).attempt.unsafeRunSync
 

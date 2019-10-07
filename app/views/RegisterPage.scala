@@ -10,6 +10,7 @@ import views.components.register.GroupPopup
 
 object RegisterPage extends GenericPage {
 
+  /** Displays register page */
   override def page(titleStr: String, user: Option[User]=None,message:String=""): TypedTag[String] = {
 
     tags.html(

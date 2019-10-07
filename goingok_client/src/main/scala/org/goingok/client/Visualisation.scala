@@ -7,6 +7,7 @@ import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
 object Visualisation {
 
   @JSExport
+  /** Generates chart of user's reflections */
   def rpChart(entries:js.Array[js.Object]) :Unit = {
     println("Generating Visualisation: rpChart")
     //println(s"rpChart entries: $entries")

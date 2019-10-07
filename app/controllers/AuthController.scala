@@ -10,6 +10,13 @@ import play.api.mvc.{Action, AnyContent, _}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
+/**
+  * Handles signin, signout and new users
+  * @param components [[play.api.mvc.ControllerComponents]]
+  * @param authService [[org.goingok.server.services.GoogleAuthService]]
+  * @param userService [[org.goingok.server.services.UserService]]
+  * @param ex [[scala.concurrent.ExecutionContext]]
+  */
 class AuthController @Inject()(components: ControllerComponents,authService:GoogleAuthService,userService:UserService)
                               (implicit ex: ExecutionContext) extends AbstractController(components) {
 
@@ -20,14 +27,17 @@ class AuthController @Inject()(components: ControllerComponents,authService:Goog
   private lazy val secret = Config.string("google.client.secret")
   private lazy val redirectUrl = Config.string("google.redirect.url")
 
+  /** Function to handle signin requests */
   def signin: Action[AnyContent] = Action {
     Redirect(authService.url)
   }
 
+  /** Function to handle signout requests */
   def signout: Action[AnyContent] = Action {
     Redirect("/").withNewSession
   }
 
+  /** Function to validate user information with google api */
   def googleAuth: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     Future {
       val googleUser = for {
@@ -75,6 +85,11 @@ class AuthController @Inject()(components: ControllerComponents,authService:Goog
     }
   }
 
+  /**
+    * Function to handle new GoingOK user
+    * @param user GoingOk user info
+    * @param googleUser google user info
+    */
   private def handleNewUser(user:Either[Throwable,User],googleUser:Either[Throwable,GoogleUser]):Either[Throwable,User] = user match {
     case Right(usr) => Right(usr)
     case Left(e) => {
@@ -90,6 +105,10 @@ class AuthController @Inject()(components: ControllerComponents,authService:Goog
     }
   }
 
+  /**
+    * Function to check if a user is already registered
+    * @param user user info
+    */
   private def registeredUser(user:User):Boolean = user.group_code.nonEmpty &&
     !user.group_code.contains("none") &&
     user.register_timestamp.nonEmpty

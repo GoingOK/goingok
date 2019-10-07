@@ -4,6 +4,7 @@ import scalatags.Text.all._
 
 object ReflectionEntry {
 
+  /** HTML form-group display */
   def display(sliderPoint:Double=0.0) = form( `class` := "needs-validation", action:="/profile", method:="POST", attr("novalidate"):="",
     div( `class` := "row",
       div( `class` :="col",
@@ -22,6 +23,7 @@ object ReflectionEntry {
     script(raw(validationScript))
   )
 
+  /** HTML form-group DEMO display */
   def demoDisplay(sliderPoint:Double=0.0) = form( `class` := "needs-validation", action:="/profile", method:="POST", attr("novalidate"):="",
     div( `class` := "row",
       div( `class` :="col",
@@ -40,6 +42,7 @@ object ReflectionEntry {
     //script(raw(validationScript))
   )
 
+  /** HTML slider display */
   private def slider(point:Double) = div(id:="slider-group",`class`:="form-group",
     div(`class`:="d-flex justify-content-between",
       div( `class` := "p-2", "Distressed"),

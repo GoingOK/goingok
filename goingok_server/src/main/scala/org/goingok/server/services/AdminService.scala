@@ -20,6 +20,7 @@ class AdminService {
     * Gets all groups codes from DB
     * @return Sequence of group codes
     */
+
   def groupInfo: Seq[(String, Int)] = ds.getAllGroupCodes match {
     case Right(result:DbResults.GroupCodes) => {
       logger.info(s"Get groups result: ${result.value.toString}")
