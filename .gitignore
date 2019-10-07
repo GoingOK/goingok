@@ -39,9 +39,16 @@ project/LocalSbtSettings.scala
 /public/javascripts/d3Test.js
 /public/javascripts/client-fastOptJS.js.map
 /public/javascripts/client-fastOptJS-bundle.js.map
+/public/javascripts/bootstrap.*
 
 project/project/target/
+
+project_docs/target/
 
 goingok_server/target/
 
 goingok_client/target/
+/public/javascripts/fa-regular.min.js
+/public/javascripts/fa-solid.min.js
+/public/stylesheets/fa-svg-with-js.css
+/public/javascripts/fontawesome.min.js

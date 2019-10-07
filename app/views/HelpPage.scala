@@ -12,9 +12,9 @@ import views.components.{HelpContent, NavBar}
   */
 object HelpPage extends GenericPage {
 
+
   /** Displays help page */
-  override def page(titleStr: String, user: Option[User]=None,message:String=""): TypedTag[String] = {
-    val signedIn = user.nonEmpty
+  def page(titleStr: String, message:Option[String]=None,user: Option[User]=None): TypedTag[String] = {
     tags.html(
       Includes.headContent(titleStr),
       tags.body(
