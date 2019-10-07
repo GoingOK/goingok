@@ -10,11 +10,19 @@ import views.{ProfilePage, RegisterPage}
 
 import scala.concurrent.{ExecutionContext, Future}
 
+/**
+  * Handles new GoingOK user registration
+  * @param components [[play.api.mvc.ControllerComponents]]
+  * @param userService [[org.goingok.server.services.UserService]]
+  * @param ec [[scala.concurrent.ExecutionContext]]
+  * @param assets [[controllers.AssetsFinder]]
+  */
 class RegisterController @Inject()(components: ControllerComponents, userService:UserService)
                                   (implicit ec: ExecutionContext, assets: AssetsFinder)
   extends AbstractController(components) with GoingOkController {
 
 
+  /** Handles new GoingOk user registration */
   def register: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     request.session.get("user").map { uid =>
       val goingok_id = UUID.fromString(uid)
@@ -27,6 +35,7 @@ class RegisterController @Inject()(components: ControllerComponents, userService
 
   }
 
+  /** Handles new GoingOk user with group registration */
   def registerWithGroup: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     request.session.get("user").map { uid =>
       Future {
