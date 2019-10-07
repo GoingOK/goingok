@@ -69,7 +69,7 @@ class AnalyticsController @Inject()(components: ControllerComponents, profileSer
     } else {
       "Not Permitted"
     }
-    Ok(response)
+    Ok(response).withHeaders(CONTENT_TYPE -> "application/x-download",CONTENT_DISPOSITION ->s"""attachment; filename="$group.csv" """)
   }
 
 

@@ -7,13 +7,20 @@ import io.nlytx.commons.privacy.Anonymiser
 import org.goingok.server.data.DbResults
 import org.goingok.server.data.models.{GroupCode, User}
 
-
+/** Handles all data services for the admin page
+ * == More Info ==
+ * Some more detail about the [[org.goingok.server.services.AdminService]] class here.
+ */
 class AdminService {
 
   val logger: Logger = Logger(this.getClass)
 
   val ds = new DataService()
 
+  /** groupInfo
+   * Gets all group_codes from database and returns as sequence of (String,Int)
+   * @return Seq[(String,Int)]
+   */
   def groupInfo: Seq[(String, Int)] = ds.getAllGroupCodes match {
     case Right(result:DbResults.GroupCodes) => {
       logger.info(s"Get groups result: ${result.value.toString}")

@@ -45,11 +45,13 @@ class ApplicationController @Inject()(components: ControllerComponents)
     //Ok(Json.toJson(ServerInfo(BuildInfo.name,BuildInfo.version,BuildInfo.builtAtString)))
   }
 
+
   /** Renders help page */
   def help: Action[AnyContent] = Action {
     val page = HelpPage.render("GoingOK :: help")
     Ok(page)
   }
+
 
   /** Renders demo page */
   def demo: Action[AnyContent] = Action {
