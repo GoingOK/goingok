@@ -1,6 +1,5 @@
 package views
 
-import java.util.UUID
 
 import org.goingok.server.Config
 import org.goingok.server.data.{Profile, UiMessage, models}
@@ -64,9 +63,9 @@ object ProfilePage extends GenericPage {
   /** Creates user chart */
   private def createChart(data:Option[Vector[models.ReflectionEntry]]) = {
     val refs = data.getOrElse(Vector()).toList
-    val chartData:List[ujson.Obj] = refs.map(r => ujson.Obj("timestamp" -> r.bneZonedDateTime.toOffsetDateTime.toString, "point" -> r.reflection.point))
+    val chartData:List[ujson.Obj] = refs.map(r => ujson.Obj("timestamp" -> r.bneDateTimeString, "point" -> r.reflection.point))
     val entries:String = ujson.write(chartData)
-    script(raw(s"org.goingok.client.Visualisation.rpChart($entries)"))
+    script(raw(s"Visualisation.rpChart($entries)"))
   }
 }
 

@@ -16,11 +16,11 @@
 
 import LocalSbtSettings._
 
-scalacOptions += "-Ypartial-unification" // 2.11.9+
+//scalacOptions += "-Ypartial-unification" // 2.11.9+
 //scalacOptions += "-target:jvm-1.8"
 
 lazy val projectName = "goingok"
-lazy val projectVersion = "4.2.0"
+lazy val projectVersion = "4.2.2"
 lazy val projectOrganisation = "org.goingok"
 
 lazy val serverName = s"${projectName}_server"
@@ -28,34 +28,34 @@ lazy val clientName = s"${projectName}_client"
 lazy val sharedName = s"${projectName}_shared"
 
 //Versions
-scalaVersion in ThisBuild := "2.12.8"
+scalaVersion in ThisBuild := "2.13.1"
 
 //resolvers in ThisBuild += "nlytx bintray" at "https://dl.bintray.com/nlytx/nlytx-nlp"
-resolvers in ThisBuild += Resolver.bintrayRepo("nlytx", "nlytx-nlp")
+//resolvers in ThisBuild += Resolver.bintrayRepo("nlytx", "nlytx-nlp")
 
-lazy val vScalaTags = "0.7.0"
-lazy val vSlinky = "0.6.2"
+lazy val vScalaTags = "0.8.6"
+lazy val vSlinky = "0.6.4"
 lazy val vSjsD3 = "0.3.4"
 
-lazy val vUpickle = "0.7.5"
-lazy val vGoogleClientApi = "1.30.2"
-lazy val vDoobie = "0.7.0"
-lazy val vConfig = "1.3.4"
-lazy val vNlpCommons = "1.1.2"
+lazy val vUpickle = "1.0.0"
+lazy val vGoogleClientApi = "1.30.5"
+lazy val vDoobie = "0.8.8"
+lazy val vConfig = "1.4.0"
+//lazy val vNlpCommons = "1.1.2"
 
-lazy val vScalaJsDom = "0.9.7"
+lazy val vScalaJsDom = "1.0.0"
 lazy val vWebpack = "4.10.2"
 lazy val vWebpackDevServer = "3.1.4"
 //lazy val vSjsBootstrap = "2.3.5"
 //lazy val vBootstrapNative = "1.2.7"
 
-lazy val vReact = "16.4.1"
+lazy val vReact = "16.13.0"
 //lazy val vBootstrap = "4.1.1"
-lazy val vJquery = "3.2.1"
+lazy val vJquery = "3.4.1"
 lazy val vPopper = "1.14.4"
 lazy val vD3 = "5.9.7"
 
-lazy val vScalaTest = "3.0.8"
+lazy val vScalaTest = "3.1.1"
 lazy val vScalaLogging = "3.9.2"
 
 //Settings
@@ -72,7 +72,7 @@ val generalDeps = Seq(
   "com.typesafe" % "config" % vConfig,
   "com.lihaoyi" %% "scalatags" % vScalaTags, //Using ScalaTags instead of Twirl
   "com.lihaoyi" %% "upickle" % vUpickle, //Using uJson for main JSON
-  "io.nlytx" %% "nlytx-nlp-commons" % vNlpCommons
+  //"io.nlytx" %% "nlytx-nlp-commons" % vNlpCommons
 )
 
 val authDeps = Seq(

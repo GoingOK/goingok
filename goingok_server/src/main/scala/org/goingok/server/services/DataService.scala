@@ -159,6 +159,25 @@ class DataService {
     runQuery(query.to[Seq]).map(r => DbResults.GroupedReflections(r))
   }
 
+  def getAuthorReflectionsForGroup(group_code:String): Either[Throwable,DbResults.Result] = {
+    val query = sql"""select r.timestamp, u.pseudonym, r.point, r.text
+                  from reflections r, users u
+                  where r.goingok_id = u.goingok_id
+                  and u.group_code=$group_code""".query[ReflectionAuthorEntry]
+
+    runQuery(query.to[Seq]).map(r => DbResults.GroupedAuthorReflections(r))
+  }
+
+  def getAuthorReflectionsForGroupWithRange(group_code:String,start:String,end:String): Either[Throwable,DbResults.Result] = {
+    val query = sql"""select r.timestamp, u.pseudonym, r.point, r.text
+                  from reflections r, users u
+                  where r.goingok_id = u.goingok_id
+                  and u.group_code=$group_code
+                  and timestamp >=$start
+                  and timestamp <=$end""".query[ReflectionAuthorEntry]
+    runQuery(query.to[Seq]).map(r => DbResults.GroupedAuthorReflections(r))
+  }
+
   /**
     * Gets GoingOK group code from DB
     * @param code GoingOK group code

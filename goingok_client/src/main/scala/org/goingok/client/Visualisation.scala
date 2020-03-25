@@ -3,7 +3,7 @@ package org.goingok.client
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
 
-@JSExportTopLevel("org.goingok.client.Visualisation")
+@JSExportTopLevel("Visualisation")
 object Visualisation {
 
   @JSExport

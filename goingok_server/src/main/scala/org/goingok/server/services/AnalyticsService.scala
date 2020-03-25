@@ -64,7 +64,7 @@ class AnalyticsService {
   def reflectionsForGroupCSV(group:String,range:Option[String]=None): Option[String] = {
     val result  = if(range.isEmpty) {
       logger.info(s"getting all reflections for: $group")
-      ds.getReflectionsForGroup(group) // all reflections
+      ds.getAuthorReflectionsForGroup(group) // all reflections
     } else {
       range match {
         case Some("week") =>
@@ -73,17 +73,17 @@ class AnalyticsService {
           val end = now.`with`(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY))
           val start = end.`with`(TemporalAdjusters.previous(DayOfWeek.SUNDAY))
           logger.info(s"date range: $start - $end")
-          ds.getReflectionsForGroupWithRange(group,start.toString,end.toString)
+          ds.getAuthorReflectionsForGroupWithRange(group,start.toString,end.toString)
         case _ => Left(new Exception("Range is not valid"))
       }
     }
     result match {
-      case Right(result:DbResults.GroupedReflections) => {
+      case Right(result:DbResults.GroupedAuthorReflections) => {
         logger.info(s"reflections found: ${result.value.size}")
-        val header = "TIMESTAMP,REF_POINT,REF_TEXT\n"
+        val header = "TIMESTAMP,AUTHOR,REF_POINT,REF_TEXT\n"
         val lines = result.value.map{re =>
           val text = re.reflection.text.replaceAll("\"","'").replaceAll("[\\n\\r]+"," ")
-          s""""${re.timestamp}",${re.reflection.point},"${text}""""
+          s""""${re.timestamp}",${re.pseudonym},${re.reflection.point},"${text}""""
         }.mkString("\n")
         Some(header+lines)
       }

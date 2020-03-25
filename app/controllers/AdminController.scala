@@ -93,7 +93,7 @@ class AdminController @Inject()(components: ControllerComponents,profileService:
   }
 
   private val addMorePseudonyms = (user:User, request:Request[AnyContent]) => {
-    adminService.createPseudonyms(2000) match {
+    adminService.createPseudonyms(3000) match {
       case Right(num) => Ok(s"Created $num pseudonyms")
       case Left(error) => Ok(error.getMessage)
     }
