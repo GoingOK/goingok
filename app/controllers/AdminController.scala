@@ -88,8 +88,7 @@ class AdminController @Inject()(components: ControllerComponents,profileService:
   private def makePageWithMessage(message:Option[UiMessage],user:User): Result = {
     val groupInfo = adminService.groupInfo
     val userInfo = adminService.userInfo
-    val page = AdminPage.page("GoingOK :: admin", message, Some(user),AdminData(groupInfo,userInfo))
-    Ok(AdminPage.getHtml(page))
+    Ok(new AdminPage(Some(user),AdminData(groupInfo,userInfo)).buildPage(message=message))
   }
 
   private val addMorePseudonyms = (user:User, request:Request[AnyContent]) => {

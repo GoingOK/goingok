@@ -68,8 +68,9 @@ class ProfileController @Inject()(components: ControllerComponents,profileServic
         val reflections = profileService.getReflections(goingok_id).map(_.reverse)
 
         if(user.getOrElse(User(UUID.randomUUID())).group_code!="none") {
-          val page = ProfilePage.page("GoingOK :: profile", message, Profile(user, reflections))
-          Ok(ProfilePage.getHtml(page))
+//          val page = ProfilePage.page("GoingOK :: profile", message, Profile(user, reflections))
+//          Ok(ProfilePage.getHtml(page))
+          Ok(new ProfilePage(Profile(user,reflections)).buildPage(message = message))
         } else {
           Redirect("/register")
         }

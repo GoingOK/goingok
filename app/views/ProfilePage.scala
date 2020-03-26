@@ -10,13 +10,13 @@ import views.components._
 import views.components.profile.{MessagesList, ReflectionEntry, ReflectionList, ReflectionPointChart}
 
 
-object ProfilePage extends GenericPage {
+class ProfilePage(profile:Profile = Profile()) extends GenericPage {
 
   private val sliderStartPoint:Double = 50.0
 
-
+  val title = "GoingOK :: profile"
   /** Displays HTML profile page */
-  def page(titleStr: String,message:Option[UiMessage],profile:Profile = Profile()): TypedTag[String] = {
+  def pageContent(titleStr: String = this.title,message:Option[UiMessage]): TypedTag[String] = {
 
     //profile.user.map(u => (u.group_code+"_"+u.pseudonym))
 
