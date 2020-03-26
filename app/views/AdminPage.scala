@@ -24,13 +24,13 @@ object AdminPage extends GenericPage {
         div(id := "analytics-content",`class` := "container-fluid",
           showMessage(message),
           div(`class`:="row",
-            div(`class`:="col",
+            div(`class`:="col-6",
               card("Groups",div(groupList(adminData.groupInfo),groupForm))
             ),
             div(`class`:="col",
               card("Pseudonyms",div(userList(adminData.userInfo),userForm))
             ),
-            div(`class`:="col",
+            div(`class`:="col-2",
               card("...",
                 div( id := "reflection-points-contour-chart", `class` := "svg-container")
               )
@@ -43,11 +43,17 @@ object AdminPage extends GenericPage {
   }
 
   /** Group list HTML display */
-  private def groupList(groupInfo:Seq[(String,Int)]):Seq[TypedTag[String]] = {
-    groupInfo.map{ case (group_code:String,not_used:Int) =>
-      div(group_code)
-    }
-    //div(groupInfo.mkString("|"))
+  private def groupList(groupInfo:Seq[(String,Int)]):TypedTag[String] = {
+    div(style:="height: 233px; overflow-y: scroll; border: 1px solid black;",
+      table(`class`:="table table-striped table-sm",
+        thead(tr(th(small(b("group code"))),th(small("admin name")),th(small("authors")),th(small("reflections")))),
+        tbody(
+          groupInfo.map{ case (group_code:String,not_used:Int) =>
+            tr(td(small(group_code)),td(small("not implemented")),td(small(99)),td(small(9999)))
+          }
+        )
+      )
+    )
   }
 
   /** Group form HTML display */
@@ -58,7 +64,7 @@ object AdminPage extends GenericPage {
         input(`type` := "text", name := "group-code", `class` := "form-control", id := "group-code", attr("required") := ""),
         div(`class` := "invalid-feedback", "A group-code is required.")
       ),
-      div(`class` := "form-group text-center",
+      div(`class` := "form-group text-right",
         input(`type` := "submit", value := "add", `class` := "btn btn-success")
       ),
       script(validationScript)
@@ -76,7 +82,7 @@ object AdminPage extends GenericPage {
   /** User form HTML display */
   private def userForm:TypedTag[String] = {
     form(`class` := "needs-validation", action := "/admin/addPseudonyms", method := "POST", attr("novalidate") := "",
-      div(`class` := "form-group text-center",
+      div(`class` := "form-group text-right",
         input(`type` := "submit", value := "add pseuonyms", `class` := "btn btn-success")
       ),
       script(validationScript)
