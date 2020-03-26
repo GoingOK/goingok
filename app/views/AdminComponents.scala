@@ -12,7 +12,7 @@ class AdminComponents(adminData:AdminData) extends GenericComponents {
   }
 
   def groupsAdmin:CardComponent = {
-    val content = div(groupList(adminData.groupInfo),groupForm)
+    val content = div(groupList(adminData.groupInfo),groupForm,groupAdminList(),groupAdminForm())
     card("Groups",content)
   }
 
@@ -22,7 +22,7 @@ class AdminComponents(adminData:AdminData) extends GenericComponents {
   }
 
   /** Group list HTML display */
-  private def groupList(groupInfo:Seq[(String,Int)]):TypedTag[String] = {
+  private def groupList(groupInfo:Seq[(String,Int)]):CardContent = {
     div(style:="height: 233px; overflow-y: scroll; border: 1px solid black;",
       table(`class`:="table table-striped table-sm",
         thead(tr(th(small(b("group code"))),th(small("admin name")),th(small("authors")),th(small("reflections")))),
@@ -36,7 +36,7 @@ class AdminComponents(adminData:AdminData) extends GenericComponents {
   }
 
   /** Group form HTML display */
-  private def groupForm:TypedTag[String] = {
+  private def groupForm:CardContent = {
     form(`class` := "needs-validation", action := "/admin/addGroup", method := "POST", attr("novalidate") := "",
       div(`class` := "form-group",
         label(`for` := "group-code", `class` := "col-form-label")("Enter a new group code:"),
@@ -48,6 +48,14 @@ class AdminComponents(adminData:AdminData) extends GenericComponents {
       ),
       script(validationScript)
     )
+  }
+
+  private def groupAdminList():CardContent = {
+    div(hr(),"A list of group admins and the groups assigned to them.")
+  }
+
+  private def groupAdminForm():CardContent = {
+    div(hr(),"A form for adding and removing admins to groups")
   }
 
   /** Group form HTML display */
