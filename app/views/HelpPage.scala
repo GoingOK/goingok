@@ -12,7 +12,9 @@ import views.components.{HelpContent, NavBar}
   */
 object HelpPage extends GenericPage {
 
-   def page(titleStr: String, message:Option[String]=None,user: Option[User]=None): TypedTag[String] = {
+
+  /** Displays help page */
+  def page(titleStr: String, message:Option[String]=None,user: Option[User]=None): TypedTag[String] = {
     tags.html(
       Includes.headContent(titleStr),
       tags.body(

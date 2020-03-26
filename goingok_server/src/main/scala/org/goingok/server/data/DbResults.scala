@@ -1,6 +1,6 @@
 package org.goingok.server.data
 
-import org.goingok.server.data.models.{GroupCode, ReflectionEntry}
+import org.goingok.server.data.models.{GroupCode, ReflectionAuthorEntry, ReflectionEntry}
 
 object DbResults {
 
@@ -11,6 +11,8 @@ object DbResults {
   case class GroupedReflectionCounts(value:Seq[(String,Int)]) extends Result
 
   case class GroupedReflections(value:Seq[ReflectionEntry]) extends Result
+
+  case class GroupedAuthorReflections(value:Seq[ReflectionAuthorEntry]) extends Result
 
   case class GroupedPseudonymCounts(value:Seq[(Option[String],Int)]) extends Result
 

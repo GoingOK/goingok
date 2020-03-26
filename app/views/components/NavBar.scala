@@ -11,6 +11,7 @@ object NavBar {
 
   case class NavParams(user:Option[User]=None,baseUrl:Option[String]=None,page:Option[String]=None)
 
+  /** Renders navigation bar */
   def main(navParams: NavParams = NavParams()) :TypedTag[String] = {
 
 
@@ -35,7 +36,7 @@ object NavBar {
     val homeUrl = navParams.baseUrl.getOrElse("http://goingok.org")
 
 
-
+    /** Setting page to 'active' */
     def pageActive(thisPage:String):String = navParams.page match {
       case Some(page) if page.contentEquals(thisPage) => "active"
       case _ => ""

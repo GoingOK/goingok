@@ -11,18 +11,35 @@ import views.AdminPage
 
 import scala.concurrent.{ExecutionContext, Future}
 
+/****
+ * AdminController - controls interaction with the admin page
+ *
+ * @param components
+ * @param profileService
+ * @param adminService
+ * @param ec
+ * @param assets
+ */
 class AdminController @Inject()(components: ControllerComponents,profileService:ProfileService,adminService:AdminService)
                                (implicit ec: ExecutionContext, assets: AssetsFinder)
   extends AbstractController(components) with GoingOkController {
 
+  /** Authorises user and calls 'pageMaker' to create an HTML page of reflection analytics */
   def admin: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] => authorise(request,makePage)}
 
+  /** Authorises user and calls 'pageMaker' to add a new group */
   def addGroup: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] => authorise(request,addNewGroup)}
 
+  /** Authorises user and calls 'pageMaker' to add more pseudonyms */
   def addPseudonyms: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] => authorise(request,addMorePseudonyms)}
 
   //def reflectionsCsv: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] => authorise(request,makeCSV)}
 
+  /**
+    * Validates user info and authorizes if the user is an admin
+    * @param request the submitted HTTP request
+    * @param pageMaker page maker based on user info
+    */
   private def authorise(request:Request[AnyContent],pageMaker:(User,Request[AnyContent])=>Result) = Future {
     val user: Option[User] = for {
       uid <- request.session.get("user")
@@ -62,6 +79,12 @@ class AdminController @Inject()(components: ControllerComponents,profileService:
     makePageWithMessage(message,user)
   }
 
+  /**
+    * Renders an admin page with UI message
+    * @param message UI message to display
+    * @param user User info
+    * @return HTML admin page
+    */
   private def makePageWithMessage(message:Option[UiMessage],user:User): Result = {
     val groupInfo = adminService.groupInfo
     val userInfo = adminService.userInfo
@@ -70,7 +93,7 @@ class AdminController @Inject()(components: ControllerComponents,profileService:
   }
 
   private val addMorePseudonyms = (user:User, request:Request[AnyContent]) => {
-    adminService.createPseudonyms(2000) match {
+    adminService.createPseudonyms(1000) match {
       case Right(num) => Ok(s"Created $num pseudonyms")
       case Left(error) => Ok(error.getMessage)
     }

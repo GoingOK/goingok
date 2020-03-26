@@ -15,6 +15,7 @@ object DemoPage extends GenericPage {
 
   private val sliderStartPoint:Double = 50.0
 
+  /** Displays a DEMO home page */
   override def page(titleStr: String, user: Option[User]=None,message:String=""): TypedTag[String] = {
     tags.html(
       Includes.headContent(titleStr),

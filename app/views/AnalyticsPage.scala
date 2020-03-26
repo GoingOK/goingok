@@ -14,6 +14,7 @@ import views.components._ // scalastyle:ignore
 
 object AnalyticsPage extends GenericPage {
 
+  /** Analytics page HTML display */
   def page(titleStr: String,message:Option[UiMessage],user:Option[User]=None,analytics:Analytics): TypedTag[String] = {
 
     val mergedCounts = merge(analytics.userCounts,analytics.reflectionCounts)
@@ -43,6 +44,7 @@ object AnalyticsPage extends GenericPage {
     )
   }
 
+  /** Merges users and reflections */
   private def merge(userCounts:Seq[(String,Int)],reflectionCounts:Seq[(String,Int)]):Seq[(String,Int,Int)] = {
     val ucs = userCounts.toMap
     reflectionCounts.map{ case (group,rc) =>
@@ -50,6 +52,7 @@ object AnalyticsPage extends GenericPage {
     }
   }
 
+  /** Creates a csv file of reflections data for download */
   private def downloadLinks(mergedCounts:Seq[(String,Int,Int)]):Seq[(String,TypedTag[String],TypedTag[String])] = {
     mergedCounts.map { case (group, uc, rc) =>
       val allLink = s"/analytics/csv?group=$group"
@@ -69,6 +72,7 @@ object AnalyticsPage extends GenericPage {
   case class IntTable(values:Seq[(String,Int,Int)]) extends TableValues
   case class TypedTagStringTable(values:Seq[(String,TypedTag[String],TypedTag[String])]) extends TableValues
 
+  /** Displays basic HTML table */
   private def basicTable(tableVals:TableValues,headings:List[String]): TypedTag[String] = {
 
     table(`class`:="table table-striped table-borderless table-sm",

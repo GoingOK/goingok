@@ -13,6 +13,7 @@ import views.components._ // scalastyle:ignore
 
 object AdminPage extends GenericPage {
 
+  /** Admin page HTML display */
   def page(titleStr: String,message:Option[UiMessage],user:Option[User]=None,adminData:AdminData): TypedTag[String] = {
 
 
@@ -24,10 +25,10 @@ object AdminPage extends GenericPage {
           showMessage(message),
           div(`class`:="row",
             div(`class`:="col",
-              card("Group Management",div(groupList(adminData.groupInfo),groupForm))
+              card("Groups",div(groupList(adminData.groupInfo),groupForm))
             ),
             div(`class`:="col",
-              card("User Management",div(userList(adminData.userInfo),userForm))
+              card("Pseudonyms",div(userList(adminData.userInfo),userForm))
             ),
             div(`class`:="col",
               card("...",
@@ -41,10 +42,15 @@ object AdminPage extends GenericPage {
     )
   }
 
-  private def groupList(groupInfo:Seq[(String,Int)]):TypedTag[String] = {
-    div(groupInfo.mkString("|"))
+  /** Group list HTML display */
+  private def groupList(groupInfo:Seq[(String,Int)]):Seq[TypedTag[String]] = {
+    groupInfo.map{ case (group_code:String,not_used:Int) =>
+      div(group_code)
+    }
+    //div(groupInfo.mkString("|"))
   }
 
+  /** Group form HTML display */
   private def groupForm:TypedTag[String] = {
     form(`class` := "needs-validation", action := "/admin/addGroup", method := "POST", attr("novalidate") := "",
       div(`class` := "form-group",
@@ -59,10 +65,15 @@ object AdminPage extends GenericPage {
     )
   }
 
-  private def userList(userInfo:Seq[(String,Int)]):TypedTag[String] = {
-    div(userInfo.mkString("|"))
+  /** Group form HTML display */
+  private def userList(userInfo:Seq[(String,Int)]):Seq[TypedTag[String]] = {
+    userInfo.map { case (name:String,value:Int) =>
+     div(b(name,":")," ",value)
+    }
+    //div(userInfo.mkString("|"))
   }
 
+  /** User form HTML display */
   private def userForm:TypedTag[String] = {
     form(`class` := "needs-validation", action := "/admin/addPseudonyms", method := "POST", attr("novalidate") := "",
       div(`class` := "form-group text-center",

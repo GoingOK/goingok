@@ -1,19 +1,19 @@
 resolvers += "Typesafe repository" at "https://repo.typesafe.com/typesafe/releases/"
 
 //Play framework
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.7.3")
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.8.1")
 
 //ScalaJS
-addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.28")
-addSbtPlugin("com.vmunier" % "sbt-web-scalajs" % "1.0.9-0.6")
-addSbtPlugin("ch.epfl.scala" % "sbt-web-scalajs-bundler" % "0.15.0-0.6")
+addSbtPlugin("org.scala-js" % "sbt-scalajs" % "1.0.1")
+addSbtPlugin("com.vmunier" % "sbt-web-scalajs" % "1.0.11")
+addSbtPlugin("ch.epfl.scala" % "sbt-web-scalajs-bundler" % "0.17.0")
 
 //Dependency management
-addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.4.0")
+addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.5.0")
 //addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.8.2")
 
 //Build and packaging
-addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.3.22")
+addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.6.1")
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.9.0")
 
 //Documentation
