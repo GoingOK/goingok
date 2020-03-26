@@ -4,7 +4,7 @@ resolvers += "Typesafe repository" at "https://repo.typesafe.com/typesafe/releas
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.8.1")
 
 //ScalaJS
-addSbtPlugin("org.scala-js" % "sbt-scalajs" % "1.0.0")
+addSbtPlugin("org.scala-js" % "sbt-scalajs" % "1.0.1")
 addSbtPlugin("com.vmunier" % "sbt-web-scalajs" % "1.0.11")
 addSbtPlugin("ch.epfl.scala" % "sbt-web-scalajs-bundler" % "0.17.0")
 

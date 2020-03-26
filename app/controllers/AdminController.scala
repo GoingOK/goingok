@@ -11,15 +11,15 @@ import views.AdminPage
 
 import scala.concurrent.{ExecutionContext, Future}
 
-/**
-  * Validates admin credentials and renders admin profile
-  *
-  * @param components  [[play.api.mvc.ControllerComponents]]
-  * @param profileService  [[org.goingok.server.services.ProfileService]]
-  * @param adminService [[org.goingok.server.services.AdminService]]
-  * @param ec  [[scala.concurrent.ExecutionContext]]
-  * @param assets  [[controllers.AssetsFinder]]
-  */
+/****
+ * AdminController - controls interaction with the admin page
+ *
+ * @param components
+ * @param profileService
+ * @param adminService
+ * @param ec
+ * @param assets
+ */
 class AdminController @Inject()(components: ControllerComponents,profileService:ProfileService,adminService:AdminService)
                                (implicit ec: ExecutionContext, assets: AssetsFinder)
   extends AbstractController(components) with GoingOkController {
@@ -93,7 +93,7 @@ class AdminController @Inject()(components: ControllerComponents,profileService:
   }
 
   private val addMorePseudonyms = (user:User, request:Request[AnyContent]) => {
-    adminService.createPseudonyms(3000) match {
+    adminService.createPseudonyms(1000) match {
       case Right(num) => Ok(s"Created $num pseudonyms")
       case Left(error) => Ok(error.getMessage)
     }
