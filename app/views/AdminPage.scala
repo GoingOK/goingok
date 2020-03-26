@@ -25,10 +25,10 @@ object AdminPage extends GenericPage {
           showMessage(message),
           div(`class`:="row",
             div(`class`:="col",
-              card("Group Management",div(groupList(adminData.groupInfo),groupForm))
+              card("Groups",div(groupList(adminData.groupInfo),groupForm))
             ),
             div(`class`:="col",
-              card("User Management",div(userList(adminData.userInfo),userForm))
+              card("Pseudonyms",div(userList(adminData.userInfo),userForm))
             ),
             div(`class`:="col",
               card("...",
@@ -43,8 +43,11 @@ object AdminPage extends GenericPage {
   }
 
   /** Group list HTML display */
-  private def groupList(groupInfo:Seq[(String,Int)]):TypedTag[String] = {
-    div(groupInfo.mkString("|"))
+  private def groupList(groupInfo:Seq[(String,Int)]):Seq[TypedTag[String]] = {
+    groupInfo.map{ case (group_code:String,not_used:Int) =>
+      div(group_code)
+    }
+    //div(groupInfo.mkString("|"))
   }
 
   /** Group form HTML display */
@@ -63,8 +66,11 @@ object AdminPage extends GenericPage {
   }
 
   /** Group form HTML display */
-  private def userList(userInfo:Seq[(String,Int)]):TypedTag[String] = {
-    div(userInfo.mkString("|"))
+  private def userList(userInfo:Seq[(String,Int)]):Seq[TypedTag[String]] = {
+    userInfo.map { case (name:String,value:Int) =>
+     div(b(name,":")," ",value)
+    }
+    //div(userInfo.mkString("|"))
   }
 
   /** User form HTML display */

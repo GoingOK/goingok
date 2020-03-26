@@ -24,7 +24,7 @@ class AdminService {
   def groupInfo: Seq[(String, Int)] = ds.getAllGroupCodes match {
     case Right(result:DbResults.GroupCodes) => {
       logger.info(s"Get groups result: ${result.value.toString}")
-      result.value.map(g => (g.toString,-1))
+      result.value.map(g => (g.group_code,-1))
     }
     case Left(err) => {
       logger.error(err.getMessage)
@@ -65,7 +65,6 @@ class AdminService {
     } yield g
   }
 
-
   /**
     * Creates new pseudonyms and inserts them into DB
     * @param num number of pseudonyms to be created
@@ -73,7 +72,7 @@ class AdminService {
   def createPseudonyms(num:Int): Either[Throwable,Int] = {
     for {
       ss <- ds.getAllPseudonyms.map(_.toSet)
-      ns = Anonymiser.generate(num,ss)
+      ns = Anonymiser.increaseBy(num,ss)
       dif = ns.diff(ss)
       res <- ds.insertPseudonyms(dif.toList)
     } yield res

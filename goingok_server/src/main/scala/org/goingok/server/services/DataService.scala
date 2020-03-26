@@ -2,10 +2,7 @@ package org.goingok.server.services
 
 import java.time.LocalDateTime
 
-import cats._
-import cats.data._
 import cats.effect.IO
-import cats.implicits._
 import doobie._
 import doobie.implicits._
 import doobie.util.ExecutionContexts
@@ -14,13 +11,10 @@ import doobie.postgres._
 import doobie.postgres.implicits._
 
 import com.typesafe.scalalogging.Logger
-//import doobie.util.
 import org.goingok.server.Config
 import org.goingok.server.data.DbResults
-import org.goingok.server.data.DbResults.Result
 import org.goingok.server.data.models._
 
-import scala.collection.immutable.HashMap
 
 
 class DataService {
@@ -139,7 +133,7 @@ class DataService {
                   where r.goingok_id = u.goingok_id
                   and u.group_code=$group_code""".query[ReflectionEntry]
 
-    runQuery(query.to[Seq]).map(r => DbResults.GroupedReflections(r))
+    runQuery(query.to[Vector]).map(r => DbResults.GroupedReflections(r))
   }
 
   /**
@@ -156,7 +150,7 @@ class DataService {
                   and u.group_code=$group_code
                   and timestamp >=$start
                   and timestamp <=$end""".query[ReflectionEntry]
-    runQuery(query.to[Seq]).map(r => DbResults.GroupedReflections(r))
+    runQuery(query.to[Vector]).map(r => DbResults.GroupedReflections(r))
   }
 
   def getAuthorReflectionsForGroup(group_code:String): Either[Throwable,DbResults.Result] = {
@@ -165,7 +159,7 @@ class DataService {
                   where r.goingok_id = u.goingok_id
                   and u.group_code=$group_code""".query[ReflectionAuthorEntry]
 
-    runQuery(query.to[Seq]).map(r => DbResults.GroupedAuthorReflections(r))
+    runQuery(query.to[Vector]).map(r => DbResults.GroupedAuthorReflections(r))
   }
 
   def getAuthorReflectionsForGroupWithRange(group_code:String,start:String,end:String): Either[Throwable,DbResults.Result] = {
@@ -175,7 +169,7 @@ class DataService {
                   and u.group_code=$group_code
                   and timestamp >=$start
                   and timestamp <=$end""".query[ReflectionAuthorEntry]
-    runQuery(query.to[Seq]).map(r => DbResults.GroupedAuthorReflections(r))
+    runQuery(query.to[Vector]).map(r => DbResults.GroupedAuthorReflections(r))
   }
 
   /**
@@ -194,8 +188,10 @@ class DataService {
     * @return Sequence of group codes
     */
   def getAllGroupCodes: Either[Throwable,DbResults.Result] = {
-    val query = sql"""select * from group_codes""".query[GroupCode]
-    runQuery(query.to[Seq]).map(r => DbResults.GroupCodes(r))
+    val query =
+      sql"""select * from group_codes
+            order by group_code""".query[GroupCode]
+    runQuery(query.to[Vector]).map(r => DbResults.GroupCodes(r))
   }
 
   /**
@@ -248,7 +244,7 @@ class DataService {
     val query = sql"""select allocated,count(pseudonym) from pseudonyms
                       group by allocated
                       """.query[(Option[String],Int)]
-    runQuery(query.to[Seq]).map(r => DbResults.GroupedPseudonymCounts(r))
+    runQuery(query.to[Vector]).map(r => DbResults.GroupedPseudonymCounts(r))
   }
 
   /**
@@ -260,13 +256,17 @@ class DataService {
     runQuery(query.to[Vector])
   }
 
+
   /**
     * Inserts new pseudonyms into DB
     * @param pseudocodes new list of pseudonyms
     */
+
+
   def insertPseudonyms(pseudocodes:List[String]): Either[Throwable, Int] = {
-    val query = "insert into pseudonyms (pseudonym) values (?)"
-    val batch = Update[String](query).updateMany(pseudocodes)
+    import cats.implicits._
+    val query = """insert into pseudonyms (pseudonym) values (?)"""
+    val batch = doobie.Update[String](query).updateMany(pseudocodes)
     runQuery(batch)
   }
 
@@ -281,7 +281,7 @@ class DataService {
 
   /**
     * Update a given pseudonym from 'not allocated' to 'allocated'
-    * @param pseudonym
+    * @param pseudonym as string
     * @return
     */
   def updatePseudonym(pseudonym:String): Either[Throwable,Int] = {
@@ -299,7 +299,7 @@ class DataService {
                       GROUP BY group_code
                       ORDER BY group_code
       """.query[(String,Int)]
-    runQuery(query.to[Seq]).map(r => DbResults.GroupedUserCounts(r))
+    runQuery(query.to[Vector]).map(r => DbResults.GroupedUserCounts(r))
   }
 
   /**
@@ -319,6 +319,6 @@ class DataService {
                      group by u.group_code
                      order by u.group_code
       """.query[(String, Int)]
-    runQuery(query.to[Seq]).map(r => DbResults.GroupedReflectionCounts(r))
+    runQuery(query.to[Vector]).map(r => DbResults.GroupedReflectionCounts(r))
   }
 }

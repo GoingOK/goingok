@@ -28,6 +28,8 @@ object Anonymiser {
 
   def word = syllable + syllable + r.nextInt(100).formatted("%02d")
 
+  def increaseBy(num:Int,currentSet:Set[String]):Set[String] = generate(currentSet.size+num,currentSet)
+
   def generate(num:Int,startSet:Set[String] = Set[String]()):Set[String] = if (startSet.size >= num) startSet else generate(num,startSet.+(word))
 
 
