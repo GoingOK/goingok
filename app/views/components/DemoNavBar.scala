@@ -11,6 +11,7 @@ object DemoNavBar {
 
   case class NavParams(user:Option[User]=None,baseUrl:Option[String]=None,page:Option[String]=None)
 
+  /** Renders demo navigation bar */
   def main(navParams: NavParams = NavParams()) :TypedTag[String] = {
 
 
@@ -19,6 +20,7 @@ object DemoNavBar {
 
 
 
+    /** Setting page to 'active' */
     def pageActive(thisPage:String):String = navParams.page match {
       case Some(page) if page.contentEquals(thisPage) => "active"
       case _ => ""

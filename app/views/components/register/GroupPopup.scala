@@ -6,6 +6,7 @@ object GroupPopup {
 
 
 
+  /** Group required popup message display */
   def display(message:String="") = div(
     p("In order to use GoingOK, you need to register with an existing GoingOK group such as an organisational unit, a subject cohort, or a research group."),
     p("A ",b("GoingOK group code")," should have been given to you by someone responsible for your group."),

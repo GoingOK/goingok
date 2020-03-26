@@ -20,21 +20,28 @@ class GoogleAuthService {
   private lazy val tokenServer = "https://www.googleapis.com/oauth2/v4/token"
 
 
+  /** Builds GoogleAuth URL*/
   def url:String = new GoogleBrowserClientRequestUrl(clientId,redirectUrl,scopes)
     .setState("profile")
     .setApprovalPrompt("force")
     .setResponseTypes(List("code").asJava)
     .build()
 
+  /** Parses GoogleAuth code */
   def parseAuthCode(code:String):Either[Throwable,GoogleUser] = for {
     tokenResponse <- getTokens(code)
     googleUser <- parseToUser(tokenResponse)
   } yield googleUser
 
+  /** Gets GoogleAuth tokens */
   private def getTokens(code:String):Either[Throwable,GoogleTokenResponse] = Try {
     new GoogleAuthorizationCodeTokenRequest(new NetHttpTransport, JacksonFactory.getDefaultInstance, tokenServer, clientId, secret, code, redirectUrl).execute
   }.toEither
 
+  /**
+    * Parses user information
+    * @param response google token response
+    */
   private def parseToUser(response:GoogleTokenResponse): Either[Throwable, GoogleUser] = Try {
     val idToken: GoogleIdToken = response.parseIdToken()
     val payload = idToken.getPayload

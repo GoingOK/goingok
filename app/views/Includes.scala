@@ -9,6 +9,7 @@ object Includes {
 
   lazy val googleClientId = Config.stringOpt("google.client.id")
 
+  /** creates HTML head content */
   def headContent(titleStr:String): TypedTag[String] = tags.head(
     tags2.title(titleStr),
     meta(charset := "utf-8"),
@@ -46,9 +47,9 @@ object Includes {
   val initPopovers = script(raw("""$(function () {$('[data-toggle="popover"]').popover()})"""))
   val startRegister = script("$('#register-modal').modal({ keyboard: false })")
 
-  //val startPopovers =
 
-  def panel(idName:String,icon:String,title:String,content:TypedTag[String],help:String="Sorry, no help here!"):TypedTag[String] = div(
+  /** Creates HTML dev element for panels */
+ def panel(idName:String,icon:String,title:String,content:TypedTag[String],help:String="Sorry, no help here!"):TypedTag[String] = div(
     id := idName, `class` := "card profile-panel",
     div(`class` := "card-header",
       span(`class` := icon), b(s" $title"),

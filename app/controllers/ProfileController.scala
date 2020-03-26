@@ -13,6 +13,15 @@ import views.{ProfilePage, RegisterPage}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
+/**
+  * Handles GoingOK user profile,
+  * Saves new reflections,
+  * and gets reflections data
+  * @param components
+  * @param profileService
+  * @param ec
+  * @param assets
+  */
 class ProfileController @Inject()(components: ControllerComponents,profileService:ProfileService)
                                  (implicit ec: ExecutionContext, assets: AssetsFinder)
   extends AbstractController(components) with GoingOkController {
@@ -28,6 +37,7 @@ class ProfileController @Inject()(components: ControllerComponents,profileServic
       Reflection("2018-08-20T06:01:29.077Z",70.0,"This is a dummy reflection. Number 4.",dummyUid),
     )
 
+  /** Processes user reflection */
   def profile: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     request.session.get("user").map { uid =>
       Future {
@@ -69,6 +79,7 @@ class ProfileController @Inject()(components: ControllerComponents,profileServic
     }
   }
 
+  /** Save reflection to user profile */
   private def saveReflection(formValues:Map[String,Seq[String]],user: User): Either[Throwable, Int] = {
     for {
       rd <- getReflectionData(formValues)
@@ -76,6 +87,7 @@ class ProfileController @Inject()(components: ControllerComponents,profileServic
     } yield res
   }
 
+  /** Gets reflection data */
   private def getReflectionData(formValues:Map[String,Seq[String]]):Either[Throwable,ReflectionData] = Try {
     val point = formValues.get("reflection-point").get.head.toDouble
     val text = formValues.get("reflection-text").get.head

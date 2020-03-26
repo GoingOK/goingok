@@ -7,5 +7,9 @@ import scala.scalajs.js.annotation.JSImport
 @js.native
 object RelfectionPointChart extends js.Object {
 
+  /**
+    * Builds relections chart
+    * @param entries user's reflections
+    */
   def buildChart(entries:js.Any): js.Object = js.native
 }
