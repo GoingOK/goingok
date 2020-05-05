@@ -321,4 +321,30 @@ class DataService {
       """.query[(String, Int)]
     runQuery(query.to[Vector]).map(r => DbResults.GroupedReflectionCounts(r))
   }
+
+  def getGroupAdmins():Either[Throwable,DbResults.Result] = {
+    val query =
+      sql"""select p.group_code, u.pseudonym ,a.google_email
+            from group_permissions p, user_auths a, users u
+            where p.goingok_id = a.goingok_id
+            and a.goingok_id = u.goingok_id
+            and permission = 'SENSITIVE'
+            order by a.google_email;
+           """.query[(String,String,String)]
+    runQuery(query.to[Vector]).map(r => DbResults.GroupAdmins(r))
+  }
+
+  def getGoingokIdForPseudonym(pseudonym:String):Either[Throwable,UUID] = {
+    val query = sql"""select goingok_id from users
+                      where pseudonym = $pseudonym
+                   """.query[UUID].unique
+
+    runQuery(query)
+  }
+  def insertGroupAdmin(goingok_id:UUID,group_code:String,permission:String):Either[Throwable,Int] = {
+    val query = sql"""insert into group_permissions (goingok_id, group_code, permission)
+                    values ($goingok_id,$group_code,$permission)
+                """.update.run
+    runQuery(query)
+  }
 }

@@ -27,6 +27,8 @@ GET     /admin                  controllers.AdminController.admin
 +nocsrf
 POST    /admin/addGroup         controllers.AdminController.addGroup
 +nocsrf
+POST    /admin/addGroupAdmin         controllers.AdminController.addGroupAdmin
++nocsrf
 POST    /admin/addPseudonyms    controllers.AdminController.addPseudonyms
 
 #GET     /profile/records/csv    controllers.ProfileController.reflectionsCsv

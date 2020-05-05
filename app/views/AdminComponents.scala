@@ -12,7 +12,7 @@ class AdminComponents(adminData:AdminData) extends GenericComponents {
   }
 
   def groupsAdmin:CardComponent = {
-    val content = div(groupList(adminData.groupInfo),groupForm,groupAdminList(),groupAdminForm())
+    val content = div(groupList(adminData.groupInfo),groupForm,groupAdminList(adminData.groupAdminInfo),groupAdminForm(adminData.groupAdminInfo,adminData.groupInfo))
     card("Groups",content)
   }
 
@@ -24,8 +24,9 @@ class AdminComponents(adminData:AdminData) extends GenericComponents {
   /** Group list HTML display */
   private def groupList(groupInfo:Seq[(String,Int)]):CardContent = {
     div(style:="height: 233px; overflow-y: scroll; border: 1px solid black;",
+      div(`class`:="group-summary-text small",b("Total number groups: "),groupInfo.size),
       table(`class`:="table table-striped table-sm",
-        thead(tr(th(small(b("group code"))),th(small("admin name")),th(small("authors")),th(small("reflections")))),
+        thead(tr(th(small(b("group code"))),th(small(b("admin"))),th(small(b("authors"))),th(small(b("reflections"))))),
         tbody(
           groupInfo.map{ case (group_code:String,not_used:Int) =>
             tr(td(small(group_code)),td(small("not implemented")),td(small(99)),td(small(9999)))
@@ -34,6 +35,7 @@ class AdminComponents(adminData:AdminData) extends GenericComponents {
       )
     )
   }
+
 
   /** Group form HTML display */
   private def groupForm:CardContent = {
@@ -50,13 +52,48 @@ class AdminComponents(adminData:AdminData) extends GenericComponents {
     )
   }
 
-  private def groupAdminList():CardContent = {
-    div(hr(),"A list of group admins and the groups assigned to them.")
+  private def groupAdminList(groupAdminInfo:Seq[(String,String,String)]):CardContent = {
+    val admins = uniqueAdmins(groupAdminInfo)
+    div(style:="height: 233px; overflow-y: scroll; border: 1px solid black;",
+      div(`class`:="groupadmin-summary-text small",b("Total number admins: "),admins.size),
+      table(`class`:="table table-striped table-sm",
+        thead(tr(th(small(b("admin email"))),th(small(b("pseudonym"))),th(small(b("group"))))),
+        tbody(
+          groupAdminInfo.map{ case (group:String,pseudonym:String,email:String) =>
+            tr(td(small(email)),td(small(pseudonym)),td(small(group)))
+          }
+        )
+      )
+    )
   }
 
-  private def groupAdminForm():CardContent = {
-    div(hr(),"A form for adding and removing admins to groups")
+  private def groupAdminForm(groupAdminInfo:Seq[(String,String,String)],groupInfo:Seq[(String,Int)]):CardContent = {
+    form(`class` := "needs-validation", action := "/admin/addGroupAdmin", method := "POST", attr("novalidate") := "",
+      div(`class` := "form-group",
+        label(`for` := "admin-pseudonym", `class` := "col-form-label")("Admin:"),
+        select(id := "admin-pseudonym", name := "admin",
+          uniqueAdmins(groupAdminInfo).map{ case (pseudonym:String,email:String) =>
+            option(value:=s"$pseudonym")(s"$pseudonym ($email)")
+          }.toList
+        )
+      ),
+      div(`class` := "form-group",
+        label(`for` := "admin-group", `class` := "col-form-label")("Group:"),
+        select(id := "admin-group", name := "group",
+          uniqueGroups(groupInfo).map{ case (group:String) =>
+            option(value:=s"$group")(s"$group")
+          }.toList
+        )
+      ),
+      div(`class` := "form-group text-right",
+        input(`type` := "submit", value := "add", `class` := "btn btn-success")
+      ),
+      script(validationScript)
+    )
   }
+
+  private def uniqueAdmins(groupAdminInfo:Seq[(String,String,String)]):Seq[(String,String)] = groupAdminInfo.map(g => (g._2,g._3)).distinct
+  private def uniqueGroups(groupInfo:Seq[(String,Int)]):Seq[String] = groupInfo.map(_._1).distinct
 
   /** Group form HTML display */
   private def userList(userInfo:Seq[(String,Int)]):Seq[TypedTag[String]] = {
