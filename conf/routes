@@ -7,10 +7,12 @@ GET     /version                controllers.ApplicationController.version
 GET     /help                   controllers.HelpController.help
 GET     /demo                   controllers.ApplicationController.demo
 
-
-GET     /googleAuth             controllers.AuthController.googleAuth
-GET     /signin                 controllers.AuthController.signin
-GET     /signout                controllers.AuthController.signout
+GET     /auth                   controllers.CognitoAuthController.cognitoAuth
+GET     /signin                 controllers.CognitoAuthController.signin
+GET     /signout                controllers.CognitoAuthController.signout
+#GET     /googleAuth             controllers.AuthController.googleAuth
+#GET     /signin                 controllers.AuthController.signin
+#GET     /signout                controllers.AuthController.signout
 
 GET     /register               controllers.RegisterController.register
 + nocsrf

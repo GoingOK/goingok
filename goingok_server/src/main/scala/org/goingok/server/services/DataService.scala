@@ -50,12 +50,27 @@ class DataService {
   }
 
   /**
+    * Gets GoingOK user from DB by Cognito user ID
+    * @param cognitoId Cognito user ID
+    * @return GoingOK user
+    */
+  def getUserWithServiceId(serviceUuid:UUID):Either[Throwable,User] = {
+    val serviceId = serviceUuid.toString
+    val query = sql"""select * from users u, user_auths a
+                      where u.goingok_id = a.goingok_id
+                      and a.google_id = $serviceId
+                   """.query[User].unique
+
+    runQuery(query)
+  }
+
+  /**
     * Inserts new user Authentication into DB
     * @param userauth User authentication
     */
   def insertNewUserAuth(userauth:UserAuth):Either[Throwable,UUID] = {
     val query = sql"""insert into user_auths (goingok_id, google_id, google_email, init_timestamp)
-                      values(${userauth.goingok_id},${userauth.google_id},${userauth.google_email},${userauth.init_timestamp})
+                      values(${userauth.goingok_id},${userauth.service_id},${userauth.service_email},${userauth.init_timestamp})
                    """.update
                   .withUniqueGeneratedKeys[UUID]("goingok_id")
 

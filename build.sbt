@@ -20,7 +20,7 @@ import LocalSbtSettings._
 //scalacOptions += "-target:jvm-1.8"
 
 lazy val projectName = "goingok"
-lazy val projectVersion = "4.2.4"
+lazy val projectVersion = "4.2.6"
 lazy val projectOrganisation = "org.goingok"
 
 lazy val serverName = s"${projectName}_server"
@@ -38,8 +38,8 @@ lazy val vSlinky = "0.6.6"
 lazy val vSjsD3 = "0.3.4"
 
 lazy val vUpickle = "1.2.2"
-lazy val vGoogleClientApi = "1.31.1"
-lazy val vDoobie = "0.9.2"
+lazy val vGoogleClientApi = "1.31.2"
+lazy val vDoobie = "0.10.0"
 lazy val vConfig = "1.4.1"
 //lazy val vNlpCommons = "1.1.2"
 
@@ -72,11 +72,10 @@ val generalDeps = Seq(
   "com.typesafe" % "config" % vConfig,
   "com.lihaoyi" %% "scalatags" % vScalaTags, //Using ScalaTags instead of Twirl
   "com.lihaoyi" %% "upickle" % vUpickle, //Using uJson for main JSON
-  //"io.nlytx" %% "nlytx-nlp-commons" % vNlpCommons
 )
 
 val authDeps = Seq(
-    "com.google.api-client" % "google-api-client" % vGoogleClientApi,
+  "com.pauldijou" %% "jwt-core" % "5.0.0",
 )
 
 val dbDeps = Seq(
@@ -111,7 +110,7 @@ lazy val goingok = project.in(file("."))
     dockerRepository := Some(s"$dockerRepoURI"),
     defaultLinuxInstallLocation in Docker := "/opt/docker",
     dockerExposedVolumes := Seq("/opt/docker/logs"),
-    dockerBaseImage := "openjdk:11-jdk",
+    dockerBaseImage := "openjdk:latest",
     // Puts unified scaladocs into target/api
     siteSubdirName in ScalaUnidoc := "api",
     addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), siteSubdirName in ScalaUnidoc)
