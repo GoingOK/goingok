@@ -72,11 +72,10 @@ val generalDeps = Seq(
   "com.typesafe" % "config" % vConfig,
   "com.lihaoyi" %% "scalatags" % vScalaTags, //Using ScalaTags instead of Twirl
   "com.lihaoyi" %% "upickle" % vUpickle, //Using uJson for main JSON
-  //"io.nlytx" %% "nlytx-nlp-commons" % vNlpCommons
 )
 
 val authDeps = Seq(
-    "com.google.api-client" % "google-api-client" % vGoogleClientApi,
+  "com.pauldijou" %% "jwt-core" % "5.0.0",
 )
 
 val dbDeps = Seq(
@@ -111,7 +110,7 @@ lazy val goingok = project.in(file("."))
     dockerRepository := Some(s"$dockerRepoURI"),
     defaultLinuxInstallLocation in Docker := "/opt/docker",
     dockerExposedVolumes := Seq("/opt/docker/logs"),
-    dockerBaseImage := "openjdk:11-jdk",
+    dockerBaseImage := "openjdk:latest",
     // Puts unified scaladocs into target/api
     siteSubdirName in ScalaUnidoc := "api",
     addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), siteSubdirName in ScalaUnidoc)

@@ -20,5 +20,7 @@ object Config {
   lazy val googleClientId:Option[String] = stringOpt("google.client.id")
   lazy val dbUser:Option[String] = stringOpt("db.user")
   lazy val dbSecret:Option[String] = stringOpt("db.password")
+  lazy val awsCognitoAppClientId:Option[String] = stringOpt("aws.cognito.app_client_id")
+  lazy val awsCognitoAppClientSecret:Option[String] = stringOpt("aws.cognito.app_client_secret")
 
 }
