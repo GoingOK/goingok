@@ -20,7 +20,7 @@ import LocalSbtSettings._
 //scalacOptions += "-target:jvm-1.8"
 
 lazy val projectName = "goingok"
-lazy val projectVersion = "4.2.4"
+lazy val projectVersion = "4.2.6"
 lazy val projectOrganisation = "org.goingok"
 
 lazy val serverName = s"${projectName}_server"
@@ -38,8 +38,8 @@ lazy val vSlinky = "0.6.6"
 lazy val vSjsD3 = "0.3.4"
 
 lazy val vUpickle = "1.2.2"
-lazy val vGoogleClientApi = "1.31.1"
-lazy val vDoobie = "0.9.2"
+lazy val vGoogleClientApi = "1.31.2"
+lazy val vDoobie = "0.10.0"
 lazy val vConfig = "1.4.1"
 //lazy val vNlpCommons = "1.1.2"
 
