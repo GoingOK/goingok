@@ -2,7 +2,9 @@ package org.goingok.server.services
 
 import java.util.UUID
 import com.typesafe.scalalogging.Logger
-import org.goingok.server.data.models.{CognitoUser, User, UserAuth}
+import org.goingok.server.data.models.{Activity, CognitoUser, User, UserAuth}
+
+import java.time.LocalDateTime
 
 
 class UserService {
@@ -34,6 +36,10 @@ class UserService {
     } yield u1
   }
 
+  def registerLoginActivity(goingok_id:UUID,detail:String) = {
+    val time = LocalDateTime.now().toString
+    val dbResult = ds.insertActivity(Activity(time,goingok_id,"login",detail))
+  }
 
 
   /**
@@ -74,6 +80,10 @@ class UserService {
       usr <- ds.getUserForId(uuid)
     } yield usr
     logger.info(s"user: $user")
+    user match {
+      case Right(u) => registerLoginActivity(u.goingok_id,"new user created")
+      case Left(e) => //do nothing
+    }
     user
   }
 

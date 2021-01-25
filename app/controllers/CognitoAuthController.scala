@@ -71,7 +71,13 @@ class CognitoAuthController @Inject()(components: ControllerComponents, userServ
       newUser match {
         case Right(u) => {
           logger.info(s"Sucessful login for ${u.goingok_id.toString} [${u.pseudonym}]")
-          val url = if(registeredUser(u)) { "/profile"} else { "/register" }
+          val url = if(registeredUser(u)) {
+            userService.registerLoginActivity(u.goingok_id,"success - profile page")
+            "/profile"
+          } else {
+            userService.registerLoginActivity(u.goingok_id,"redirected - register page")
+            "/register"
+          }
           Redirect(url).withSession("user" -> u.goingok_id.toString)
         }
         case Left(e) => {

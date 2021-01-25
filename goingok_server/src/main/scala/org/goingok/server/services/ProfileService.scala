@@ -1,9 +1,10 @@
 package org.goingok.server.services
 
 import java.util.UUID
-
 import com.typesafe.scalalogging.Logger
-import org.goingok.server.data.models.{ReflectionData, ReflectionEntry, User}
+import org.goingok.server.data.models.{Activity, ReflectionData, ReflectionEntry, User}
+
+import java.time.LocalDateTime
 
 class ProfileService {
 

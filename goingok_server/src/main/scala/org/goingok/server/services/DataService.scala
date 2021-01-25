@@ -239,6 +239,18 @@ class DataService {
   }
 
   /**
+    * Inserts new activity into DB
+    * @param activity new activity
+    */
+  def insertActivity(activity:Activity): Either[Throwable,Int] = {
+    val query = sql"""insert into user_activities (timestamp, goingok_id, actitvity_type, activity_detail)
+                    values (${activity.timestamp},${activity.goingok_id},${activity.activity_type},${activity.activity_detail})
+                """.update.run
+
+    runQuery(query)
+  }
+
+  /**
     * Inserts new group code into DB
     * @param groupCode new group code
     * @param goingok_id GoingOK user ID
