@@ -5,14 +5,14 @@ package org.goingok.server.data.models
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDateTime, ZoneId, ZonedDateTime}
 
-case class ReflectionEntry(timestamp:String,reflection:ReflectionData) {
-  def bneZonedDateTime: ZonedDateTime =  {
-    LocalDateTime.parse(timestamp).atZone(ZoneId.of("GMT")).withZoneSameInstant(ZoneId.of("Australia/Brisbane"))
-  }
-  def bneTimestamp: String = bneZonedDateTime.toLocalDateTime.toString
-  def bneDateTimeString: String = bneZonedDateTime.format(DateTimeFormatter.ofPattern("E d MMM Y hh:mm a")) //Mon 23 Jul 2018 12:41 AM
+case class ReflectionEntry(timestamp:String,reflection:ReflectionData) extends TimestampedData
+//  def bneZonedDateTime: ZonedDateTime =  {
+//    LocalDateTime.parse(timestamp).atZone(ZoneId.of("GMT")).withZoneSameInstant(ZoneId.of("Australia/Brisbane"))
+//  }
+//  def bneTimestamp: String = bneZonedDateTime.toLocalDateTime.toString
+//  def bneDateTimeString: String = bneZonedDateTime.format(DateTimeFormatter.ofPattern("E d MMM Y hh:mm a")) //Mon 23 Jul 2018 12:41 AM
 
-}
+
 
 //object ReflectionEntry {
 //  import play.api.libs.functional.syntax._

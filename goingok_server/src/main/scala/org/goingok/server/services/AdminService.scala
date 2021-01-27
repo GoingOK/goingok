@@ -32,6 +32,17 @@ class AdminService {
     }
   }
 
+  def groupAdminInfo: Seq[(String, String, String)] = ds.getGroupAdmins match {
+    case Right(result:DbResults.GroupAdmins) => {
+      logger.info(s"Get groupAmins result: ${result.value.toString}")
+      result.value //.map(g => (g,-1))
+    }
+    case Left(err) => {
+      logger.error(err.getMessage)
+      Seq((err.getMessage,"",""))
+    }
+  }
+
   /**
     * Gets all users pseudonyms from DB
     * @return Sequence of pseudonyms
@@ -62,6 +73,13 @@ class AdminService {
   def addGroup(groupCode:String,goingokId:UUID): Either[Throwable,Int] = {
     for {
       g <- ds.insertGroup(groupCode,goingokId)
+    } yield g
+  }
+
+  def addGroupAdmin(pseudonym:String,group:String,permission:String="SENSITIVE"): Either[Throwable,Int] = {
+    for {
+      i <- ds.getGoingokIdForPseudonym(pseudonym)
+      g <- ds.insertGroupAdmin(i,group,permission)
     } yield g
   }
 

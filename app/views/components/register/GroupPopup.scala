@@ -1,5 +1,7 @@
 package views.components.register
 
+import org.goingok.server.data.UiMessage
+import scalatags.Text.TypedTag
 import scalatags.Text.all._
 
 object GroupPopup {
@@ -7,12 +9,12 @@ object GroupPopup {
 
 
   /** Group required popup message display */
-  def display(message:String="") = div(
+  def display(message:TypedTag[String]) = div(
     p("In order to use GoingOK, you need to register with an existing GoingOK group such as an organisational unit, a subject cohort, or a research group."),
     p("A ",b("GoingOK group code")," should have been given to you by someone responsible for your group."),
     p("Please enter this code below and click ",b("register.")),
     div( `class`:="card-footer text-muted",
-      showMessage(message),
+      message,
       form( `class`:="needs-validation", action:="/registerWithGroup", method:="POST", attr("novalidate"):="",
         div(`class`:="form-group form-check",
           input(`type`:="checkbox", name:="disclaimer",`class`:="form-check-input",id:="disclaimer",attr("required"):=""),
@@ -32,14 +34,14 @@ object GroupPopup {
     )
   )
 
-  private def showMessage(message:String) = {
-    if(message!="") {
-      div(id:="message",`class`:="alert alert-danger",attr("role"):="alert",message)
-    } else {
-      div()
-    }
-
-  }
+//  private def showMessage(message:String) = {
+//    if(message!="") {
+//      div(id:="message",`class`:="alert alert-danger",attr("role"):="alert",message)
+//    } else {
+//      div()
+//    }
+//
+//  }
 
   private val disclaimer = raw("""
                              |I have read the <a href="/help">help section</a> on how GoingOK treats my data, and I understand

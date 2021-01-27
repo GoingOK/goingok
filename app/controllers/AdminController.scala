@@ -6,6 +6,7 @@ import javax.inject.Inject
 import org.goingok.server.data.{AdminData, UiMessage}
 import org.goingok.server.data.models.User
 import org.goingok.server.services.{AdminService, ProfileService}
+import play.api.Logger
 import play.api.mvc.{AnyContent, _}
 import views.AdminPage
 
@@ -29,6 +30,8 @@ class AdminController @Inject()(components: ControllerComponents,profileService:
 
   /** Authorises user and calls 'pageMaker' to add a new group */
   def addGroup: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] => authorise(request,addNewGroup)}
+
+  def addGroupAdmin: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] => authorise(request,addNewGroupAdmin)}
 
   /** Authorises user and calls 'pageMaker' to add more pseudonyms */
   def addPseudonyms: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] => authorise(request,addMorePseudonyms)}
@@ -79,6 +82,28 @@ class AdminController @Inject()(components: ControllerComponents,profileService:
     makePageWithMessage(message,user)
   }
 
+  private val addNewGroupAdmin = (user:User, request:Request[AnyContent]) => {
+    val query = request.queryString
+    val formValues = request.body.asFormUrlEncoded
+    val result = if (formValues.nonEmpty) {
+      System.out.println("formValues:",formValues)
+      val pseuodnym:String = formValues.get.getOrElse("admin",Vector("")).head
+      val group:String = formValues.get.getOrElse("group",Vector("")).head
+      adminService.addGroupAdmin(pseuodnym,group)
+    } else {
+      Left("There was a problem adding the group")
+    }
+    val message = result match {
+      case Right(v) => if (v==1) {
+        Some(UiMessage(s"Group created successfully","info"))
+      } else {
+        Some(UiMessage(s"The group was not created [Code: $v]", "warn"))
+      }
+      case Left(e) => Some(UiMessage(s"ERROR: $e", "danger"))
+    }
+    makePageWithMessage(message,user)
+  }
+
   /**
     * Renders an admin page with UI message
     * @param message UI message to display
@@ -87,9 +112,9 @@ class AdminController @Inject()(components: ControllerComponents,profileService:
     */
   private def makePageWithMessage(message:Option[UiMessage],user:User): Result = {
     val groupInfo = adminService.groupInfo
+    val groupAdminInfo = adminService.groupAdminInfo
     val userInfo = adminService.userInfo
-    val page = AdminPage.page("GoingOK :: admin", message, Some(user),AdminData(groupInfo,userInfo))
-    Ok(AdminPage.getHtml(page))
+    Ok(new AdminPage(Some(user),AdminData(groupInfo,groupAdminInfo,userInfo)).buildPage(message=message))
   }
 
   private val addMorePseudonyms = (user:User, request:Request[AnyContent]) => {

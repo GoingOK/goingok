@@ -5,7 +5,7 @@ import org.goingok.server.Config
 import javax.inject.Inject
 import org.goingok.server.data.models.HealthStatus
 import play.api.mvc._
-import views.{DemoPage, HelpPage, HomePage}
+import views.{DemoPage, GenericPage, HelpPage, HomePage}
 
 import scala.concurrent.ExecutionContext
 
@@ -23,13 +23,13 @@ class ApplicationController @Inject()(components: ControllerComponents)
   def index: Action[AnyContent] = Action {
     val db = Config.dbUrl
     if(db.isDefined){ //replace with .isDefined
-      val page = HomePage.render("GoingOK :: home")
-      Ok(page)
+      Ok(new HomePage().buildPage())
     } else {
-      val page = DemoPage.render("GoingOK :: demo")
-      Ok(page)
+      Ok(new DemoPage().buildPage())
     }
   }
+
+
 
   /** Gets health status */
   def health :Action[AnyContent] = Action {
@@ -48,15 +48,13 @@ class ApplicationController @Inject()(components: ControllerComponents)
 
   /** Renders help page */
   def help: Action[AnyContent] = Action {
-    val page = HelpPage.render("GoingOK :: help")
-    Ok(page)
+    Ok(new HelpPage().buildPage())
   }
 
 
   /** Renders demo page */
   def demo: Action[AnyContent] = Action {
-    val page = DemoPage.render("GoingOK :: demo")
-    Ok(page)
+    Ok(new DemoPage().buildPage())
   }
 
 }

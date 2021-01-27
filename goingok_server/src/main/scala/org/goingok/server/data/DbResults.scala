@@ -19,4 +19,6 @@ object DbResults {
   case class GroupCodes(value:Seq[GroupCode]) extends Result
 
   case class Permission(value:String) extends Result
+
+  case class GroupAdmins(value:Seq[(String,String,String)]) extends Result
 }

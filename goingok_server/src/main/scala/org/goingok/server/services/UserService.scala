@@ -1,9 +1,10 @@
 package org.goingok.server.services
 
 import java.util.UUID
-
 import com.typesafe.scalalogging.Logger
-import org.goingok.server.data.models.{GoogleUser, User, UserAuth}
+import org.goingok.server.data.models.{Activity, CognitoUser, User, UserAuth}
+
+import java.time.LocalDateTime
 
 
 class UserService {
@@ -12,14 +13,34 @@ class UserService {
 
   val ds = new DataService
 
+//  /**
+//    * Gets GoingOK user from DB with google user info
+//    * @param googleUser Google user
+//    * @return GoingOK user
+//    */
+//  def getUser(googleUser:GoogleUser):Either[Throwable, User] = for {
+//      u1 <- ds.getUserWithGoogleId(googleUser.gId)
+//  } yield u1
+
   /**
-    * Gets GoingOK user from DB with google user info
-    * @param googleUser Google user
+    * Gets Goingok user from DB with cognito user info
+    * @param cognitoUser Cognito user
     * @return GoingOK user
     */
-  def getUser(googleUser:GoogleUser):Either[Throwable, User] = for {
-      u1 <- ds.getUserWithGoogleId(googleUser.gId)
-  } yield u1
+  def getUser(cognitoUser:CognitoUser):Either[Throwable, User] = cognitoUser.googleId match {
+    case Some(googleId) => for {
+          u1 <- ds.getUserWithGoogleId(googleId)
+      } yield u1
+    case None => for {
+      u1 <- ds.getUserWithServiceId(cognitoUser.id)
+    } yield u1
+  }
+
+  def registerLoginActivity(goingok_id:UUID,detail:String) = {
+    val time = LocalDateTime.now().toString
+    val dbResult = ds.insertActivity(Activity(time,goingok_id,"login",detail))
+  }
+
 
   /**
     * Gets GoingOK user from DB
@@ -30,19 +51,39 @@ class UserService {
     usr <- ds.getUserForId(goingok_id)
   } yield usr
 
+//  /**
+//    * Creates new GoingOK user
+//    * @param googleUser Google user
+//    */
+//  def createUser(googleUser:GoogleUser):Either[Throwable,User] = {
+//    logger.warn("Creating new user")
+//    val user = for {
+//      gid <- ds.insertNewUserAuth(new UserAuth(googleUser.gId, googleUser.email))
+//      p <- getNewPseudonym
+//      uuid <- ds.insertNewUser(User(gid,Some(p)))
+//      usr <- ds.getUserForId(uuid)
+//    } yield usr
+//    logger.info(s"user: $user")
+//    user
+//  }
+
   /**
     * Creates new GoingOK user
     * @param googleUser Google user
     */
-  def createUser(googleUser:GoogleUser):Either[Throwable,User] = {
+  def createUser(cognitoUser:CognitoUser):Either[Throwable,User] = {
     logger.warn("Creating new user")
     val user = for {
-      gid <- ds.insertNewUserAuth(new UserAuth(googleUser.gId, googleUser.email))
+      gid <- ds.insertNewUserAuth(new UserAuth(cognitoUser.id))
       p <- getNewPseudonym
       uuid <- ds.insertNewUser(User(gid,Some(p)))
       usr <- ds.getUserForId(uuid)
     } yield usr
     logger.info(s"user: $user")
+    user match {
+      case Right(u) => registerLoginActivity(u.goingok_id,"new user created")
+      case Left(e) => //do nothing
+    }
     user
   }
 

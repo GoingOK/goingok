@@ -50,12 +50,27 @@ class DataService {
   }
 
   /**
+    * Gets GoingOK user from DB by Cognito user ID
+    * @param cognitoId Cognito user ID
+    * @return GoingOK user
+    */
+  def getUserWithServiceId(serviceUuid:UUID):Either[Throwable,User] = {
+    val serviceId = serviceUuid.toString
+    val query = sql"""select * from users u, user_auths a
+                      where u.goingok_id = a.goingok_id
+                      and a.google_id = $serviceId
+                   """.query[User].unique
+
+    runQuery(query)
+  }
+
+  /**
     * Inserts new user Authentication into DB
     * @param userauth User authentication
     */
   def insertNewUserAuth(userauth:UserAuth):Either[Throwable,UUID] = {
     val query = sql"""insert into user_auths (goingok_id, google_id, google_email, init_timestamp)
-                      values(${userauth.goingok_id},${userauth.google_id},${userauth.google_email},${userauth.init_timestamp})
+                      values(${userauth.goingok_id},${userauth.service_id},${userauth.service_email},${userauth.init_timestamp})
                    """.update
                   .withUniqueGeneratedKeys[UUID]("goingok_id")
 
@@ -224,6 +239,18 @@ class DataService {
   }
 
   /**
+    * Inserts new activity into DB
+    * @param activity new activity
+    */
+  def insertActivity(activity:Activity): Either[Throwable,Int] = {
+    val query = sql"""insert into user_activities (timestamp, goingok_id, actitvity_type, activity_detail)
+                    values (${activity.timestamp},${activity.goingok_id},${activity.activity_type},${activity.activity_detail})
+                """.update.run
+
+    runQuery(query)
+  }
+
+  /**
     * Inserts new group code into DB
     * @param groupCode new group code
     * @param goingok_id GoingOK user ID
@@ -320,5 +347,31 @@ class DataService {
                      order by u.group_code
       """.query[(String, Int)]
     runQuery(query.to[Vector]).map(r => DbResults.GroupedReflectionCounts(r))
+  }
+
+  def getGroupAdmins():Either[Throwable,DbResults.Result] = {
+    val query =
+      sql"""select p.group_code, u.pseudonym ,a.google_email
+            from group_permissions p, user_auths a, users u
+            where p.goingok_id = a.goingok_id
+            and a.goingok_id = u.goingok_id
+            and permission = 'SENSITIVE'
+            order by a.google_email;
+           """.query[(String,String,String)]
+    runQuery(query.to[Vector]).map(r => DbResults.GroupAdmins(r))
+  }
+
+  def getGoingokIdForPseudonym(pseudonym:String):Either[Throwable,UUID] = {
+    val query = sql"""select goingok_id from users
+                      where pseudonym = $pseudonym
+                   """.query[UUID].unique
+
+    runQuery(query)
+  }
+  def insertGroupAdmin(goingok_id:UUID,group_code:String,permission:String):Either[Throwable,Int] = {
+    val query = sql"""insert into group_permissions (goingok_id, group_code, permission)
+                    values ($goingok_id,$group_code,$permission)
+                """.update.run
+    runQuery(query)
   }
 }

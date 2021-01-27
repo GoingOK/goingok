@@ -3,6 +3,7 @@ package controllers
 import java.util.UUID
 
 import javax.inject.Inject
+import org.goingok.server.data.UiMessage
 import org.goingok.server.services.UserService
 import play.api.Logger
 import play.api.mvc._
@@ -26,8 +27,8 @@ class RegisterController @Inject()(components: ControllerComponents, userService
   def register: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     request.session.get("user").map { uid =>
       val goingok_id = UUID.fromString(uid)
-      val page = RegisterPage.render("GoingOK :: register")
-      Future.successful(Ok(page))
+      //val page = RegisterPage.render("GoingOK :: register")
+      Future.successful(Ok(new RegisterPage().buildPage()))
     }.getOrElse {
       Future.successful(Unauthorized(UNAUTHORIZED_MESSAGE))
     }
@@ -57,8 +58,8 @@ class RegisterController @Inject()(components: ControllerComponents, userService
           case Left(error) => {
             logger.warn(s"An incorrect group-code was entered by $goingok_id")
             val message = s"""$code is not a valid group code. Please check the code and try again."""
-            val page = RegisterPage.render("GoingOK :: register", message = message)
-            Ok(page)
+            //val page = RegisterPage.render("GoingOK :: register", message = message)
+            Ok(new RegisterPage().buildPage(message = Some(UiMessage(message,"warn"))))
           }
         }
       }

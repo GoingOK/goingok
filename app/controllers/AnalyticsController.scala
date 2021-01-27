@@ -54,9 +54,10 @@ class AnalyticsController @Inject()(components: ControllerComponents, profileSer
   private val makePage = (user: User,request:Request[AnyContent]) => {
     val userCounts = analyticsService.groupedUserCounts.getOrElse(Seq())
     val reflectionCounts = analyticsService.groupedReflectionCounts(user.goingok_id).getOrElse(Seq())
-    val message = Some(UiMessage(s"This page is a work in progress. For now, there are only basic stats here. More coming soon.", "info"))
-    val page = AnalyticsPage.page("GoingOK :: analytics", message, Some(user), Analytics(userCounts, reflectionCounts))
-    Ok(AnalyticsPage.getHtml(page))
+    val msg = Some(UiMessage(s"This page is a work in progress. For now, there are only basic stats here. More coming soon.", "info"))
+    //val page = AnalyticsPage.page("GoingOK :: analytics", message, Some(user), Analytics(userCounts, reflectionCounts))
+    //Ok(AnalyticsPage.getHtml(page))
+    Ok(new AnalyticsPage(Some(user), Analytics(userCounts, reflectionCounts)).buildPage(message=msg))
   }
 
   private val makeCSV = (user:User, request:Request[AnyContent]) => {

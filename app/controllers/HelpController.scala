@@ -28,8 +28,9 @@ class HelpController @Inject()(components: ControllerComponents, profileService:
 
   private val makePage = (user: Option[User],request:Request[AnyContent]) => {
     //val message = Some(UiMessage(s"This page is a work in progress. For now, there are only basic stats here. More coming soon.", "info"))
-    val page = HelpPage.page("GoingOK :: help", None, user)
-    Ok(HelpPage.getHtml(page))
+//    val page = HelpPage.page("GoingOK :: help", None, user)
+//    Ok(HelpPage.getHtml(page))
+    Ok(new HelpPage(user).buildPage())
   }
 
 

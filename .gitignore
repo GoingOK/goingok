@@ -52,3 +52,5 @@ goingok_client/target/
 /public/javascripts/fa-solid.min.js
 /public/stylesheets/fa-svg-with-js.css
 /public/javascripts/fontawesome.min.js
+/.run/
+

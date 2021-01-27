@@ -20,7 +20,7 @@ import LocalSbtSettings._
 //scalacOptions += "-target:jvm-1.8"
 
 lazy val projectName = "goingok"
-lazy val projectVersion = "4.2.3"
+lazy val projectVersion = "4.2.7"
 lazy val projectOrganisation = "org.goingok"
 
 lazy val serverName = s"${projectName}_server"
@@ -28,22 +28,22 @@ lazy val clientName = s"${projectName}_client"
 lazy val sharedName = s"${projectName}_shared"
 
 //Versions
-scalaVersion in ThisBuild := "2.13.1"
+scalaVersion in ThisBuild := "2.13.4"
 
 //resolvers in ThisBuild += "nlytx bintray" at "https://dl.bintray.com/nlytx/nlytx-nlp"
 //resolvers in ThisBuild += Resolver.bintrayRepo("nlytx", "nlytx-nlp")
 
-lazy val vScalaTags = "0.8.6"
-lazy val vSlinky = "0.6.4"
+lazy val vScalaTags = "0.9.2"
+lazy val vSlinky = "0.6.6"
 lazy val vSjsD3 = "0.3.4"
 
-lazy val vUpickle = "1.0.0"
-lazy val vGoogleClientApi = "1.30.9"
-lazy val vDoobie = "0.8.8"
-lazy val vConfig = "1.4.0"
+lazy val vUpickle = "1.2.2"
+lazy val vGoogleClientApi = "1.31.2"
+lazy val vDoobie = "0.10.0"
+lazy val vConfig = "1.4.1"
 //lazy val vNlpCommons = "1.1.2"
 
-lazy val vScalaJsDom = "1.0.0"
+lazy val vScalaJsDom = "1.1.0"
 lazy val vWebpack = "4.10.2"
 lazy val vWebpackDevServer = "3.1.4"
 //lazy val vSjsBootstrap = "2.3.5"
@@ -55,7 +55,7 @@ lazy val vJquery = "3.4.1"
 lazy val vPopper = "1.14.4"
 lazy val vD3 = "5.9.7"
 
-lazy val vScalaTest = "3.1.1"
+lazy val vScalaTest = "3.2.3"
 lazy val vScalaLogging = "3.9.2"
 
 //Settings
@@ -72,11 +72,10 @@ val generalDeps = Seq(
   "com.typesafe" % "config" % vConfig,
   "com.lihaoyi" %% "scalatags" % vScalaTags, //Using ScalaTags instead of Twirl
   "com.lihaoyi" %% "upickle" % vUpickle, //Using uJson for main JSON
-  //"io.nlytx" %% "nlytx-nlp-commons" % vNlpCommons
 )
 
 val authDeps = Seq(
-    "com.google.api-client" % "google-api-client" % vGoogleClientApi,
+  "com.pauldijou" %% "jwt-core" % "5.0.0",
 )
 
 val dbDeps = Seq(
@@ -111,7 +110,7 @@ lazy val goingok = project.in(file("."))
     dockerRepository := Some(s"$dockerRepoURI"),
     defaultLinuxInstallLocation in Docker := "/opt/docker",
     dockerExposedVolumes := Seq("/opt/docker/logs"),
-    dockerBaseImage := "openjdk:11-jdk",
+    dockerBaseImage := "openjdk:latest",
     // Puts unified scaladocs into target/api
     siteSubdirName in ScalaUnidoc := "api",
     addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), siteSubdirName in ScalaUnidoc)
