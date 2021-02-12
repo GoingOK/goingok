@@ -13,4 +13,10 @@ object Visualisation {
     //println(s"rpChart entries: $entries")
     RelfectionPointChart.buildChart(entries)
   }
+
+  /** Generates analytics page charts */
+  def analyticsCharts(entries:js.Array[js.Object]) :Unit = {
+    println("Generating Analytics Charts: analyticsCharts")
+    AnalyticsCharts.buildAnalyticsChart(entries)
+  }
 }

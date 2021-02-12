@@ -1,10 +1,9 @@
 package views
 
 import java.time.LocalDate
-
 import org.goingok.server.Config
 import org.goingok.server.data.models.User
-import org.goingok.server.data.{Analytics, Profile, UiMessage}
+import org.goingok.server.data.{Analytics, Profile, UiMessage, models}
 import scalatags.Text.all._
 import scalatags.Text.{TypedTag, tags}
 import views.components.NavBar.NavParams
@@ -41,13 +40,20 @@ class AnalyticsPage(user:Option[User]=None,analytics:Analytics) extends GenericP
 //                div()
 //              )
             )
-          )
+          ),
+          div(id :="analytics-charts", `class`:="row")
         ),
         script(src:=bundleUrl)
       )
     )
   }
-
+  /** Creates analytics charts */
+  private def createChart(data:Option[Vector[models.ReflectionEntry]]) = {
+    val refs = data.getOrElse(Vector()).toList
+    val chartData:List[ujson.Obj] = refs.map(r => ujson.Obj("timestamp" -> r.bneDateTimeString, "point" -> r.reflection.point))
+    val entries:String = ujson.write(chartData)
+    script(raw(s"Visualisation.rpChart($entries)"))
+  }
 
 }
 

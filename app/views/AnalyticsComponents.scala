@@ -57,7 +57,7 @@ class AnalyticsComponents(analytics:Analytics) extends GenericComponents {
       ),
       tableVals match {
         case IntTable(tVals) => tbody(
-          for((label,val1,val2) <- tVals) yield tr(style:="font-family:monospace;",td(label),td(val1),td(val2)),
+          for((title,val1,val2) <- tVals) yield tr(style:="font-family:monospace;",td(div(`class`:="form-check", input(`class`:="form-check-input", `type`:="checkbox", `value`:=title, id:=title), label(`class`:="form-check-label", `for`:=title, title))),td(val1),td(val2)),
           tr(style:="font-family:monospace;",td(b("Total")),td(b(tVals.map(_._2).sum)),td(b(tVals.map(_._3).sum)))
         )
         case TypedTagStringTable(tVals) => tbody(
