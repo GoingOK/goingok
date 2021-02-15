@@ -53,8 +53,11 @@ class CognitoAuthController @Inject()(components: ControllerComponents, userServ
         cu <- getCognitoUserwithAuthCode(code)
       } yield cu
 
-      logger.info(s"Get cognitoUser from Cognito result: ${cognitoUser.isRight}")
 
+      cognitoUser match {
+        case Right(user) => logger.warn(s"cognitoUser from Cognito result: ${user.toString}")
+        case Left(e) => logger.error(s"Unable to get cognitoUser from Cognito result: ${e.toString}")
+      }
       val user = for {
         cu <- cognitoUser
         usr <- userService.getUser(cu)
@@ -122,7 +125,7 @@ class CognitoAuthController @Inject()(components: ControllerComponents, userServ
       .addHttpHeaders("Content-Type" -> "application/x-www-form-urlencoded")
       .withAuth(clientId, Config.awsCognitoAppClientSecret.get, WSAuthScheme.BASIC)
       .post(form)
-    logger.warn(wsResponse.toString)
+    logger.debug(wsResponse.toString)
     val fResult = wsResponse.map { response =>
       if (response.status >= 400) {
         // application level error
@@ -151,15 +154,22 @@ class CognitoAuthController @Inject()(components: ControllerComponents, userServ
     val jsonClaims: JsValue = Json.parse(claims)
     logger.debug(s"jsonClaims: $jsonClaims")
     val sub = (jsonClaims \ "sub").as[UUID]
-    //logger.warn("Need to check for google identity for backwards compatibility")
+    logger.debug("Need to check for google identity for backwards compatibility")
+    logger.debug(s"SUB: $sub")
     val identities = (jsonClaims \ "identities" \ 0).toOption
     val cogUser:CognitoUser = identities match {
       case Some(identity) => {
-        //logger.warn("Found an identity!")
+        logger.debug("Found an identity: "+identity.toString())
         val provider = (identity \ "providerName")
         val uid = (identity \ "userId")
         logger.debug(s"PROVIDER: $provider with UID: $uid")
-        CognitoUser(sub,Some(uid.get.as[String]))
+        if(provider.toString.contains("Google")) {
+          logger.debug(s"User logging in with Google - add google_id to cognitoUser")
+          CognitoUser(sub,Some(uid.get.as[String]))
+        } else {
+          logger.debug(s"User logging in with ${provider.toString} - no google_id")
+          CognitoUser(sub)
+        }
       }
       case None => {
         CognitoUser(sub)

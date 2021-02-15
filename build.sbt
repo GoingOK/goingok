@@ -20,7 +20,7 @@ import LocalSbtSettings._
 //scalacOptions += "-target:jvm-1.8"
 
 lazy val projectName = "goingok"
-lazy val projectVersion = "4.2.7"
+lazy val projectVersion = "4.2.8"
 lazy val projectOrganisation = "org.goingok"
 
 lazy val serverName = s"${projectName}_server"
