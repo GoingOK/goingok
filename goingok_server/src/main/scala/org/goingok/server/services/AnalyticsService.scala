@@ -3,10 +3,12 @@ package org.goingok.server.services
 import java.time.{DayOfWeek, LocalDate}
 import java.time.temporal.{Temporal, TemporalAdjusters}
 import java.util.{Date, UUID}
-
 import com.typesafe.scalalogging.Logger
 import org.goingok.server.data.DbResults
 import org.goingok.server.data.Permissions.Permission
+import org.goingok.server.data.models.AnalyticsChartsData
+
+import scala.collection.mutable.ListBuffer
 
 class AnalyticsService {
 
@@ -110,6 +112,34 @@ class AnalyticsService {
     case Left(err) => {
       logger.error(err.getMessage)
       false
+    }
+  }
+
+  def analyticsChartsData(goingok_id:UUID): Option[List[AnalyticsChartsData]] = {
+    val result = ds.countReflections(goingok_id)
+
+    result match {
+      case Right(result:DbResults.GroupedReflectionCounts) => {
+        logger.info(s"chart reflections found: ${result.value.size}")
+        val analyticsChartsData = new ListBuffer[AnalyticsChartsData]
+        result.value.map{gr =>
+          val reflectionData = ds.getAuthorReflectionsForGroup(gr._1)
+          reflectionData match {
+            case Right(result:DbResults.GroupedAuthorReflections) => {
+              analyticsChartsData += AnalyticsChartsData(gr._1, result.value.toList)
+            }
+            case Left(err) => {
+              logger.error(err.getMessage)
+              None
+            }
+          }
+        }
+        Some(analyticsChartsData.toList)
+      }
+      case Left(err) => {
+        logger.error(err.getMessage)
+        None
+      }
     }
   }
 

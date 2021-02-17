@@ -1,12 +1,11 @@
 package views
 
-import java.time.LocalDate
-
 import org.goingok.server.data.Analytics
-import scalatags.Text.all._
-import scalatags.Text.{TypedTag, tags}
-import views.components.NavBar.NavParams
-import views.components._ // scalastyle:ignore
+import org.goingok.server.data.models.AnalyticsChartsData
+import scalatags.Text.TypedTag
+import scalatags.Text.all.{label, _}
+
+import java.time.LocalDate // scalastyle:ignore
 
 class AnalyticsComponents(analytics:Analytics) extends GenericComponents {
 
@@ -19,6 +18,8 @@ class AnalyticsComponents(analytics:Analytics) extends GenericComponents {
   def reflectionsDownload: CardComponent = {
     card("Download reflections",basicTable(TypedTagStringTable(downloadLinks(mergedCounts)),List("Groups","all","last week")))
   }
+
+  def charts: Seq[AnalyticsChartsData] = analytics.chartData
 
   /** Merges users and reflections */
   private def merge(userCounts:Seq[(String,Int)],reflectionCounts:Seq[(String,Int)]):Seq[(String,Int,Int)] = {

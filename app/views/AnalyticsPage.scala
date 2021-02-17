@@ -7,7 +7,8 @@ import org.goingok.server.data.{Analytics, Profile, UiMessage, models}
 import scalatags.Text.all._
 import scalatags.Text.{TypedTag, tags}
 import views.components.NavBar.NavParams
-import views.components._ // scalastyle:ignore
+import views.components._
+// scalastyle:ignore
 
 
 
@@ -29,13 +30,13 @@ class AnalyticsPage(user:Option[User]=None,analytics:Analytics) extends GenericP
         div(id := "analytics-content",`class` := "container-fluid",
           showMessage(message),
           div(`class`:="row",
-            div(`class`:="col",
+            div(`class`:="col", id:="groups",
               ac.groups
             ),
             div(`class`:="col",
               ac.reflectionsDownload
             ),
-            div(`class`:="col", div()
+            div(`class`:="col", button(`class`:="d-none", id:="create-charts", "Visualise selected groups"), div()
 //              card("...",
 //                div()
 //              )
@@ -43,16 +44,16 @@ class AnalyticsPage(user:Option[User]=None,analytics:Analytics) extends GenericP
           ),
           div(id :="analytics-charts", `class`:="row")
         ),
-        script(src:=bundleUrl)
+        script(src:=bundleUrl),
+        createChart(ac.charts.toVector)
       )
     )
   }
   /** Creates analytics charts */
-  private def createChart(data:Option[Vector[models.ReflectionEntry]]) = {
-    val refs = data.getOrElse(Vector()).toList
-    val chartData:List[ujson.Obj] = refs.map(r => ujson.Obj("timestamp" -> r.bneDateTimeString, "point" -> r.reflection.point))
+  private def createChart(data:Vector[models.AnalyticsChartsData]) = {
+    val chartData:List[ujson.Obj] = data.toList.map(r => ujson.Obj("group" -> r.group, "value" -> r.value.map(c => ujson.Obj("timestamp" -> c.timestamp, "pseudonym" -> c.pseudonym, "point" -> c.reflection.point))))
     val entries:String = ujson.write(chartData)
-    script(raw(s"Visualisation.rpChart($entries)"))
+    script(raw(s"Visualisation.analyticsCharts($entries)"))
   }
 
 }

@@ -14,9 +14,10 @@ object Visualisation {
     RelfectionPointChart.buildChart(entries)
   }
 
+  @JSExport
   /** Generates analytics page charts */
   def analyticsCharts(entries:js.Array[js.Object]) :Unit = {
     println("Generating Analytics Charts: analyticsCharts")
-    AnalyticsCharts.buildAnalyticsChart(entries)
+    AnalyticsCharts.buildAnalyticsCharts(entries)
   }
 }
