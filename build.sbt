@@ -160,7 +160,7 @@ lazy val client = project.in(file(clientName))
       "org.scalatest" %%% "scalatest" % vScalaTest % "test"
     ),
     npmDependencies in Compile ++= Seq( //Only managing libraries that are used by ScalaJS, others are in public/javascripts and loaded in Includes (views)
-      "d3" -> vD3,
+      //"d3" -> vD3,
       "react" -> vReact,
       "react-dom" -> vReact
     )

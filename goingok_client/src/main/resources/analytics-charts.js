@@ -1,4 +1,4 @@
-var d3 = require("d3");
+//var d3 = require("d3");
 //var $ = require("$");
 var Chart = /** @class */ (function () {
     function Chart() {
@@ -22,29 +22,28 @@ var HtmlContainers = /** @class */ (function () {
 }());
 
 export function buildAnalyticsCharts(entries) {
+    d3.select("#side-panel-open-btn").on("click", function (e) {
+        d3.select("#groups").attr("class", "side-panel show");
+    });
+    d3.select("#side-panel-close-btn").on("click", function (e) {
+        d3.select("#groups").attr("class", "side-panel");
+    });
     var selectedGroups = [];
-    drawCharts((entries))
     d3.selectAll("#groups input").on("change", function (e) {
-        console.log(e)
         if (e.target.checked) {
             selectedGroups.push(e.target.value);
-            d3.select("#create-charts").attr("class", "btn btn-primary");
             var groupData = d3.filter(entries, function (d) { return selectedGroups.includes(d.group); });
-            d3.select("#create-charts").on("click", function (e) {
-                d3.select("#analytics-charts").html("");
-                drawCharts(groupData);
-            });
+            d3.select("#analytics-charts").html("");
+            drawCharts(groupData);
         }
         else {
             selectedGroups.splice(selectedGroups.indexOf(e.target.value), 1);
             if (selectedGroups.length == 0) {
-                d3.select("#create-charts").attr("class", "d-none");
+                d3.select("#analytics-charts").html("");
             }
             var groupData = d3.filter(entries, function (d) { return selectedGroups.includes(d.group); });
-            d3.select("#create-charts").on("click", function (e) {
-                d3.select("#analytics-charts").html("");
-                drawCharts(groupData);
-            });
+            d3.select("#analytics-charts").html("");
+            drawCharts(groupData);
         }
     });
     function drawCharts(entries) {
@@ -59,7 +58,7 @@ export function buildAnalyticsCharts(entries) {
                 return ({ key: key, value: value });
             });
             data.push({
-                value: c.value,
+                value: c.value.map(function (r) { return { timestamp: new Date(r.timestamp), point: parseInt(r.point), pseudonym: r.pseudonym }; }),
                 group: c.group,
                 mean: Math.round(d3.mean(c.value.map(function (r) { return r.point; }))),
                 median: d3.median(c.value.map(function (r) { return r.point; })),
@@ -69,8 +68,8 @@ export function buildAnalyticsCharts(entries) {
                 min: d3.min(c.value.map(function (r) { return r.point; })),
                 variance: chartFunctions.data.roundDecimal(d3.variance(c.value.map(function (r) { return r.point; }))),
                 deviation: chartFunctions.data.roundDecimal(d3.deviation(c.value.map(function (r) { return r.point; }))),
-                oldestReflection: d3.min(c.value.map(function (r) { return r.timestamp; })),
-                newestReflection: d3.max(c.value.map(function (r) { return r.timestamp; })),
+                oldestReflection: d3.min(c.value.map(function (r) { return new Date(r.timestamp); })),
+                newestReflection: d3.max(c.value.map(function (r) { return new Date(r.timestamp); })),
                 avgReflectionsPerUser: chartFunctions.data.roundDecimal(d3.mean(uniqueUsers.map(function (r) { return r.value; }))),
                 userMostReflective: d3.max(uniqueUsers.map(function (r) { return r.value; })),
                 userLessReflective: d3.min(uniqueUsers.map(function (r) { return r.value; }))

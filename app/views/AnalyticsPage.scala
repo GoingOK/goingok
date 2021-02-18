@@ -27,22 +27,24 @@ class AnalyticsPage(user:Option[User]=None,analytics:Analytics) extends GenericP
       Includes.headContent(titleStr),
       tags.body(
         NavBar.main(NavParams(user,Config.baseUrl,Some("analytics"))),
+        ac.selectGroups,
+        div(`class`:="side-panel-button", button(`class`:="btn btn-dark", id:="side-panel-open-btn", i(`class`:="fa fa-chevron-right"))),
         div(id := "analytics-content",`class` := "container-fluid",
           showMessage(message),
-          div(`class`:="row",
-            div(`class`:="col", id:="groups",
+          div(id :="analytics-charts", `class`:="row mt-3"),
+          div(`class`:="row mt-3",
+            div(`class`:="col",
               ac.groups
             ),
             div(`class`:="col",
               ac.reflectionsDownload
             ),
-            div(`class`:="col", button(`class`:="d-none", id:="create-charts", "Visualise selected groups"), div()
+            div(`class`:="col"
 //              card("...",
 //                div()
 //              )
             )
-          ),
-          div(id :="analytics-charts", `class`:="row")
+          )
         ),
         script(src:=bundleUrl),
         createChart(ac.charts.toVector)
