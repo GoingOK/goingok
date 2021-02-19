@@ -24,28 +24,45 @@ var HtmlContainers = /** @class */ (function () {
 export function buildAnalyticsCharts(entries) {
     d3.select("#side-panel-open-btn").on("click", function (e) {
         d3.select("#groups").attr("class", "side-panel show");
+        d3.select("#side-panel-open-btn").attr("class", "d-none");
     });
     d3.select("#side-panel-close-btn").on("click", function (e) {
         d3.select("#groups").attr("class", "side-panel");
+        d3.select("#side-panel-open-btn").attr("class", "btn btn-dark side-panel-btn")
+            .style("height", d3.select("#groups").style("height"));
     });
     var selectedGroups = [];
-    d3.selectAll("#groups input").on("change", function (e) {
-        if (e.target.checked) {
-            selectedGroups.push(e.target.value);
-            var groupData = d3.filter(entries, function (d) { return selectedGroups.includes(d.group); });
-            d3.select("#analytics-charts").html("");
-            drawCharts(groupData);
-        }
-        else {
-            selectedGroups.splice(selectedGroups.indexOf(e.target.value), 1);
-            if (selectedGroups.length == 0) {
+    preloadGroups();
+    addRemoveGroups();
+    //Check preloaded groups
+    function preloadGroups() {
+        d3.selectAll("#groups input").each(function () {
+            d3.select(this).attr("checked") == null ? "" : selectedGroups.push(d3.select(this).attr("value"));
+            console.log( d3.select(this).attr("checked"))
+        });
+        var groupData = d3.filter(entries, function (d) { return selectedGroups.includes(d.group); });
+        drawCharts(groupData);
+    }
+    //Handle add or remove groups
+    function addRemoveGroups() {
+        d3.selectAll("#groups input").on("change", function (e) {
+            if (e.target.checked) {
+                selectedGroups.push(e.target.value);
+                var groupData = d3.filter(entries, function (d) { return selectedGroups.includes(d.group); });
                 d3.select("#analytics-charts").html("");
+                drawCharts(groupData);
             }
-            var groupData = d3.filter(entries, function (d) { return selectedGroups.includes(d.group); });
-            d3.select("#analytics-charts").html("");
-            drawCharts(groupData);
-        }
-    });
+            else {
+                selectedGroups.splice(selectedGroups.indexOf(e.target.value), 1);
+                if (selectedGroups.length == 0) {
+                    d3.select("#analytics-charts").html("");
+                }
+                var groupData = d3.filter(entries, function (d) { return selectedGroups.includes(d.group); });
+                d3.select("#analytics-charts").html("");
+                drawCharts(groupData);
+            }
+        });
+    }
     function drawCharts(entries) {
         var htmlContainer = new HtmlContainers();
         //Append groups chart container
@@ -387,9 +404,12 @@ export function buildAnalyticsCharts(entries) {
                         .x(function (d) { return chart.x.scale(d.timestamp); })
                         .y(function (d) { return chart.y.scale(d.point); });
                     chart.renderElements.contentContainer.append("path")
+                        .datum(d3.sort(data.filter(function (c) { return c.pseudonym == d.pseudonym; }), function (d) { return d.timestamp; }))
                         .classed("line", true)
                         .attr("id", chart.id + "-timeline-circles-line")
-                        .attr("d", line(d3.sort(data.filter(function (c) { return c.pseudonym == d.pseudonym; }), function (d) { return d.timestamp; })));
+                        .attr("d", function (d) { return line(d); });
+                    chart.renderElements.contentContainer.selectAll(".line")
+                        .attr("clip-path", "url(#clip-" + chart.id + ")");
                     chartFunctions.click.appendText(chart, d, d.pseudonym, [{ label: "Avg", value: Math.round(d3.mean(data.filter(function (c) { return c.pseudonym == d.pseudonym; }).map(function (r) { return r.point; }))) }, { label: "Count", value: data.filter(function (c) { return c.pseudonym == d.pseudonym; }).length }]);
                 }
                 //Append zoom bar
@@ -422,15 +442,18 @@ export function buildAnalyticsCharts(entries) {
                     var newChartRange = [0, chart.width - chart.padding.yAxis].map(function (d) { return e.transform.applyX(d); });
                     chart.x.scale.rangeRound(newChartRange);
                     zoomChart.x.scale.rangeRound([0, chart.width - chart.padding.yAxis - 5].map(function (d) { return e.transform.invertX(d); }));
+                    var newLine = d3.line()
+                        .x(function (d) { return chart.x.scale(d.timestamp); })
+                        .y(function (d) { return chart.y.scale(d.point); });
                     chart.renderElements.contentContainer.selectAll("#" + chart.id + "-timeline-circles")
                         .attr("cx", function (d) { return chart.x.scale(d.timestamp); });
+                    chart.renderElements.contentContainer.selectAll("#" + chart.id + "-timeline-circles-line")
+                        .attr("d", function (d) { return newLine(d); });
                     chart.renderElements.zoomFocus.selectAll(".zoom-content")
                         .attr("cx", function (d) { return zoomChart.x.scale(d.timestamp); });
                     chart.x.axis.ticks(newChartRange[1] / 75);
                     chart.renderElements.xAxis.call(chart.x.axis);
                     chartFunctions.click.removeClick(chart);
-                    chart.renderElements.content.attr("class", "line-circle");
-                    chart.renderElements.contentContainer.selectAll("#" + chart.id + "-timeline-circles-line").remove();
                 }
             }
         }

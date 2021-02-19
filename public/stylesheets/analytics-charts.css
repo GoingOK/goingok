@@ -1,3 +1,8 @@
+.side-panel-title {
+    color: #fff;
+    border-bottom: 2px solid #343a40;
+}
+
 .side-panel.show {
     left: 0;
 }
@@ -10,12 +15,19 @@
     background-color: #000000;
     border: 2px solid #f8f9fa;
     border-radius: 0 5px 5px 0;
+    border-left: none;
     color: #0f856b;
 }
 
-.side-panel-button {
+.side-panel-btn-container {
     position: fixed;
     z-index: 1;
+}
+
+.side-panel-btn {
+    border: 2px solid #f8f9fa;
+    border-radius: 0 5px 5px 0;
+    border-left: none;
 }
 
 .chart-container {
