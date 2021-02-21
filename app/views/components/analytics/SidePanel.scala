@@ -1,14 +1,16 @@
 package views.components.analytics
 
 import scalatags.Text.TypedTag
-import scalatags.Text.all.{table, _}
+import scalatags.Text.all.{_}
 
 object SidePanel {
 
-  def groups(groups: List[String]): TypedTag[String] = {
-    div(id:="groups", `class`:="side-panel show",
-      div(`class`:="input-group",
-        div(`class`:="col p-3",  p(`class`:="h5 side-panel-title", "All groups"),
+  def display(groups: List[String]): TypedTag[String] = {
+    div(id:="sidebar",
+      div(`class`:="sidebar-header",
+        h3("Your groups")
+      ),
+      div(id:="groups",
           table(`class`:="table table-striped table-borderless table-sm",
             thead(
               tr(th(attr("scope"):="col", "Group"), th(attr("scope"):="col", "Visualise"), th(attr("scope"):="col", "Download"))
@@ -24,14 +26,11 @@ object SidePanel {
               )
             )
           )
-        ),
-        div(`class`:="input-group-append", button(`class`:="btn btn-dark", id:="side-panel-close-btn", i(`class`:="fas fa-chevron-left"))
         )
       )
-    )
   }
 
   def btn(): TypedTag[String] = {
-    div(`class`:="side-panel-btn-container", button(`class`:="btn btn-dark side-panel-btn", id:="side-panel-open-btn", i(`class`:="fas fa-chevron-right")))
+    button(`class`:="btn btn-dark", id:="sidebar-btn", i(`class`:="fa fa-align-justify"))
   }
 }

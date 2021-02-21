@@ -26,22 +26,28 @@ class AnalyticsPage(user:Option[User]=None, analytics: Analytics) extends Generi
       Includes.headContent(titleStr),
       tags.body(
         NavBar.main(NavParams(user,Config.baseUrl,Some("analytics"))),
-        SidePanel.groups(analytics.charts.map(r => r.group).toList),
-        SidePanel.btn(),
-        div(id := "analytics-content",`class` := "container-fluid",
-          showMessage(message),
-          Charts.display(),
-          div(`class`:="row mt-3",
-            div(`class`:="col",
-              Includes.panel("groups-table","","Groups", Tables.groups(analytics.mergedCounts))
-            ),
-            div(`class`:="col",
-              Includes.panel("download-reflections-table", "","Download reflections", Tables.reflectionsDownload(analytics.mergedCounts))
-            ),
-            div(`class`:="col"
-//              card("...",
-//                div()
-//              )
+        div(`class`:="wrapper",
+          SidePanel.display(analytics.charts.map(r => r.group).toList),
+          div(`class`:="content",
+            SidePanel.btn(),
+            div(`class`:="content-wrapper",
+              div(id := "analytics-content",`class` := "container-fluid",
+                showMessage(message),
+                Charts.display(),
+                div(`class`:="row mt-3",
+                  div(`class`:="col",
+                    Includes.panel("groups-table","","Groups", Tables.groups(analytics.mergedCounts))
+                  ),
+                  div(`class`:="col",
+                    Includes.panel("download-reflections-table", "","Download reflections", Tables.reflectionsDownload(analytics.mergedCounts))
+                  ),
+                  div(`class`:="col"
+                    //              card("...",
+                    //                div()
+                    //              )
+                  )
+                )
+              )
             )
           )
         ),

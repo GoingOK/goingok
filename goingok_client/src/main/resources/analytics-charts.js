@@ -22,14 +22,8 @@ var HtmlContainers = /** @class */ (function () {
 }());
 
 export function buildAnalyticsCharts(entries) {
-    d3.select("#side-panel-open-btn").on("click", function (e) {
-        d3.select("#groups").attr("class", "side-panel show");
-        d3.select("#side-panel-open-btn").attr("class", "d-none");
-    });
-    d3.select("#side-panel-close-btn").on("click", function (e) {
-        d3.select("#groups").attr("class", "side-panel");
-        d3.select("#side-panel-open-btn").attr("class", "btn btn-dark side-panel-btn")
-            .style("height", d3.select("#groups").style("height"));
+    d3.select("#sidebar-btn").on("click", function (e) {
+        $("#sidebar").toggleClass("active");
     });
     var selectedGroups = [];
     preloadGroups();
