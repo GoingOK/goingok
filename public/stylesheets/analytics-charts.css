@@ -14,13 +14,22 @@
 }
 
 #sidebar.active {
-    margin-left: -250px
+    margin-left: -200px;
 }
 
 #sidebar .sidebar-header {
     padding: 20px;
     background: #000000;
     color: #fff;
+    display: flex;
+}
+
+#sidebar .sidebar-header.active {
+    padding: 20px 10px 20px 10px;
+}
+
+#groups.active {
+    display: none;
 }
 
 .content {
@@ -49,7 +58,7 @@
 }
 
 .chart-container {
-    height: 40vh;
+    min-height: 40vh;
 }
 
 .statistics-text {

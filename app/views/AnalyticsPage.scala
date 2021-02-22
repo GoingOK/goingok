@@ -29,7 +29,6 @@ class AnalyticsPage(user:Option[User]=None, analytics: Analytics) extends Generi
         div(`class`:="wrapper",
           SidePanel.display(analytics.charts.map(r => r.group).toList),
           div(`class`:="content",
-            SidePanel.btn(),
             div(`class`:="content-wrapper",
               div(id := "analytics-content",`class` := "container-fluid",
                 showMessage(message),

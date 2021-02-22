@@ -24,6 +24,8 @@ var HtmlContainers = /** @class */ (function () {
 export function buildAnalyticsCharts(entries) {
     d3.select("#sidebar-btn").on("click", function (e) {
         $("#sidebar").toggleClass("active");
+        $("#sidebar .sidebar-header").toggleClass("active");
+        $("#sidebar #groups").toggleClass("active");
     });
     var selectedGroups = [];
     preloadGroups();
@@ -32,7 +34,6 @@ export function buildAnalyticsCharts(entries) {
     function preloadGroups() {
         d3.selectAll("#groups input").each(function () {
             d3.select(this).attr("checked") == null ? "" : selectedGroups.push(d3.select(this).attr("value"));
-            console.log( d3.select(this).attr("checked"))
         });
         var groupData = d3.filter(entries, function (d) { return selectedGroups.includes(d.group); });
         drawCharts(groupData);
@@ -722,8 +723,8 @@ var chartFunctions = {
             .select(".chart-container")
             .append("svg")
             .attr("id", "chart-" + chart.id)
-            .attr("width", chart.width)
-            .attr("height", chart.height);
+            .attr("preserveAspectRatio", "xMinYMin meet")
+            .attr("viewBox", "0 0 "+chart.width+" "+chart.height);
     },
     appendContentContainer: function (chart) {
         var result = chart.renderElements.svg.append("g")

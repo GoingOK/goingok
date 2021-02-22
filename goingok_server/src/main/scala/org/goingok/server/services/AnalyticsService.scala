@@ -6,7 +6,7 @@ import java.util.{Date, UUID}
 import com.typesafe.scalalogging.Logger
 import org.goingok.server.data.DbResults
 import org.goingok.server.data.Permissions.Permission
-import org.goingok.server.data.models.AnalyticsChartsData
+import org.goingok.server.data.models.{AnalyticsChartsData, ReflectionAuthorEntry, ReflectionData}
 
 import scala.collection.mutable.ListBuffer
 
@@ -116,26 +116,15 @@ class AnalyticsService {
   }
 
   def analyticsChartsData(goingok_id:UUID): Option[List[AnalyticsChartsData]] = {
-    val result = ds.countReflections(goingok_id)
+    val result = ds.getAuthorReflectionsAndGroup(goingok_id)
 
     result match {
-      case Right(result:DbResults.GroupedReflectionCounts) => {
+      case Right(result:DbResults.GroupedAuthorReflectionsByUser) => {
         logger.info(s"chart reflections found: ${result.value.size}")
-        val analyticsChartsData = new ListBuffer[AnalyticsChartsData]
-        result.value.map{gr =>
-          val reflectionData = ds.getAuthorReflectionsForGroup(gr._1)
-          reflectionData match {
-            case Right(result:DbResults.GroupedAuthorReflections) => {
-              analyticsChartsData += AnalyticsChartsData(gr._1, result.value.toList)
-            }
-            case Left(err) => {
-              logger.error(err.getMessage)
-              None
-            }
-          }
-        }
+        val analyticsChartsData = result.value.groupBy(c => c.group).map(c =>
+          AnalyticsChartsData(c._1, c._2.map(r => ReflectionAuthorEntry(r.timestamp, r.pseudonym, ReflectionData(r.point, "")))))
         Some(analyticsChartsData.toList)
-      }
+        }
       case Left(err) => {
         logger.error(err.getMessage)
         None
