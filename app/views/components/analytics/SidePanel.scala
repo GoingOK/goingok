@@ -15,7 +15,7 @@ object SidePanel {
       div(id:="groups",
           table(`class`:="table table-striped table-borderless table-sm",
             thead(
-              tr(th(attr("scope"):="col", "Group"), th(attr("scope"):="col", "Visualise"), th(attr("scope"):="col", "Download"))
+              tr(th(attr("scope"):="col", "Group"), th(attr("scope"):="col", "Visualise"), th(attr("scope"):="col"))
             ),
             tbody(
               for(group <- groups) yield tr(
