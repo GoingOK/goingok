@@ -1,4 +1,4 @@
-//var d3 = require("d3");
+var d3 = require("d3");
 //var $ = require("$");
 var Chart = /** @class */ (function () {
     function Chart() {
