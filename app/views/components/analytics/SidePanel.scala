@@ -7,7 +7,7 @@ object SidePanel {
 
   def display(groups: List[String]): TypedTag[String] = {
     var isChecked = true
-    div(id:="sidebar",
+    div(id:="sidebar", `class`:= "active",
       div(`class`:="sidebar-header",
         h3("Your groups"),
         button(`class`:="btn btn-dark ml-auto mt-auto mb-auto", id:="sidebar-btn", i(`class`:="fa fa-align-justify"))

@@ -1,5 +1,4 @@
 var d3 = require("d3");
-//var $ = require("$");
 var Chart = /** @class */ (function () {
     function Chart() {
         this.renderElements = {};
@@ -22,84 +21,119 @@ var HtmlContainers = /** @class */ (function () {
 }());
 
 export function buildAnalyticsCharts(entries) {
+    var sidebarWidth = d3.select("#sidebar").node().getBoundingClientRect().width;
+    d3.select("#sidebar")
+        .style("width", `${sidebarWidth}px`);
+
+    //Handle side bar btn click
     d3.select("#sidebar-btn").on("click", function (e) {
-        $("#sidebar").toggleClass("active");
-        $("#sidebar .sidebar-header").toggleClass("active");
-        $("#sidebar #groups").toggleClass("active");
+        var isActive = d3.select("#sidebar").attr("class") == "active";
+        d3.select("#sidebar")
+            .attr("class", isActive ? "" : "active")
+            .style("margin-left", isActive ? `${66 - sidebarWidth}px` : "");
+        d3.select("#sidebar #groups")
+            .style("opacity", isActive ? "0" : "1")
     });
-    var selectedGroups = [];
-    preloadGroups();
-    addRemoveGroups();
-    //Check preloaded groups
-    function preloadGroups() {
-        d3.selectAll("#groups input").each(function () {
-            d3.select(this).attr("checked") == null ? "" : selectedGroups.push(d3.select(this).attr("value"));
-        });
-        var groupData = d3.filter(entries, function (d) { return selectedGroups.includes(d.group); });
-        drawCharts(groupData);
-    }
-    //Handle add or remove groups
-    function addRemoveGroups() {
-        d3.selectAll("#groups input").on("change", function (e) {
-            if (e.target.checked) {
-                selectedGroups.push(e.target.value);
-                var groupData = d3.filter(entries, function (d) { return selectedGroups.includes(d.group); });
-                d3.select("#analytics-charts").html("");
-                drawCharts(groupData);
-            }
-            else {
-                selectedGroups.splice(selectedGroups.indexOf(e.target.value), 1);
-                if (selectedGroups.length == 0) {
-                    d3.select("#analytics-charts").html("");
-                }
-                var groupData = d3.filter(entries, function (d) { return selectedGroups.includes(d.group); });
-                d3.select("#analytics-charts").html("");
-                drawCharts(groupData);
-            }
-        });
-    }
-    function drawCharts(entries) {
+    //Draw charts
+    drawCharts(entries);
+    function drawCharts(allEntries) {
         var htmlContainer = new HtmlContainers();
+        var selectedGroups = [];
+        //Preloaded groups
+        preloadGroups();
+        function preloadGroups() {
+            d3.selectAll("#groups input").each(function () {
+                d3.select(this).attr("checked") == null ? "" : selectedGroups.push(d3.select(this).attr("value"));
+            });
+            //Process entries to be drawn
+            entries = d3.filter(allEntries, function (d) { return selectedGroups.includes(d.group); });
+        }
+        //Handle add or remove groups
+        addRemoveGroups();
+        function addRemoveGroups() {
+            d3.selectAll("#groups input").on("change", function (e) {
+                if (e.target.checked) {
+                    //Add group code to the list
+                    selectedGroups.push(e.target.value);
+                    //Update data
+                    updateData();
+                    //Handle there is an active click in the group chart
+                    if (groupChart.click) {
+                        //Update click text
+                        chartFunctions.click.appendGroupsText(groupChart, data, data[data.map(function (d) { return d.group; }).indexOf(htmlContainer.groupStatistics.select(".card").attr("id"))]);
+                        //Update group compare inputs
+                        groupCompare(data, htmlContainer.groupStatistics.select(".card").attr("id"));
+                    }
+                }
+                else {
+                    //Remove group code from the list
+                    selectedGroups.splice(selectedGroups.indexOf(e.target.value), 1);
+                    //Update data
+                    updateData();
+                    //Remove clicks that are not in the list
+                    groupChart.renderElements.contentContainer.selectAll("#" + groupChart.id + " .content-container .click-container")
+                        .data(data)
+                        .exit()
+                        .remove();
+                    //Handle there is an active click in the group chart
+                    if (groupChart.click) {
+                        //Handle if the removed code group was clicked
+                        if (e.target.value == htmlContainer.groupStatistics.select(".card").attr("id")) {
+                            //Remove click
+                            chartFunctions.click.removeClick(groupChart);
+                            //Remove click class
+                            chartFunctions.click.removeClickClass(groupChart, "bar");
+                            //Remove drilldown html containers
+                            htmlContainer.remove();
+                        }
+                        else {
+                            //Update click text
+                            chartFunctions.click.appendGroupsText(groupChart, data, data[data.map(function (d) { return d.group; }).indexOf(htmlContainer.groupStatistics.select(".card").attr("id"))]);
+                            //Update group compare inputs
+                            var currentCompareGroups_1 = groupCompare(data, htmlContainer.groupStatistics.select(".card").attr("id"));
+                            //Remove removed group code from the compare groups
+                            currentCompareGroups_1.splice(currentCompareGroups_1.indexOf(e.target.value), 1);
+                            //Update violin data
+                            var violinData = d3.filter(allEntries, function (d) { return currentCompareGroups_1.includes(d.group); });
+                            //Update violin chart series scale
+                            violinChart.x = chartFunctions.axis.setSeriesAxis("Group Code", violinData.map(function (r) { return r.group; }), [0, violinChart.width - violinChart.padding.yAxis - violinChart.padding.right], "bottom");
+                            //Update violin users chart series scale
+                            violinUsersChart.x = chartFunctions.axis.setSeriesAxis("Group Code", violinData.map(function (r) { return r.group; }), [0, violinUsersChart.width - violinUsersChart.padding.yAxis - violinUsersChart.padding.right], "bottom");
+                            //Render violin with updated data
+                            renderViolin(violinChart, violinData);
+                            //Render violin users with updated data
+                            renderViolin(violinUsersChart, violinData);
+                            //Transition violin series
+                            chartFunctions.transitions.axis(violinChart, violinData);
+                            //Transition violin users series
+                            chartFunctions.transitions.axis(violinUsersChart, violinData);
+                        }
+                    }
+                }
+            });
+            function updateData() {
+                //Update entries with the new group code list
+                entries = d3.filter(allEntries, function (d) { return selectedGroups.includes(d.group); });
+                //Update data with the updated entries
+                data = chartFunctions.data.processEntries(entries);
+                //Update group chart series scale
+                groupChart.x = chartFunctions.axis.setSeriesAxis("Group Code", data.map(function (r) { return r.group; }), [0, groupChart.width - groupChart.padding.yAxis - groupChart.padding.right], "bottom");
+                //Transition group chart series
+                chartFunctions.transitions.axis(groupChart, data);
+                //Render group chart with updated data
+                renderGroupChart(groupChart, data);
+            }
+        }
         //Append groups chart container
         htmlContainer.groupsChart = chartFunctions.appendDiv("groups-chart", "col-md-9");
         chartFunctions.appendCard(htmlContainer.groupsChart, "Reflections box plot by group");
-        var data = [];
-        entries.forEach(function (c) {
-            var uniqueUsers = Array.from(d3.rollup(c.value, function (d) { return d.length; }, function (d) { return d.pseudonym; }), function (_a) {
-                var key = _a[0], value = _a[1];
-                return ({ key: key, value: value });
-            });
-            data.push({
-                value: c.value.map(function (r) { return { timestamp: new Date(r.timestamp), point: parseInt(r.point), pseudonym: r.pseudonym }; }),
-                group: c.group,
-                mean: Math.round(d3.mean(c.value.map(function (r) { return r.point; }))),
-                median: d3.median(c.value.map(function (r) { return r.point; })),
-                q1: d3.quantile(c.value.map(function (r) { return r.point; }), 0.25),
-                q3: d3.quantile(c.value.map(function (r) { return r.point; }), 0.75),
-                max: d3.max(c.value.map(function (r) { return r.point; })),
-                min: d3.min(c.value.map(function (r) { return r.point; })),
-                variance: chartFunctions.data.roundDecimal(d3.variance(c.value.map(function (r) { return r.point; }))),
-                deviation: chartFunctions.data.roundDecimal(d3.deviation(c.value.map(function (r) { return r.point; }))),
-                oldestReflection: d3.min(c.value.map(function (r) { return new Date(r.timestamp); })),
-                newestReflection: d3.max(c.value.map(function (r) { return new Date(r.timestamp); })),
-                avgReflectionsPerUser: chartFunctions.data.roundDecimal(d3.mean(uniqueUsers.map(function (r) { return r.value; }))),
-                userMostReflective: d3.max(uniqueUsers.map(function (r) { return r.value; })),
-                userLessReflective: d3.min(uniqueUsers.map(function (r) { return r.value; }))
-            });
-        });
-        var groupChart = setGroupChart(data);
+        //Create data with current entries
+        var data = chartFunctions.data.processEntries(entries);
+        //Create group chart with current data
+        var groupChart = chartFunctions.setChart("groups-chart", data);
+        //Render svg, containers, standard axis and labels
         preRender(groupChart);
         renderGroupChart(groupChart, data);
-        function setGroupChart(data) {
-            var result = new Chart();
-            result.id = "groups-chart";
-            var containerDimensions = chartFunctions.getContainerDimension(result.id);
-            result.width = containerDimensions.width;
-            result.height = containerDimensions.height;
-            result.x = chartFunctions.axis.setSeriesAxis("Group Code", data.map(function (r) { return r.group; }), [0, result.width - result.padding.yAxis - result.padding.right], "bottom");
-            result.y = chartFunctions.axis.setValuesAxis("State", [0, 100], [result.height - result.padding.xAxis - result.padding.top, 0], "left");
-            return result;
-        }
         function preRender(chart) {
             chart.renderElements.svg = chartFunctions.appendSVG(chart);
             chart.renderElements.contentContainer = chartFunctions.appendContentContainer(chart);
@@ -109,57 +143,82 @@ export function buildAnalyticsCharts(entries) {
             chartFunctions.axis.appendYAxisLabel(chart);
         }
         function renderGroupChart(chart, data) {
-            //Draw min to max line
-            chart.renderElements.contentContainer.selectAll(chart.id + "-data-min-max")
-                .data(data)
-                .enter()
+            //Select existing minMax lines
+            var minMax = chart.renderElements.contentContainer.selectAll("#" + chart.id + "-data-min-max")
+                .data(data);
+            //Remove old minMax lines
+            minMax.exit().remove();
+            //Append new minMax lines
+            var minMaxEnter = minMax.enter()
                 .append("line")
                 .attr("id", chart.id + "-data-min-max")
                 .attr("class", "box-line")
                 .attr("x1", function (d) { return chart.x.scale(d.group) + (chart.x.scale.bandwidth() / 2); })
-                .attr("y1", function (d) { return chart.y.scale(d.min); })
                 .attr("x2", function (d) { return chart.x.scale(d.group) + (chart.x.scale.bandwidth() / 2); })
+                .attr("y1", function (d) { return chart.y.scale(d.min); })
                 .attr("y2", function (d) { return chart.y.scale(d.max); });
-            //Draw median line
-            chart.renderElements.contentContainer.selectAll(chart.id + "-data-median")
-                .data(data)
-                .enter()
+            //Merge existing and new minMax lines
+            minMax.merge(minMaxEnter);
+            //Select existing median lines
+            var median = chart.renderElements.contentContainer.selectAll("#" + chart.id + "-data-median")
+                .data(data);
+            //Remove old median lines
+            median.exit().remove();
+            //Append new median lines
+            var medianEnter = median.enter()
                 .append("line")
                 .attr("id", chart.id + "-data-median")
                 .attr("class", "box-line")
                 .attr("x1", function (d) { return chart.x.scale(d.group); })
-                .attr("y1", function (d) { return chart.y.scale(d.median); })
                 .attr("x2", function (d) { return chart.x.scale(d.group) + chart.x.scale.bandwidth(); })
+                .attr("y1", function (d) { return chart.y.scale(d.median); })
                 .attr("y2", function (d) { return chart.y.scale(d.median); });
-            //Draw boxes
-            chart.renderElements.content = chart.renderElements.contentContainer.selectAll(chart.id + "-data")
-                .data(data)
-                .enter()
+            //Merge existing and new median lines
+            median.merge(medianEnter);
+            //Select existing boxes
+            var boxes = chart.renderElements.contentContainer.selectAll("#" + chart.id + "-data")
+                .data(data);
+            //Remove old boxes
+            boxes.exit().remove();
+            //Append new boxes
+            var boxesEnter = boxes.enter()
                 .append("rect")
                 .attr("id", chart.id + "-data")
                 .classed("bar", true)
-                .attr("width", chart.x.scale.bandwidth())
-                .attr("height", function (d) { return chart.y.scale(d.q1) - chart.y.scale(d.q3); })
+                .attr("y", function (d) { return chart.y.scale(d.q3); })
                 .attr("x", function (d) { return chart.x.scale(d.group); })
-                .attr("y", function (d) { return chart.y.scale(d.q3); });
+                .attr("width", function (d) { return chart.x.scale.bandwidth(); })
+                .attr("height", function (d) { return chart.y.scale(d.q1) - chart.y.scale(d.q3); });
+            //Merge existing and new boxes
+            boxes.merge(boxesEnter);
+            //Transition boxes and lines
+            chartFunctions.transitions.bars(chart, data);
+            //Set render elements content to boxes
+            chart.renderElements.content = chart.renderElements.contentContainer.selectAll("#" + chart.id + "-data");
             //Enable tooltip
             chartFunctions.tooltip.enableTooltip(chart, onMouseover, onMouseout);
             function onMouseover(e, d) {
+                //If box is clicked not append tooltip
                 if (d3.select(this).attr("class").includes("clicked")) {
                     return;
                 }
-                var tooltipBox = chartFunctions.tooltip.appendTooltipBox(chart);
-                chartFunctions.tooltip.appendTooltipText(chart, d.group, [{ label: "q1", value: d.q1 }, { label: "q3", value: d.q3 }, { label: "Median", value: d.median }, { label: "Mean", value: d.mean }, { label: "Max", value: d.max }, { label: "Min", value: d.min }]);
+                //Append tooltip box with text
+                var tooltipBox = chartFunctions.tooltip.appendTooltipText(chart, d.group, [{ label: "q1", value: d.q1 }, { label: "q3", value: d.q3 }, { label: "Median", value: d.median }, { label: "Mean", value: d.mean }, { label: "Max", value: d.max }, { label: "Min", value: d.min }]);
+                //Position tooltip container
                 chartFunctions.tooltip.positionTooltipContainer(chart, xTooltip(d.group, tooltipBox), yTooltip(d.q3, tooltipBox));
                 function xTooltip(x, tooltipBox) {
+                    //Position tooltip right of the box
                     var xTooltip = chart.x.scale(x) + chart.x.scale.bandwidth();
+                    //If tooltip does not fit position left of the box
                     if (chart.width - chart.padding.yAxis < xTooltip + tooltipBox.node().getBBox().width) {
                         return xTooltip - chart.x.scale.bandwidth() - tooltipBox.node().getBBox().width;
                     }
                     return xTooltip;
                 }
                 function yTooltip(y, tooltipBox) {
+                    //Position tooltip on top of the box
                     var yTooltip = chart.y.scale(y) - (tooltipBox.node().getBBox().height / 2);
+                    //If tooltip does not fit position at the same height as the box
                     if (chart.y.scale.invert(yTooltip) < 0) {
                         return chart.y.scale(y + chart.y.scale.invert(yTooltip));
                     }
@@ -167,54 +226,41 @@ export function buildAnalyticsCharts(entries) {
                 }
             }
             function onMouseout() {
+                //Transition tooltip to opacity 0
                 chart.renderElements.svg.select(".tooltip-container").transition()
                     .style("opacity", 0);
+                //Remove tooltip
                 chartFunctions.tooltip.removeTooltip(chart);
             }
             //Enable click
             chartFunctions.click.enableClick(chart, onClick);
             function onClick(e, d) {
+                //If box is clicked remove click
                 if (d3.select(this).attr("class") == "bar clicked") {
+                    //Remove click
                     chartFunctions.click.removeClick(chart);
+                    //Remove click class
                     d3.select(this).attr("class", "bar");
+                    //Remove drilldown html containers
                     htmlContainer.remove();
                     return;
                 }
+                //Remove existing click
                 chartFunctions.click.removeClick(chart);
+                //Remove existing click classes
+                chartFunctions.click.removeClickClass(chart, "bar");
+                //If drilldown html containers exists remove them
                 if (htmlContainer.groupStatistics != undefined) {
+                    //Remove drilldown html containers
                     htmlContainer.remove();
                 }
-                chart.renderElements.contentContainer.selectAll(".bar.clicked")
-                    .attr("class", "bar");
-                d3.select(this).attr("class", "bar clicked");
-                data.forEach(function (c) {
-                    appendText(d.q3, c.q3, d.group, c.group, "q3");
-                    appendText(d.median, c.median, d.group, c.group, "Median");
-                    appendText(d.q1, c.q1, d.group, c.group, "q1");
-                });
-                function appendText(clickValue, value, clickXValue, xValue, label) {
-                    var textClass = "click-text";
-                    var textSymbol = "";
-                    if (clickValue - value < 0) {
-                        textClass = textClass + " positive";
-                        textSymbol = "+";
-                    }
-                    else if (clickValue - value > 0) {
-                        textClass = textClass + " negative";
-                        textSymbol = "-";
-                    }
-                    else {
-                        textClass = textClass + " black";
-                    }
-                    chart.renderElements.contentContainer.append("text")
-                        .attr("class", textClass)
-                        .attr("x", chart.x.scale(xValue) + (chart.x.scale.bandwidth() / 2))
-                        .attr("y", chart.y.scale(value) - 5)
-                        .text(label + ": " + textSymbol + (clickXValue == xValue ? clickValue : (Math.abs(clickValue - value))));
-                }
+                //Set chat click to true
+                chart.click = true;
+                //Append click text
+                chartFunctions.click.appendGroupsText(chart, data, d);
                 //Show selected group general statistics
                 htmlContainer.groupStatistics = chartFunctions.appendDiv("groups-statistics", "col-md-3");
-                var groupsStatisticsCard = chartFunctions.appendCard(htmlContainer.groupStatistics, "Statitics (" + d.group + ")");
+                var groupsStatisticsCard = chartFunctions.appendCard(htmlContainer.groupStatistics, "Statitics (" + d.group + ")", d.group);
                 groupsStatisticsCard.select(".card-body")
                     .attr("class", "card-body statistics-text")
                     .html("<b>Q1: </b>" + d.q1 + "<br>\n                        <b>Median: </b>" + d.median + "<br>\n                        <b>Q3: </b>" + d.q3 + "<br>\n                        <b>Mean: </b>" + d.mean + "<br>\n                        <b>Variance: </b>" + d.variance + "<br>\n                        <b>Std Deviation: </b>" + d.deviation + "<br>\n                        <b>Max: </b>" + d.max + "<br>\n                        <b>Min: </b>" + d.min + "<br>\n                        <b>Reflections per user: </b>" + d.avgReflectionsPerUser + "<br>\n                        <b>Max reflections per user: </b>" + d.userMostReflective + "<br>\n                        <b>Min reflections per user: </b>" + d.userLessReflective + "<br>\n                        <b>Oldest reflection</b><br>" + d.oldestReflection.toDateString() + "<br>\n                        <b>Newest reflection</b><br>" + d.newestReflection.toDateString() + "<br>");
@@ -231,30 +277,30 @@ export function buildAnalyticsCharts(entries) {
                 htmlContainer.compare = chartFunctions.appendDiv("group-compare", "col-md-2 mt-3");
                 var compareCard = chartFunctions.appendCard(htmlContainer.compare, "Compare " + d.group + " with:");
                 compareCard.select(".card-body").attr("class", "card-body");
-                groupCompare(data, d.group);
+                var currentCompareGroups = groupCompare(data, d.group);
                 //Draw groups violin container
                 htmlContainer.groupViolin = chartFunctions.appendDiv("group-violin-chart", "col-md-5 mt-3");
                 chartFunctions.appendCard(htmlContainer.groupViolin, "Reflections distribution (" + d.group + ")");
                 //Draw users violin container
                 htmlContainer.userViolin = chartFunctions.appendDiv("group-violin-users-chart", "col-md-5 mt-3");
                 chartFunctions.appendCard(htmlContainer.userViolin, "Users distribution (" + d.group + ")");
-                //Draw violin charts
-                groupViolinChart(data, d.group);
+                //Draw violins
+                groupViolinChart(data, currentCompareGroups);
             }
             //Enable sort
             var sortButton = chart.renderElements.svg.select(".y-label-container").attr("class", "y-label-container zoom");
             var yArrow = chartFunctions.sort.appendArrow(sortButton, chart, false, true);
             sortButton.on("click", function () {
-                chartFunctions.sort.setSorted(chart, false, true);
+                chart.y.sorted = chart.y.sorted == false ? true : false;
                 chartFunctions.sort.arrowTransition(chart.renderElements.svg, chart, yArrow, false, true);
                 data = data.sort(function (a, b) {
                     return chartFunctions.sort.sortData(a.mean, b.mean, chart.y.sorted);
                 });
-                chartFunctions.click.removeClick(chart);
-                chart.renderElements.svg.selectAll(".bar.clicked")
-                    .attr("class", "bar");
-                axisTransition(chart, data);
-                barsTransition(chart, data);
+                chartFunctions.transitions.axis(chart, data);
+                chartFunctions.transitions.bars(chart, data);
+                if (chart.click) {
+                    chartFunctions.click.appendGroupsText(chart, data, data[data.map(function (d) { return d.group; }).indexOf(htmlContainer.groupStatistics.select(".card").attr("id"))]);
+                }
             });
         }
         function groupTimeline(data) {
@@ -356,8 +402,7 @@ export function buildAnalyticsCharts(entries) {
                     if (d3.select(this).attr("class").includes("clicked")) {
                         return;
                     }
-                    var tooltipBox = chartFunctions.tooltip.appendTooltipBox(chart);
-                    chartFunctions.tooltip.appendTooltipText(chart, d.timestamp.toDateString(), [{ label: "State", value: d.point }]);
+                    var tooltipBox = chartFunctions.tooltip.appendTooltipText(chart, d.timestamp.toDateString(), [{ label: "State", value: d.point }]);
                     chartFunctions.tooltip.positionTooltipContainer(chart, xTooltip(d.timestamp, tooltipBox), yTooltip(d.point, tooltipBox));
                     function xTooltip(x, tooltipBox) {
                         var xTooltip = chart.x.scale(x);
@@ -452,9 +497,12 @@ export function buildAnalyticsCharts(entries) {
                 }
             }
         }
-        function groupViolinChart(data, group) {
-            var currentGroups = [group];
-            var groupData = d3.filter(data, function (d) { return currentGroups.includes(d.group); });
+        //Global variables for the violin chart
+        var violinChart;
+        var violinUsersChart;
+        var thresholdAxis;
+        function groupViolinChart(data, groups) {
+            var groupData = d3.filter(data, function (d) { return groups.includes(d.group); });
             var currentData = [];
             groupData.forEach(function (c) {
                 var userAvg = Array.from(d3.rollup(c.value, function (d) { return Math.round(d3.mean(d.map(function (r) { return r.point; }))); }, function (d) { return d.pseudonym; }), function (_a) {
@@ -463,29 +511,21 @@ export function buildAnalyticsCharts(entries) {
                 });
                 currentData.push({ group: c.group, value: userAvg });
             });
-            //Remove svg
-            d3.select("#group-violin-chart").selectAll("svg").remove();
-            d3.select("#group-violin-users-chart").selectAll("svg").remove();
-            var violinChart = setViolinChart(groupData, "group-violin-chart");
+            violinChart = chartFunctions.setChart("group-violin-chart", groupData);
+            violinChart.padding.right = 85;
+            violinChart.x = chartFunctions.axis.setSeriesAxis("Group Code", groupData.map(function (r) { return r.group; }), [0, violinChart.width - violinChart.padding.yAxis - violinChart.padding.right], "bottom");
             preRender(violinChart);
-            renderViolin(violinChart, groupData, 30, 70);
-            var violinUsersChart = setViolinChart(currentData, "group-violin-users-chart");
+            renderViolinThresholds(violinChart, groupData, 30, 70);
+            renderViolin(violinChart, groupData);
+            violinUsersChart = chartFunctions.setChart("group-violin-users-chart", currentData);
+            violinUsersChart.padding.right = 85;
+            violinUsersChart.x = chartFunctions.axis.setSeriesAxis("Group Code", groupData.map(function (r) { return r.group; }), [0, violinUsersChart.width - violinUsersChart.padding.yAxis - violinUsersChart.padding.right], "bottom");
             preRender(violinUsersChart);
-            renderViolin(violinUsersChart, currentData, 30, 70);
-            function setViolinChart(data, id) {
-                var result = new Chart();
-                result.id = id;
-                var containerDimensions = chartFunctions.getContainerDimension(result.id);
-                result.width = containerDimensions.width;
-                result.height = containerDimensions.height;
-                result.padding.right = 85;
-                result.x = chartFunctions.axis.setSeriesAxis("Group Code", data.map(function (r) { return r.group; }), [0, result.width - result.padding.yAxis - result.padding.right], "bottom");
-                result.y = chartFunctions.axis.setValuesAxis("State", [0, 100], [result.height - result.padding.xAxis - result.padding.top, 0], "left");
-                return result;
-            }
-            function renderViolin(chart, data, tDistressed, tSoaring) {
+            renderViolinThresholds(violinUsersChart, currentData, 30, 70);
+            renderViolin(violinUsersChart, currentData);
+            function renderViolinThresholds(chart, data, tDistressed, tSoaring) {
                 //Create threshold axis
-                var thresholdAxis = chartFunctions.axis.setThresholdAxis(chart, tDistressed, tSoaring);
+                thresholdAxis = chartFunctions.axis.setThresholdAxis(chart, tDistressed, tSoaring);
                 //Draw threshold axis
                 chartFunctions.axis.appendThresholdAxis(chart, thresholdAxis);
                 //Draw threshold indicators
@@ -494,11 +534,22 @@ export function buildAnalyticsCharts(entries) {
                 chartFunctions.axis.appendThresholdLabel(chart);
                 //Draw threshold lines
                 chartFunctions.drag.appendThresholdLine(chart, [tDistressed, tSoaring]);
+            }
+        }
+        function renderViolin(chart, data) {
+            var thresholds = chartFunctions.drag.getThresholdsValues(chart);
+            var tDistressed = thresholds[0];
+            var tSoaring = thresholds[1];
+            dragViolinThresholds(chart, data, tDistressed, tSoaring);
+            drawViolin(chart, data, tDistressed, tSoaring);
+            function dragViolinThresholds(chart, data, tDistressed, tSoaring) {
+                //Add drag functions to the distressed threshold
                 chart.renderElements.contentContainer.select(".threshold-line.distressed")
                     .call(d3.drag()
                         .on("start", dragStartDistressed)
                         .on("drag", draggingDistressed)
                         .on("end", dragEndDistressed));
+                //Add drag functions to the soaring threshold
                 chart.renderElements.contentContainer.select(".threshold-line.soaring")
                     .call(d3.drag()
                         .on("start", dragStartSoaring)
@@ -538,18 +589,7 @@ export function buildAnalyticsCharts(entries) {
                     if (newT > 99) {
                         newT = 99;
                     }
-                    var newBin = d3.bin().domain([0, 100]).thresholds([0, tDistressed, newT]);
-                    chart.renderElements.content.remove();
-                    chart.renderElements.content = binContainer.append("path")
-                        .attr("id", chart.id + "-violin")
-                        .attr("class", "violin-path")
-                        .datum(function (d) { return newBin(d.value.map(function (d) { return d.point; })); })
-                        .attr("d", d3.area()
-                            .x0(function (d) { return bandwithScale(-d.length); })
-                            .x1(function (d) { return bandwithScale(d.length); })
-                            .y(function (d, i) { return chart.y.scale(i == 0 ? 0 : i == 1 ? 50 : 100); })
-                            .curve(d3.curveCatmullRom));
-                    chartFunctions.drag.appendThresholdPercentages(chart, binContainer, newBin, bandwithScale, tDistressed, newT);
+                    chartFunctions.transitions.violin(chart, data, tDistressed, newT);
                 }
                 //Start drag distressed functions
                 function dragStartDistressed(e, d) {
@@ -587,34 +627,28 @@ export function buildAnalyticsCharts(entries) {
                     if (newT > 49) {
                         newT = 49;
                     }
-                    var newBin = d3.bin().domain([0, 100]).thresholds([0, newT, tSoaring]);
-                    chart.renderElements.content.remove();
-                    chart.renderElements.content = binContainer.append("path")
-                        .attr("id", chart.id + "-violin")
-                        .attr("class", "violin-path")
-                        .datum(function (d) { return newBin(d.value.map(function (d) { return d.point; })); })
-                        .attr("d", d3.area()
-                            .x0(function (d) { return bandwithScale(-d.length); })
-                            .x1(function (d) { return bandwithScale(d.length); })
-                            .y(function (d, i) { return chart.y.scale(i == 0 ? 0 : i == 1 ? 50 : 100); })
-                            .curve(d3.curveCatmullRom));
-                    chartFunctions.drag.appendThresholdPercentages(chart, binContainer, newBin, bandwithScale, newT, tSoaring);
+                    chartFunctions.transitions.violin(chart, data, newT, tSoaring);
                 }
+            }
+            function drawViolin(chart, data, tDistressed, tSoaring) {
                 //Create bandwidth scale
                 var bandwithScale = d3.scaleLinear()
                     .range([0, chart.x.scale.bandwidth()])
                     .domain([-d3.max(data.map(function (r) { return r.value.length; })), d3.max(data.map(function (r) { return r.value.length; }))]);
                 //Create bins
                 var bin = d3.bin().domain([0, 100]).thresholds([0, tDistressed, tSoaring]);
-                //Create bins container
-                var binContainer = chart.renderElements.contentContainer.selectAll(chart.id + "-violin-container")
-                    .data(data)
-                    .enter()
+                //Select existing bin containers
+                var binContainer = chart.renderElements.contentContainer.selectAll("." + chart.id + "-violin-container")
+                    .data(data);
+                //Remove old bin containers
+                binContainer.exit().remove();
+                //Append new bin containers
+                var binContainerEnter = binContainer.enter()
                     .append("g")
                     .attr("class", chart.id + "-violin-container")
                     .attr("transform", function (d) { return "translate(" + chart.x.scale(d.group) + ", 0)"; });
                 //Draw violins
-                chart.renderElements.content = binContainer.append("path")
+                binContainerEnter.append("path")
                     .attr("id", chart.id + "-violin")
                     .attr("class", "violin-path")
                     .datum(function (d) { return bin(d.value.map(function (d) { return d.point; })); })
@@ -623,9 +657,36 @@ export function buildAnalyticsCharts(entries) {
                         .x1(function (d) { return bandwithScale(d.length); })
                         .y(function (d, i) { return chart.y.scale(i == 0 ? 0 : i == 1 ? 50 : 100); })
                         .curve(d3.curveCatmullRom));
-                //Draw threshold percentages
-                chartFunctions.drag.appendThresholdPercentages(chart, binContainer, bin, bandwithScale, tDistressed, tSoaring);
+                //Transision bin containers
+                binContainer.transition()
+                    .duration(750)
+                    .attr("transform", function (d) { return "translate(" + chart.x.scale(d.group) + ", 0)"; });
+                //Merge existing with new bin containers
+                binContainer.merge(binContainerEnter);
+                //Transition violins
+                chartFunctions.transitions.violin(chart, data, tDistressed, tSoaring);
             }
+        }
+        function groupCompare(data, group) {
+            var currentGroups = [];
+            //Check active groups
+            d3.selectAll("#group-compare input").each(function () {
+                d3.select(this).property("checked") == null ? "" : currentGroups.push(d3.select(this).attr("value"));
+            });
+            //Remove groups html
+            d3.select("#group-compare .card-body").html("");
+            //Select card body
+            var container = d3.select("#group-compare .card-body");
+            //Append group inputs
+            data.map(function (r) { return r.group; }).forEach(function (d) {
+                //If current d is the selected group skip rendering input
+                if (d == group) {
+                    return;
+                }
+                //Render input
+                container.html(container.html() + ("<div class=\"form-check\">\n                                    <input class=\"form-check-input\" type=\"checkbox\" value=\"" + d + "\" id=\"compare-" + d + "\" " + (currentGroups.includes(d) ? "checked" : "") + " />\n                                    <label class=\"form-check-label\" for=\"compare-" + d + "\">" + d + "</label>\n                                </div>"));
+            });
+            //Handle change group inputs
             d3.selectAll("#group-compare input").on("change", function (e) {
                 if (e.target.checked) {
                     currentGroups.push(e.target.value);
@@ -642,62 +703,17 @@ export function buildAnalyticsCharts(entries) {
                     });
                     currentData.push({ group: c.group, value: userAvg });
                 });
-                d3.select("#group-violin-chart svg").remove();
-                var violinChart = setViolinChart(groupData, "group-violin-chart");
-                preRender(violinChart);
-                renderViolin(violinChart, groupData, 30, 70);
-                d3.select("#group-violin-users-chart svg").remove();
-                var violinUsersChart = setViolinChart(currentData, "group-violin-users-chart");
-                preRender(violinUsersChart);
-                renderViolin(violinUsersChart, currentData, 30, 70);
+                violinChart.x = chartFunctions.axis.setSeriesAxis("Group Code", groupData.map(function (r) { return r.group; }), [0, violinChart.width - violinChart.padding.yAxis - violinChart.padding.right], "bottom");
+                violinUsersChart.x = chartFunctions.axis.setSeriesAxis("Group Code", groupData.map(function (r) { return r.group; }), [0, violinUsersChart.width - violinUsersChart.padding.yAxis - violinUsersChart.padding.right], "bottom");
+                chartFunctions.transitions.axis(violinChart, groupData);
+                chartFunctions.transitions.axis(violinUsersChart, groupData);
+                renderViolin(violinChart, groupData);
+                renderViolin(violinUsersChart, groupData);
             });
-        }
-        function groupCompare(data, group) {
-            //Remove current groups
-            d3.select("#group-compare .card-body").html("");
-            var currentGroups = [group];
-            var groupsData = d3.filter(data, function (d) { return !currentGroups.includes(d.group); });
-            var container = d3.select("#group-compare .card-body");
-            groupsData.forEach(function (c) {
-                container.html(container.html() + ("<div class=\"form-check\">\n                                    <input class=\"form-check-input\" type=\"checkbox\" value=\"" + c.group + "\" id=\"compare-" + c.group + "\" />\n                                    <label class=\"form-check-label\" for=\"compare-" + c.group + "\">" + c.group + "</label>\n                                </div>"));
-            });
-        }
-        function axisTransition(chart, data) {
-            chart.x.scale.domain(data.map(function (d) { return d.group; }));
-            chart.renderElements.svg.select(".x-axis").transition()
-                .duration(750)
-                .call(chart.x.axis);
-        }
-        function barsTransition(chart, data) {
-            chart.renderElements.contentContainer.selectAll("#" + chart.id + "-data")
-                .data(data)
-                .transition()
-                .duration(750)
-                .attr("height", function (d) { return chart.y.scale(d.q1) - chart.y.scale(d.q3); })
-                .attr("y", function (d) { return chart.y.scale(d.q3); });
-            chart.renderElements.contentContainer.selectAll("#" + chart.id + "-data-min-max")
-                .data(data)
-                .transition()
-                .duration(750)
-                .attr("x1", function (d) { return chart.x.scale(d.group) + (chart.x.scale.bandwidth() / 2); })
-                .attr("y1", function (d) { return chart.y.scale(d.min); })
-                .attr("x2", function (d) { return chart.x.scale(d.group) + (chart.x.scale.bandwidth() / 2); })
-                .attr("y2", function (d) { return chart.y.scale(d.max); });
-            chart.renderElements.contentContainer.selectAll("#" + chart.id + "-data-median")
-                .data(data)
-                .transition()
-                .duration(750)
-                .attr("x1", function (d) { return chart.x.scale(d.group); })
-                .attr("y1", function (d) { return chart.y.scale(d.median); })
-                .attr("x2", function (d) { return chart.x.scale(d.group) + chart.x.scale.bandwidth(); })
-                .attr("y2", function (d) { return chart.y.scale(d.median); });
+            currentGroups.push(group);
+            return currentGroups;
         }
     }
-    //Resize window
-    $(window).resize(function () {
-        d3.select("#analytics-charts").html("");
-        buildAnalyticsCharts(entries);
-    });
 }
 var chartFunctions = {
     appendDiv: function (id, css) {
@@ -705,7 +721,7 @@ var chartFunctions = {
             .attr("id", id)
             .attr("class", css);
     },
-    appendCard: function (div, header) {
+    appendCard: function (div, header, id) {
         var card = div.append("div")
             .attr("class", "card");
         card.append("div")
@@ -713,10 +729,14 @@ var chartFunctions = {
             .html(header);
         card.append("div")
             .attr("class", "card-body chart-container");
+        if (id != null) {
+            card.attr("id", id);
+        }
         return card;
     },
     getContainerDimension: function (containerId) {
-        return { width: $("#" + containerId + " .chart-container").width(), height: $("#" + containerId + " .chart-container").height() };
+        var container = d3.select("#" + containerId + " .chart-container").node().getBoundingClientRect();
+        return { width: container.width, height: container.height };
     },
     appendSVG: function (chart) {
         return d3.select("#" + chart.id)
@@ -724,7 +744,7 @@ var chartFunctions = {
             .append("svg")
             .attr("id", "chart-" + chart.id)
             .attr("preserveAspectRatio", "xMinYMin meet")
-            .attr("viewBox", "0 0 "+chart.width+" "+chart.height);
+            .attr("viewBox", "0 0 " + chart.width + " " + chart.height);
     },
     appendContentContainer: function (chart) {
         var result = chart.renderElements.svg.append("g")
@@ -736,7 +756,44 @@ var chartFunctions = {
             .attr("height", chart.height - chart.padding.xAxis - chart.padding.top);
         return result;
     },
+    setChart: function (id, data) {
+        var result = new Chart();
+        result.id = id;
+        var containerDimensions = chartFunctions.getContainerDimension(result.id);
+        result.width = containerDimensions.width;
+        result.height = containerDimensions.height;
+        result.x = this.axis.setSeriesAxis("Group Code", data.map(function (r) { return r.group; }), [0, result.width - result.padding.yAxis - result.padding.right], "bottom");
+        result.y = this.axis.setValuesAxis("State", [0, 100], [result.height - result.padding.xAxis - result.padding.top, 0], "left");
+        return result;
+    },
     data: {
+        processEntries: function (entries) {
+            var result = [];
+            entries.forEach(function (c) {
+                var uniqueUsers = Array.from(d3.rollup(c.value, function (d) { return d.length; }, function (d) { return d.pseudonym; }), function (_a) {
+                    var key = _a[0], value = _a[1];
+                    return ({ key: key, value: value });
+                });
+                result.push({
+                    value: c.value.map(function (r) { return { timestamp: new Date(r.timestamp), point: parseInt(r.point), pseudonym: r.pseudonym }; }),
+                    group: c.group,
+                    mean: Math.round(d3.mean(c.value.map(function (r) { return r.point; }))),
+                    median: d3.median(c.value.map(function (r) { return r.point; })),
+                    q1: d3.quantile(c.value.map(function (r) { return r.point; }), 0.25),
+                    q3: d3.quantile(c.value.map(function (r) { return r.point; }), 0.75),
+                    max: d3.max(c.value.map(function (r) { return r.point; })),
+                    min: d3.min(c.value.map(function (r) { return r.point; })),
+                    variance: chartFunctions.data.roundDecimal(d3.variance(c.value.map(function (r) { return r.point; }))),
+                    deviation: chartFunctions.data.roundDecimal(d3.deviation(c.value.map(function (r) { return r.point; }))),
+                    oldestReflection: d3.min(c.value.map(function (r) { return new Date(r.timestamp); })),
+                    newestReflection: d3.max(c.value.map(function (r) { return new Date(r.timestamp); })),
+                    avgReflectionsPerUser: chartFunctions.data.roundDecimal(d3.mean(uniqueUsers.map(function (r) { return r.value; }))),
+                    userMostReflective: d3.max(uniqueUsers.map(function (r) { return r.value; })),
+                    userLessReflective: d3.min(uniqueUsers.map(function (r) { return r.value; }))
+                });
+            });
+            return result;
+        },
         roundDecimal: function (value) {
             var p = d3.precisionFixed(0.1);
             var f = d3.format("." + p + "f");
@@ -880,26 +937,24 @@ var chartFunctions = {
             return chart.renderElements.contentContainer.append("g")
                 .attr("class", "tooltip-container");
         },
-        appendTooltipBox: function (chart) {
-            return chart.renderElements.contentContainer.select(".tooltip-container").append("rect")
-                .attr("class", "tooltip-box");
-        },
         appendTooltipText: function (chart, title, values) {
-            var result = chart.renderElements.contentContainer.select(".tooltip-container").append("text")
+            var result = chart.renderElements.contentContainer.select(".tooltip-container").append("rect")
+                .attr("class", "tooltip-box");
+            var text = chart.renderElements.contentContainer.select(".tooltip-container").append("text")
                 .attr("class", "tooltip-text title")
                 .attr("x", 10)
                 .text(title);
-            var textSize = result.node().getBBox().height;
-            result.attr("y", textSize);
+            var textSize = text.node().getBBox().height;
+            text.attr("y", textSize);
             values.forEach(function (c, i) {
-                result.append("tspan")
+                text.append("tspan")
                     .attr("class", "tooltip-text")
                     .attr("y", textSize * (i + 2))
                     .attr("x", 15)
                     .text(c.label + ": " + c.value);
             });
-            chart.renderElements.contentContainer.select(".tooltip-box").attr("width", result.node().getBBox().width + 20)
-                .attr("height", result.node().getBBox().height + 5);
+            chart.renderElements.contentContainer.select(".tooltip-box").attr("width", text.node().getBBox().width + 20)
+                .attr("height", text.node().getBBox().height + 5);
             return result;
         },
         appendLine: function (chart, x1, y1, x2, y2) {
@@ -948,10 +1003,10 @@ var chartFunctions = {
             if (x === void 0) { x = false; }
             if (y === void 0) { y = false; }
             if (x == true && chart.x.sorted == true) {
-                chart.x.sorted = false;
+                return chart.x.sorted = false;
             }
             else if (x == true && chart.x.sorted == false) {
-                chart.x.sorted = true;
+                return chart.x.sorted = true;
             }
             else if (y == true && chart.y.sorted == true) {
                 chart.y.sorted = false;
@@ -994,9 +1049,14 @@ var chartFunctions = {
             chart.renderElements.content.on("click", onClick);
         },
         removeClick: function (chart) {
+            chart.click = false;
             chart.renderElements.contentContainer.selectAll(".click-text").remove();
             chart.renderElements.contentContainer.selectAll(".click-line").remove();
             chart.renderElements.contentContainer.selectAll(".click-container").remove();
+        },
+        removeClickClass: function (chart, css) {
+            d3.selectAll("#" + chart.id + " .content-container ." + css)
+                .attr("class", css);
         },
         appendText: function (chart, d, title, values) {
             var container = chart.renderElements.contentContainer.append("g")
@@ -1029,6 +1089,46 @@ var chartFunctions = {
             }
             ;
             container.attr("transform", "translate(" + positionX + ", " + positionY + ")");
+        },
+        appendGroupsText: function (chart, data, clickData) {
+            chart.renderElements.contentContainer.selectAll(".click-container text").remove();
+            chart.renderElements.content.attr("class", function (d) { return d.group == clickData.group ? "bar clicked" : "bar"; });
+            var clickContainer = chart.renderElements.contentContainer.selectAll(".click-container")
+                .data(data);
+            clickContainer.enter()
+                .append("g")
+                .merge(clickContainer)
+                .attr("class", "click-container")
+                .attr("transform", function (c) { return "translate(" + (chart.x.scale(c.group) + chart.x.scale.bandwidth() / 2) + ", 0)"; });
+            clickContainer.exit().remove();
+            chart.renderElements.contentContainer.selectAll(".click-container").append("text")
+                .attr("class", function (c) { return appendText(clickData.q3, c.q3, clickData.group, c.group)[0]; })
+                .attr("y", function (c) { return chart.y.scale(c.q3) - 5; })
+                .text(function (c) { return "q3: " + appendText(clickData.q3, c.q3, clickData.group, c.group)[1]; });
+            chart.renderElements.contentContainer.selectAll(".click-container").append("text")
+                .attr("class", function (c) { return appendText(clickData.median, c.median, clickData.group, c.group)[0]; })
+                .attr("y", function (c) { return chart.y.scale(c.median) - 5; })
+                .text(function (c) { return "Median: " + appendText(clickData.median, c.median, clickData.group, c.group)[1]; });
+            chart.renderElements.contentContainer.selectAll(".click-container").append("text")
+                .attr("class", function (c) { return appendText(clickData.q1, c.q1, clickData.group, c.group)[0]; })
+                .attr("y", function (c) { return chart.y.scale(c.q1) - 5; })
+                .text(function (c) { return "q1: " + appendText(clickData.q1, c.q1, clickData.group, c.group)[1]; });
+            function appendText(clickValue, value, clickXValue, xValue) {
+                var textClass = "click-text";
+                var textSymbol = "";
+                if (clickValue - value < 0) {
+                    textClass = textClass + " positive";
+                    textSymbol = "+";
+                }
+                else if (clickValue - value > 0) {
+                    textClass = textClass + " negative";
+                    textSymbol = "-";
+                }
+                else {
+                    textClass = textClass + " black";
+                }
+                return [textClass, "" + textSymbol + (clickXValue == xValue ? clickValue : (Math.abs(clickValue - value)))];
+            }
         }
     },
     zoom: {
@@ -1074,7 +1174,7 @@ var chartFunctions = {
                     .attr("y2", chart.y.scale(c));
             });
         },
-        appendThresholdPercentages: function (chart, binContainer, bin, bandwithScale, tDistressed, tSoaring) {
+        appendThresholdPercentages: function (chart, bin, bandwithScale, tDistressed, tSoaring) {
             var binData = function (data) {
                 var bins = bin(data.map(function (r) { return r.point; }));
                 var result = [];
@@ -1083,6 +1183,8 @@ var chartFunctions = {
                 });
                 return result;
             };
+            var binContainer = chart.renderElements.contentContainer.selectAll("." + chart.id + "-violin-container");
+            binContainer.selectAll("." + chart.id + "-violin-text-container").remove();
             var binTextContainer = binContainer.append("g")
                 .attr("class", chart.id + "-violin-text-container");
             var binTextBox = binTextContainer.selectAll("rect")
@@ -1102,6 +1204,80 @@ var chartFunctions = {
                 .attr("x", bandwithScale(0) - binTextBox.node().getBBox().width / 2);
             binText.attr("y", function (d, i) { return chart.y.scale(i == 0 ? tDistressed / 2 : i == 1 ? 50 : (100 - tSoaring) / 2 + tSoaring) - binTextBox.node().getBBox().height / 2 + binText.node().getBBox().height; })
                 .attr("x", bandwithScale(0) - binText.node().getBBox().width / 2);
+        },
+        getThresholdsValues: function (chart) {
+            var result = [30, 70];
+            var dThreshold = chart.renderElements.contentContainer.select(".threshold-line.distressed");
+            if (dThreshold != undefined) {
+                result[0] = chart.y.scale.invert(dThreshold.attr("y1"));
+            }
+            var sThreshold = chart.renderElements.contentContainer.select(".threshold-line.soaring");
+            if (sThreshold != undefined) {
+                result[1] = chart.y.scale.invert(sThreshold.attr("y1"));
+            }
+            return result;
+        }
+    },
+    transitions: {
+        axis: function (chart, data) {
+            chart.x.scale.domain(data.map(function (d) { return d.group; }));
+            d3.select("#" + chart.id + " .x-axis").transition()
+                .duration(750)
+                .call(chart.x.axis);
+        },
+        bars: function (chart, data) {
+            d3.selectAll("#" + chart.id + " .content-container #" + chart.id + "-data")
+                .data(data)
+                .transition()
+                .duration(750)
+                .attr("width", function (d) { return chart.x.scale.bandwidth(); })
+                .attr("height", function (d) { return chart.y.scale(d.q1) - chart.y.scale(d.q3); })
+                .attr("y", function (d) { return chart.y.scale(d.q3); })
+                .attr("x", function (d) { return chart.x.scale(d.group); });
+            d3.selectAll("#" + chart.id + " .content-container #" + chart.id + "-data")
+                .data(data)
+                .transition()
+                .duration(750)
+                .attr("width", function (d) { return chart.x.scale.bandwidth(); })
+                .attr("height", function (d) { return chart.y.scale(d.q1) - chart.y.scale(d.q3); })
+                .attr("y", function (d) { return chart.y.scale(d.q3); })
+                .attr("x", function (d) { return chart.x.scale(d.group); });
+            d3.selectAll("#" + chart.id + " #" + chart.id + "-data-min-max")
+                .data(data)
+                .transition()
+                .duration(750)
+                .attr("x1", function (d) { return chart.x.scale(d.group) + (chart.x.scale.bandwidth() / 2); })
+                .attr("y1", function (d) { return chart.y.scale(d.min); })
+                .attr("x2", function (d) { return chart.x.scale(d.group) + (chart.x.scale.bandwidth() / 2); })
+                .attr("y2", function (d) { return chart.y.scale(d.max); });
+            d3.selectAll("#" + chart.id + " #" + chart.id + "-data-median")
+                .data(data)
+                .transition()
+                .duration(750)
+                .attr("x1", function (d) { return chart.x.scale(d.group); })
+                .attr("y1", function (d) { return chart.y.scale(d.median); })
+                .attr("x2", function (d) { return chart.x.scale(d.group) + chart.x.scale.bandwidth(); })
+                .attr("y2", function (d) { return chart.y.scale(d.median); });
+        },
+        violin: function (chart, data, tDistressed, tSoaring) {
+            //Create bandwidth scale
+            var bandwithScale = d3.scaleLinear()
+                .range([0, chart.x.scale.bandwidth()])
+                .domain([-d3.max(data.map(function (r) { return r.value.length; })), d3.max(data.map(function (r) { return r.value.length; }))]);
+            //Create bins
+            var bin = d3.bin().domain([0, 100]).thresholds([0, tDistressed, tSoaring]);
+            //Draw violins
+            chart.renderElements.contentContainer.selectAll("." + chart.id + "-violin-container").select("path")
+                .datum(function (d) { return bin(d.value.map(function (d) { return d.point; })); })
+                .transition()
+                .duration(750)
+                .attr("d", d3.area()
+                    .x0(function (d) { return bandwithScale(-d.length); })
+                    .x1(function (d) { return bandwithScale(d.length); })
+                    .y(function (d, i) { return chart.y.scale(i == 0 ? 0 : i == 1 ? 50 : 100); })
+                    .curve(d3.curveCatmullRom));
+            //Draw threshold percentages
+            chartFunctions.drag.appendThresholdPercentages(chart, bin, bandwithScale, tDistressed, tSoaring);
         }
     }
 };

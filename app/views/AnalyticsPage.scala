@@ -13,7 +13,7 @@ import views.components.analytics.{Charts, SidePanel, Tables}
 
 
 
-class AnalyticsPage(user:Option[User]=None, analytics: Analytics) extends GenericPage {
+class AnalyticsPage(user:Option[User]=None, analytics: Analytics, tester: Boolean) extends GenericPage {
 
   val title = "GoingOK :: analytics"
 
@@ -27,12 +27,16 @@ class AnalyticsPage(user:Option[User]=None, analytics: Analytics) extends Generi
       tags.body(
         NavBar.main(NavParams(user,Config.baseUrl,Some("analytics"))),
         div(`class`:="wrapper",
-          SidePanel.display(analytics.charts.map(r => r.group).toList),
+          if (tester){
+            SidePanel.display(analytics.charts.map(r => r.group).toList)
+          }else {},
           div(`class`:="content",
             div(`class`:="content-wrapper",
               div(id := "analytics-content",`class` := "container-fluid",
                 showMessage(message),
-                Charts.display(),
+                if (tester){
+                  Charts.display()
+                }else {},
                 div(`class`:="row mt-3",
                   div(`class`:="col",
                     Includes.panel("groups-table","","Groups", Tables.groups(analytics.mergedCounts))
@@ -51,7 +55,7 @@ class AnalyticsPage(user:Option[User]=None, analytics: Analytics) extends Generi
           )
         ),
         script(src:=bundleUrl),
-        createChart(analytics.charts)
+        if (tester){createChart(analytics.charts)}else{}
       )
     )
   }

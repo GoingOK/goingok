@@ -6,7 +6,6 @@
 
 #sidebar {
     min-width: 250px;
-    max-width: 250px;
     background: #000000;
     color: #0f856b;
     transition: all 0.3s;
@@ -14,7 +13,7 @@
 }
 
 #sidebar.active {
-    margin-left: -200px;
+    margin-left: 0px;
 }
 
 #sidebar .sidebar-header {
