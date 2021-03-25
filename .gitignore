@@ -4,8 +4,6 @@
 .idea/*
 .bloop/*
 .metals/*
-.bsp/*
-.vscode/*
 goingok.iml
 project/LocalSbtSettings.scala
 /src/main/public/css/bootstrap.css
@@ -56,4 +54,5 @@ goingok_client/target/
 /public/javascripts/fontawesome.min.js
 /.run/
 
+/.bsp/
 /.bsp/
