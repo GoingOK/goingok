@@ -1,7 +1,7 @@
 package views
 
-import scalatags.Text.all._
-import scalatags.Text.{TypedTag, tags}
+import scalatags.Text.TypedTag
+import scalatags.Text.all.{_}
 
 trait GenericComponents {
 
@@ -9,9 +9,9 @@ trait GenericComponents {
   type CardContent = TypedTag[String]
 
   /** Renders card data */
-  def card(heading:String,content:TypedTag[String]): CardComponent = div(`class`:="card",
-    h5(`class`:="card-header",heading),
-    div(`class`:="card-body",content)
+  def card(heading: String, content: TypedTag[String]): CardComponent = div(`class` := "card",
+    h5(`class` := "card-header", heading),
+    div(`class` := "card-body", content)
   )
 
 }

@@ -3,10 +3,12 @@ package org.goingok.server.services
 import java.time.{DayOfWeek, LocalDate}
 import java.time.temporal.{Temporal, TemporalAdjusters}
 import java.util.{Date, UUID}
-
 import com.typesafe.scalalogging.Logger
 import org.goingok.server.data.DbResults
 import org.goingok.server.data.Permissions.Permission
+import org.goingok.server.data.models.{AnalyticsChartsData, ReflectionAuthorEntry, ReflectionData}
+
+import scala.collection.mutable.ListBuffer
 
 class AnalyticsService {
 
@@ -28,6 +30,20 @@ class AnalyticsService {
     case Left(err) => {
       logger.error(err.getMessage)
       None
+    }
+  }
+
+  /**
+    * Get GoingOK user from DB by GoingOK user ID
+    * @return GoingOK user
+    */
+  def getTesters(): Vector[String] = {
+    ds.getTesters() match {
+      case Right(testers:DbResults.Testers) => testers.value.toVector
+      case Left(error) => {
+        logger.error(s"There was a problem getting a list of testers: ${error.getMessage}")
+        Vector[String]()
+      }
     }
   }
 
@@ -110,6 +126,23 @@ class AnalyticsService {
     case Left(err) => {
       logger.error(err.getMessage)
       false
+    }
+  }
+
+  def analyticsChartsData(goingok_id:UUID): Option[List[AnalyticsChartsData]] = {
+    val result = ds.getAuthorReflectionsAndGroup(goingok_id)
+
+    result match {
+      case Right(result:DbResults.GroupedAuthorReflectionsByUser) => {
+        logger.info(s"chart reflections found: ${result.value.size}")
+        val analyticsChartsData = result.value.groupBy(c => c.group).map(c =>
+          AnalyticsChartsData(c._1, c._2.map(r => ReflectionAuthorEntry(r.timestamp, r.pseudonym, ReflectionData(r.point, "")))))
+        Some(analyticsChartsData.toList)
+        }
+      case Left(err) => {
+        logger.error(err.getMessage)
+        None
+      }
     }
   }
 

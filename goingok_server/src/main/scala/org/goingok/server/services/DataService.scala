@@ -187,6 +187,19 @@ class DataService {
     runQuery(query.to[Vector]).map(r => DbResults.GroupedAuthorReflections(r))
   }
 
+  def getAuthorReflectionsAndGroup(goingok_id:UUID): Either[Throwable,DbResults.Result] = {
+    val query = sql"""select u.group_code, r.timestamp, r.point, u.pseudonym
+                  from users u,reflections r, group_codes gc
+                  where u.goingok_id = r.goingok_id
+                    and u.group_code = gc.group_code
+                    and u.group_code in (
+                      select p.group_code
+                      from group_permissions p
+                      where p.goingok_id=$goingok_id)
+                  order by  gc.created_timestamp desc""".query[ReflectionAuthorEntryAndGroup]
+    runQuery(query.to[Vector]).map(r => DbResults.GroupedAuthorReflectionsByUser(r))
+  }
+
   /**
     * Gets GoingOK group code from DB
     * @param code GoingOK group code
@@ -359,6 +372,13 @@ class DataService {
             order by a.google_email;
            """.query[(String,String,String)]
     runQuery(query.to[Vector]).map(r => DbResults.GroupAdmins(r))
+  }
+
+  def getTesters():Either[Throwable,DbResults.Result] = {
+    val query =
+      sql"""select pseudonym
+           from testers""".query[String]
+    runQuery(query.to[Vector]).map(r => DbResults.Testers(r))
   }
 
   def getGoingokIdForPseudonym(pseudonym:String):Either[Throwable,UUID] = {

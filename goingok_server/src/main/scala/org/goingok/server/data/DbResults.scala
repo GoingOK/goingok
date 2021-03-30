@@ -1,6 +1,6 @@
 package org.goingok.server.data
 
-import org.goingok.server.data.models.{GroupCode, ReflectionAuthorEntry, ReflectionEntry}
+import org.goingok.server.data.models.{GroupCode, ReflectionAuthorEntry, ReflectionAuthorEntryAndGroup, ReflectionEntry}
 
 object DbResults {
 
@@ -21,4 +21,8 @@ object DbResults {
   case class Permission(value:String) extends Result
 
   case class GroupAdmins(value:Seq[(String,String,String)]) extends Result
+
+  case class GroupedAuthorReflectionsByUser(value:Seq[ReflectionAuthorEntryAndGroup]) extends Result
+
+  case class Testers(value:Seq[String]) extends Result
 }

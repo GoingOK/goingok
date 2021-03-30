@@ -1,0 +1,232 @@
+.wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch
+}
+
+#sidebar {
+    min-width: 250px;
+    background: #000000;
+    color: #0f856b;
+    transition: all 0.3s;
+    border-top: 2px solid #fff;
+}
+
+#sidebar.active {
+    margin-left: 0px;
+}
+
+#sidebar .sidebar-header {
+    padding: 20px;
+    background: #000000;
+    color: #fff;
+    display: flex;
+}
+
+#sidebar .sidebar-header.active {
+    padding: 20px 10px 20px 10px;
+}
+
+#groups.active {
+    display: none;
+}
+
+.content {
+    width: 100%;
+    padding: 20px;
+    min-height: 100vh;
+    transition: all 0.3s
+}
+
+.content-wrapper {
+    padding: 15px
+}
+
+@media(max-width:768px) {
+    #sidebar {
+        margin-left: -250px
+    }
+
+    #sidebar.active {
+        margin-left: 0px
+    }
+
+    #sidebarCollapse span {
+        display: none
+    }
+}
+
+.chart-container {
+    min-height: 40vh;
+}
+
+.statistics-text {
+    font-size: 0.875rem;
+}
+
+.bar, .line-circle, .violin-path, .zoom-line-circle, .legend-color {
+    fill: #3399CC;
+    fill-opacity: 0.2;
+    stroke-width: 1;
+    stroke:#3399CC;
+}
+
+.bar, .line-circle {
+    cursor: pointer;
+}
+
+.box-line {
+    stroke-width: 1;
+    stroke:#3399CC;
+}
+
+.arc {
+    fill-opacity: 0.2;
+    stroke-width: 1;
+}
+
+.bar:hover, .arc:hover, .line-circle:hover {
+    fill-opacity: 0.4;
+    r: 10;
+}
+
+.dragging {
+    fill-opacity: 0.8 !important;
+}
+
+.clicked {
+    stroke-width: 2 !important;
+    fill-opacity: 0.6 !important;
+    r: 10;
+}
+
+.line {
+    fill: none;
+    stroke: #3399CC;
+}
+
+.tooltip-container {
+    opacity: 0;
+}
+
+.tooltip-box, .click-box, .violin-text-box {
+    stroke-width: 1;
+    stroke: #333;
+    fill: #333;
+    fill-opacity: 0.75;
+    ry: 5;
+    rx: 5;
+}
+
+.tooltip-text, .click-text, .violin-text {
+    fill: #ffffff;
+    font-size: 0.75rem;
+    font-weight: normal;
+}
+
+.tooltip-text.title, .click-text.title {
+    font-weight: bold;
+}
+
+.tooltip-line {
+    stroke: #3399CC;
+    stroke-width: 1;
+    stroke-dasharray: 5,5;
+    opacity: 0.4;
+}
+
+.click-line {
+    stroke: #3399CC;
+    stroke-width: 1;
+    stroke-dasharray: 5,5;
+}
+
+.click-text.black {
+    fill: #333;
+    font-weight: bold;
+    text-anchor: middle;
+}
+
+.click-text.positive {
+    fill: #00cc00;
+    font-weight: bold;
+    text-anchor: middle;
+}
+
+.click-text.negative {
+    fill: #ff3300;
+    font-weight: bold;
+    text-anchor: middle;
+}
+
+.threshold-line {
+    stroke-width: 5;
+    stroke-dasharray: 5,5;
+    cursor: row-resize;
+}
+
+.threshold-line.distressed {
+    stroke: #377eb8;
+}
+
+
+.threshold-line.soaring {
+    stroke: #ff7f00;
+}
+
+
+.threshold-indicator-box {
+    stroke-width: 1;
+    fill-opacity: 0.75;
+    ry: 5;
+    rx: 5;
+}
+
+.threshold-indicator-box.soaring {
+    stroke: #ff7f00;
+    fill: #ff7f00;
+}
+
+.threshold-indicator-box.distressed {
+    stroke: #377eb8;
+    fill: #377eb8;
+}
+
+.threshold-indicator-text {
+    font-size: 0.75rem;
+}
+
+.y-label-container.zoom:hover {
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.sort-arrow {
+    fill: #f2f2f2;
+}
+
+.sort-arrow.active {
+    fill: #333;
+}
+
+.zoom-bar-content {
+    fill-opacity: 0.2;
+    fill:  #3399CC;
+}
+
+.zoom-rect {
+    fill-opacity: 0;
+}
+
+.zoom-bar-content.zoom-line {
+    fill: none;
+}
+
+.zoom-focus {
+    outline: solid 2px rgb(176, 176, 185);
+}
+
+.zoom-content {
+    fill-opacity: 0;
+    stroke-opacity: 0;
+}

@@ -54,10 +54,12 @@ class AnalyticsController @Inject()(components: ControllerComponents, profileSer
   private val makePage = (user: User,request:Request[AnyContent]) => {
     val userCounts = analyticsService.groupedUserCounts.getOrElse(Seq())
     val reflectionCounts = analyticsService.groupedReflectionCounts(user.goingok_id).getOrElse(Seq())
+    val chartsData = analyticsService.analyticsChartsData((user.goingok_id)).getOrElse(Seq())
+    val isTester = tester(user)
     val msg = Some(UiMessage(s"This page is a work in progress. For now, there are only basic stats here. More coming soon.", "info"))
     //val page = AnalyticsPage.page("GoingOK :: analytics", message, Some(user), Analytics(userCounts, reflectionCounts))
     //Ok(AnalyticsPage.getHtml(page))
-    Ok(new AnalyticsPage(Some(user), Analytics(userCounts, reflectionCounts)).buildPage(message=msg))
+    Ok(new AnalyticsPage(Some(user), Analytics(merge(userCounts, reflectionCounts), chartsData), isTester).buildPage())
   }
 
   private val makeCSV = (user:User, request:Request[AnyContent]) => {
@@ -71,6 +73,20 @@ class AnalyticsController @Inject()(components: ControllerComponents, profileSer
       "Not Permitted"
     }
     Ok(response).withHeaders(CONTENT_TYPE -> "application/x-download",CONTENT_DISPOSITION ->s"""attachment; filename="$group.csv" """)
+  }
+
+  private lazy val testerPseudonyms = analyticsService.getTesters() //List("jazrox00","captud56","dodwic58")
+
+  private def tester(user: User) : Boolean = {
+    user.supervisor & (testerPseudonyms.contains(user.pseudonym.get))
+  }
+
+  /** Merges users and reflections */
+  private def merge(userCounts:Seq[(String,Int)],reflectionCounts:Seq[(String,Int)]):Seq[(String,Int,Int)] = {
+    val ucs = userCounts.toMap
+    reflectionCounts.map{ case (group,rc) =>
+      (group,ucs.getOrElse(group,0),rc)
+    }
   }
 
 
