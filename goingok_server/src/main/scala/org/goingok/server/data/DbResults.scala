@@ -23,4 +23,6 @@ object DbResults {
   case class GroupAdmins(value:Seq[(String,String,String)]) extends Result
 
   case class GroupedAuthorReflectionsByUser(value:Seq[ReflectionAuthorEntryAndGroup]) extends Result
+
+  case class Testers(value:Seq[String]) extends Result
 }

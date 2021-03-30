@@ -34,6 +34,20 @@ class AnalyticsService {
   }
 
   /**
+    * Get GoingOK user from DB by GoingOK user ID
+    * @return GoingOK user
+    */
+  def getTesters(): Vector[String] = {
+    ds.getTesters() match {
+      case Right(testers:DbResults.Testers) => testers.value.toVector
+      case Left(error) => {
+        logger.error(s"There was a problem getting a list of testers: ${error.getMessage}")
+        Vector[String]()
+      }
+    }
+  }
+
+  /**
     * Gets all reflections counts from DB
     * @param goingok_id GoingOK user ID
     * @return A sequence of reflections and counts

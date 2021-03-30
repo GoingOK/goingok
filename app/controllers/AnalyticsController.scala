@@ -75,8 +75,10 @@ class AnalyticsController @Inject()(components: ControllerComponents, profileSer
     Ok(response).withHeaders(CONTENT_TYPE -> "application/x-download",CONTENT_DISPOSITION ->s"""attachment; filename="$group.csv" """)
   }
 
+  private lazy val testerPseudonyms = analyticsService.getTesters() //List("jazrox00","captud56","dodwic58")
+
   private def tester(user: User) : Boolean = {
-    user.admin
+    user.supervisor & (testerPseudonyms.contains(user.pseudonym.get))
   }
 
   /** Merges users and reflections */

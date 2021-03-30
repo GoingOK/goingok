@@ -374,6 +374,13 @@ class DataService {
     runQuery(query.to[Vector]).map(r => DbResults.GroupAdmins(r))
   }
 
+  def getTesters():Either[Throwable,DbResults.Result] = {
+    val query =
+      sql"""select pseudonym
+           from testers""".query[String]
+    runQuery(query.to[Vector]).map(r => DbResults.Testers(r))
+  }
+
   def getGoingokIdForPseudonym(pseudonym:String):Either[Throwable,UUID] = {
     val query = sql"""select goingok_id from users
                       where pseudonym = $pseudonym
