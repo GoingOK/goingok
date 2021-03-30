@@ -1,31 +1,18 @@
-package views
+package views.components.analytics
+
+import scalatags.Text.TypedTag
+import scalatags.Text.all._
 
 import java.time.LocalDate
 
-import org.goingok.server.data.Analytics
-import scalatags.Text.all._
-import scalatags.Text.{TypedTag, tags}
-import views.components.NavBar.NavParams
-import views.components._ // scalastyle:ignore
+object Tables {
 
-class AnalyticsComponents(analytics:Analytics) extends GenericComponents {
-
-  val mergedCounts: Seq[(String, Int, Int)] = merge(analytics.userCounts,analytics.reflectionCounts)
-
-  def groups: CardComponent = {
-    card("Groups",basicTable(IntTable(mergedCounts),List("Groups","Users","Reflections")))
+  def groups(mergedCounts: Seq[(String,Int,Int)]): TypedTag[String] = {
+     basicTable(IntTable(mergedCounts),List("Groups","Users","Reflections"))
   }
 
-  def reflectionsDownload: CardComponent = {
-    card("Download reflections",basicTable(TypedTagStringTable(downloadLinks(mergedCounts)),List("Groups","all","last week")))
-  }
-
-  /** Merges users and reflections */
-  private def merge(userCounts:Seq[(String,Int)],reflectionCounts:Seq[(String,Int)]):Seq[(String,Int,Int)] = {
-    val ucs = userCounts.toMap
-    reflectionCounts.map{ case (group,rc) =>
-      (group,ucs.getOrElse(group,0),rc)
-    }
+  def reflectionsDownload(mergedCounts: Seq[(String,Int,Int)]): TypedTag[String] = {
+     basicTable(TypedTagStringTable(downloadLinks(mergedCounts)),List("Groups","all","last week"))
   }
 
   /** Creates a csv file of reflections data for download */
