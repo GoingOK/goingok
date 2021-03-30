@@ -7,7 +7,7 @@ import scalatags.Text.{TypedTag, tags, tags2}
 object Includes {
   import scalatags.Text.all._ // scalastyle:ignore
 
-  lazy val googleClientId = Config.stringOpt("google.client.id")
+  //lazy val googleClientId = Config.stringOpt("google.client.id")
 
   /** creates HTML head content */
   def headContent(titleStr:String): TypedTag[String] = tags.head(
@@ -21,28 +21,30 @@ object Includes {
     link(rel := "stylesheet", href := routes.Assets.versioned("stylesheets/fa-svg-with-js.css").url),
     link(rel := "stylesheet", href := routes.Assets.versioned("stylesheets/reflection-point-chart.css").url),
     link(rel := "stylesheet", href := routes.Assets.versioned("stylesheets/entry.component.css").url),
-    script(src := "//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js" ),
+    link(rel := "stylesheet", href := routes.Assets.versioned("stylesheets/analytics-charts.css").url),
+    //script(src := "//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js" ),
     script(src := routes.Assets.versioned("javascripts/bootstrap.bundle.min.js").url),
     script(src := routes.Assets.versioned("javascripts/fa-solid.min.js").url),
     script(src := routes.Assets.versioned("javascripts/fontawesome.min.js").url),
-    script(src := "https://apis.google.com/js/client:platform.js?onload=startgapi", attr("async"):="", attr("defer"):=""),
-    initGoogleAuth,
+    //script(src := "https://d3js.org/d3.v6.min.js"),
+    //script(src := "https://apis.google.com/js/client:platform.js?onload=startgapi", attr("async"):="", attr("defer"):=""),
+    //initGoogleAuth,
     initPopovers
   )
 
-  val initGoogleAuth = script(raw(
-    s"""
-       |    function startgapi() {
-       |    console.log("Starting Google API");
-       |      gapi.load('auth2', function() {
-       |        auth2 = gapi.auth2.init({
-       |          client_id: '${googleClientId}',
-       |          // Scopes to request in addition to 'profile' and 'email'
-       |          //scope: 'additional_scope'
-       |        });
-       |      });
-       |    }
-       """.stripMargin))
+//  val initGoogleAuth = script(raw(
+//    s"""
+//       |    function startgapi() {
+//       |    console.log("Starting Google API");
+//       |      gapi.load('auth2', function() {
+//       |        auth2 = gapi.auth2.init({
+//       |          client_id: '${googleClientId}',
+//       |          // Scopes to request in addition to 'profile' and 'email'
+//       |          //scope: 'additional_scope'
+//       |        });
+//       |      });
+//       |    }
+//       """.stripMargin))
 
   val initPopovers = script(raw("""$(function () {$('[data-toggle="popover"]').popover()})"""))
   val startRegister = script("$('#register-modal').modal({ keyboard: false })")
