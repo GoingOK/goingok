@@ -1,12 +1,12 @@
 package org.goingok.server.services
 
-import java.time.{DayOfWeek, LocalDate}
+import java.time.{DayOfWeek, LocalDate, LocalDateTime}
 import java.time.temporal.{Temporal, TemporalAdjusters}
 import java.util.{Date, UUID}
 import com.typesafe.scalalogging.Logger
 import org.goingok.server.data.DbResults
 import org.goingok.server.data.Permissions.Permission
-import org.goingok.server.data.models.{AnalyticsChartsData, ReflectionAuthorEntry, ReflectionData}
+import org.goingok.server.data.models.{Activity, AnalyticsChartsData, ReflectionAuthorEntry, ReflectionData}
 
 import scala.collection.mutable.ListBuffer
 
@@ -33,13 +33,22 @@ class AnalyticsService {
     }
   }
 
+  def registerAnalyticActivity(goingok_id:UUID,detail:String) = {
+    val time = LocalDateTime.now().toString
+    val dbResult = ds.insertActivity(Activity(time,goingok_id,"analytics",detail))
+  }
+
   /**
     * Get GoingOK user from DB by GoingOK user ID
     * @return GoingOK user
     */
   def getTesters(): Vector[String] = {
     ds.getTesters() match {
-      case Right(testers:DbResults.Testers) => testers.value.toVector
+      case Right(testers:DbResults.Testers) => {
+        val tstrs = testers.value.toVector
+        logger.warn(s"Checking against testers: $tstrs")
+        tstrs
+      }
       case Left(error) => {
         logger.error(s"There was a problem getting a list of testers: ${error.getMessage}")
         Vector[String]()

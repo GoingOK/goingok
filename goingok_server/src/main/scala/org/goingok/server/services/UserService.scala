@@ -42,6 +42,8 @@ class UserService {
   }
 
 
+
+
   /**
     * Gets GoingOK user from DB
     * @param goingok_id GoingOK user ID

@@ -55,11 +55,15 @@ class AnalyticsController @Inject()(components: ControllerComponents, profileSer
     val userCounts = analyticsService.groupedUserCounts.getOrElse(Seq())
     val reflectionCounts = analyticsService.groupedReflectionCounts(user.goingok_id).getOrElse(Seq())
     val chartsData = analyticsService.analyticsChartsData((user.goingok_id)).getOrElse(Seq())
-    val isTester = tester(user)
+    val tester = isTester(user)
+    if(tester) {
+      analyticsService.registerAnalyticActivity(user.goingok_id,"Tester accessing analytics page")
+      logger.warn("Making analytics page for tester")
+    }
     val msg = Some(UiMessage(s"This page is a work in progress. For now, there are only basic stats here. More coming soon.", "info"))
     //val page = AnalyticsPage.page("GoingOK :: analytics", message, Some(user), Analytics(userCounts, reflectionCounts))
     //Ok(AnalyticsPage.getHtml(page))
-    Ok(new AnalyticsPage(Some(user), Analytics(merge(userCounts, reflectionCounts), chartsData), isTester).buildPage())
+    Ok(new AnalyticsPage(Some(user), Analytics(merge(userCounts, reflectionCounts), chartsData), tester).buildPage())
   }
 
   private val makeCSV = (user:User, request:Request[AnyContent]) => {
@@ -75,10 +79,12 @@ class AnalyticsController @Inject()(components: ControllerComponents, profileSer
     Ok(response).withHeaders(CONTENT_TYPE -> "application/x-download",CONTENT_DISPOSITION ->s"""attachment; filename="$group.csv" """)
   }
 
-  private lazy val testerPseudonyms = analyticsService.getTesters() //List("jazrox00","captud56","dodwic58")
+  //private lazy val testerPseudonyms =  //List("jazrox00","captud56","dodwic58")
 
-  private def tester(user: User) : Boolean = {
-    user.supervisor & (testerPseudonyms.contains(user.pseudonym.get))
+  private def isTester(user: User) : Boolean = {
+    val isT = user.supervisor & (analyticsService.getTesters().contains(user.pseudonym.get))
+    logger.warn(s"User is Tester: $isT")
+    isT
   }
 
   /** Merges users and reflections */
