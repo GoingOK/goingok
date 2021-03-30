@@ -22,7 +22,7 @@ object Includes {
     link(rel := "stylesheet", href := routes.Assets.versioned("stylesheets/reflection-point-chart.css").url),
     link(rel := "stylesheet", href := routes.Assets.versioned("stylesheets/entry.component.css").url),
     link(rel := "stylesheet", href := routes.Assets.versioned("stylesheets/analytics-charts.css").url),
-    //script(src := "//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js" ),
+    script(src := "//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js" ),
     script(src := routes.Assets.versioned("javascripts/bootstrap.bundle.min.js").url),
     script(src := routes.Assets.versioned("javascripts/fa-solid.min.js").url),
     script(src := routes.Assets.versioned("javascripts/fontawesome.min.js").url),
