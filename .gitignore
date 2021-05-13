@@ -4,6 +4,7 @@
 .idea/*
 .bloop/*
 .metals/*
+.null/*
 goingok.iml
 project/LocalSbtSettings.scala
 /src/main/public/css/bootstrap.css
