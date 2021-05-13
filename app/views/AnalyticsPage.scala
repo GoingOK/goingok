@@ -28,7 +28,7 @@ class AnalyticsPage(user:Option[User]=None, analytics: Analytics, tester: Boolea
         NavBar.main(NavParams(user,Config.baseUrl,Some("analytics"))),
         div(`class`:="wrapper",
           if (tester){
-            SidePanel.display(analytics.charts.map(r => r.group).toList)
+            SidePanel.display(analytics.charts.sortBy(r => r.timestamp).reverse.map(r => r.group).toList)
           }else {},
           div(`class`:="content",
             div(`class`:="content-wrapper",
@@ -61,7 +61,7 @@ class AnalyticsPage(user:Option[User]=None, analytics: Analytics, tester: Boolea
   }
   /** Creates analytics charts */
   private def createChart(data:Seq[models.AnalyticsChartsData]) = {
-    val chartData:List[ujson.Obj] = data.toList.map(r => ujson.Obj("group" -> r.group, "value" -> r.value.map(c => ujson.Obj("timestamp" -> c.timestamp, "pseudonym" -> c.pseudonym, "point" -> c.reflection.point))))
+    val chartData:List[ujson.Obj] = data.toList.map(r => ujson.Obj("group" -> r.group, "value" -> r.value.map(c => ujson.Obj("timestamp" -> c.timestamp, "pseudonym" -> c.pseudonym, "point" -> c.reflection.point, "text" -> c.reflection.text))))
     val entries:String = ujson.write(chartData)
     script(raw(s"Visualisation.analyticsCharts($entries)"))
   }
