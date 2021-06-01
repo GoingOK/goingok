@@ -27,14 +27,13 @@ var HtmlContainers = /** @class */ (function () {
 export function buildAnalyticsCharts(entries) {
     var sidebarWidth = d3.select("#sidebar").node().getBoundingClientRect().width;
     d3.select("#sidebar")
-        .style("width", `${sidebarWidth}px`);
-
+        .style("width", sidebarWidth + "px");
     //Handle side bar btn click
     d3.select("#sidebar-btn").on("click", function (e) {
         var isActive = d3.select("#sidebar").attr("class") == "active";
         d3.select("#sidebar")
             .attr("class", isActive ? "" : "active")
-            .style("margin-left", isActive ? `${66 - sidebarWidth}px` : "");
+            .style("margin-left", isActive ? 66 - sidebarWidth + "px" : "");
         d3.select("#sidebar #groups")
             .style("opacity", isActive ? "0" : "1");
     });
@@ -89,6 +88,11 @@ export function buildAnalyticsCharts(entries) {
                             chartFunctions.click.removeClickClass(groupChart, "bar");
                             //Remove drilldown html containers
                             htmlContainer.remove();
+                            //If users html containers exists remove them
+                            if (htmlContainer.userStatistics != undefined) {
+                                //Remove users html containers
+                                htmlContainer.removeUsers();
+                            }
                         }
                         else {
                             //Update click text
@@ -247,6 +251,11 @@ export function buildAnalyticsCharts(entries) {
                     d3.select(this).attr("class", "bar");
                     //Remove drilldown html containers
                     htmlContainer.remove();
+                    //If users html containers exists remove them
+                    if (htmlContainer.userStatistics != undefined) {
+                        //Remove users html containers
+                        htmlContainer.removeUsers();
+                    }
                     return;
                 }
                 //Remove existing click
@@ -272,7 +281,7 @@ export function buildAnalyticsCharts(entries) {
                 var groupsStatisticsCard = chartFunctions.appendCard(htmlContainer.groupStatistics, "Statitics (" + d.group + ")", d.group);
                 groupsStatisticsCard.select(".card-body")
                     .attr("class", "card-body statistics-text")
-                    .html("<b>Q1: </b>" + d.q1 + "<br>\n                        <b>Median: </b>" + d.median + "<br>\n                        <b>Q3: </b>" + d.q3 + "<br>\n                        <b>Mean: </b>" + d.mean + "<br>\n                        <b>Variance: </b>" + d.variance + "<br>\n                        <b>Std Deviation: </b>" + d.deviation + "<br>\n                        <b>Max: </b>" + d.max + "<br>\n                        <b>Min: </b>" + d.min + "<br>\n                        <b>Reflections per user: </b>" + d.avgReflectionsPerUser + "<br>\n                        <b>Max reflections per user: </b>" + d.userMostReflective + "<br>\n                        <b>Min reflections per user: </b>" + d.userLessReflective + "<br>\n                        <b>Oldest reflection</b><br>" + d.oldestReflection.toDateString() + "<br>\n                        <b>Newest reflection</b><br>" + d.newestReflection.toDateString() + "<br>");
+                    .html("<b>Q1: </b>" + d.q1 + "<br>\n                        <b>Median: </b>" + d.median + "<br>\n                        <b>Q3: </b>" + d.q3 + "<br>\n                        <b>Mean: </b>" + d.mean + "<br>\n                        <b>Total Reflections: </b>" + d.value.length + "<br>\n                        <b>Variance: </b>" + d.variance + "<br>\n                        <b>Std Deviation: </b>" + d.deviation + "<br>\n                        <b>Max: </b>" + d.max + "<br>\n                        <b>Min: </b>" + d.min + "<br>\n                        <b>Reflections per user: </b>" + d.avgReflectionsPerUser + "<br>\n                        <b>Max reflections per user: </b>" + d.userMostReflective + "<br>\n                        <b>Min reflections per user: </b>" + d.userLessReflective + "<br>\n                        <b>Total Users: </b>" + d.totalUsers + "<br>\n                        <b>Oldest reflection</b><br>" + d.oldestReflection.toDateString() + "<br>\n                        <b>Newest reflection</b><br>" + d.newestReflection.toDateString() + "<br>");
                 //Draw compare
                 htmlContainer.compare = chartFunctions.appendDiv("group-compare", "col-md-2 mt-3");
                 var compareCard = chartFunctions.appendCard(htmlContainer.compare, "Compare " + d.group + " with:");
@@ -294,7 +303,9 @@ export function buildAnalyticsCharts(entries) {
                     .html("<div class=\"row\">\n                        <div id=\"timeline-plot\" class=\"btn-group btn-group-toggle mr-auto ml-auto\" data-toggle=\"buttons\">\n                            <label class=\"btn btn-light active\">\n                                <input type=\"radio\" name=\"plot\" value=\"density\" checked>Density Plot<br>\n                            </label>\n                            <label class=\"btn btn-light\">\n                                <input type=\"radio\" name=\"plot\" value=\"scatter\">Scatter Plot<br>\n                            </label>\n                        </div>\n                    </div>")
                     .append("div")
                     .attr("class", "chart-container");
-                groupTimeline(d.value);
+                groupTimeline(d);
+                //Scroll
+                document.querySelector("#groups-statistics").scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
             //Enable sort
             var sortButton = chart.renderElements.svg.select(".y-label-container").attr("class", "y-label-container zoom");
@@ -313,17 +324,22 @@ export function buildAnalyticsCharts(entries) {
             });
         }
         function groupTimeline(data) {
-            var timelineChart = setTimelineChart(data);
+            var timelineChart = setTimelineChart(data.value);
             preRender(timelineChart);
-            renderTimelineDensity(timelineChart, data);
-            var timelineZoomChart = setTimelineZoomChart(timelineChart, data);
+            renderTimelineDensity(timelineChart, data.value);
+            var timelineZoomChart = setTimelineZoomChart(timelineChart, data.value);
             d3.select("#group-timeline #timeline-plot").on("click", function (e) {
                 var selectedOption = e.target.control.value;
                 if (selectedOption == "density") {
-                    renderTimelineDensity(timelineChart, data);
+                    //If users html containers exists remove them
+                    if (htmlContainer.userStatistics != undefined) {
+                        //Remove users html containers
+                        htmlContainer.removeUsers();
+                    }
+                    renderTimelineDensity(timelineChart, data.value);
                 }
                 if (selectedOption == "scatter") {
-                    renderTimelineScatter(timelineChart, timelineZoomChart, data);
+                    renderTimelineScatter(timelineChart, timelineZoomChart, data.value, data);
                 }
             });
             function setTimelineChart(data) {
@@ -397,7 +413,7 @@ export function buildAnalyticsCharts(entries) {
                     chart.renderElements.xAxis.call(chart.x.axis);
                 }
             }
-            function renderTimelineScatter(chart, zoomChart, data) {
+            function renderTimelineScatter(chart, zoomChart, data, stats) {
                 //Remove density plot
                 chart.renderElements.contentContainer.selectAll("#" + chart.id + "-timeline-contours").remove();
                 //Draw circles
@@ -469,23 +485,17 @@ export function buildAnalyticsCharts(entries) {
                         .classed("line", true)
                         .attr("id", chart.id + "-timeline-circles-line")
                         .attr("d", function (d) { return line(d); });
-                    chart.renderElements.contentContainer.selectAll(".click-container")
-                        .data(userData)
-                        .enter()
-                        .append("g")
-                        .attr("class", "click-container")
-                        .attr("transform", function (c) { return "translate(" + chart.x.scale(c.timestamp) + ", " + chart.y.scale(c.point) + ")"; })
-                        .append("text")
-                        .attr("class", function (c) { return chartFunctions.click.comparativeText(d.point, c.point, d.timestamp, c.timestamp)[0]; })
-                        .text(function (c) { return chartFunctions.click.comparativeText(d.point, c.point, d.timestamp, c.timestamp)[1]; });
+                    //Draw click containers
+                    userData.forEach(function (c) { return chartFunctions.click.appendText(chart, c, c.point); });
                     //Draw user statistics container
                     htmlContainer.userStatistics = chartFunctions.appendDiv("user-statistics", "col-md-3 mt-3");
                     var userStatisticsCard = chartFunctions.appendCard(htmlContainer.userStatistics, d.pseudonym + "'s statistics");
+                    var userMean = Math.round(d3.mean(userData.map(function (r) { return r.point; })));
                     userStatisticsCard.select(".card-body")
                         .attr("class", "card-body statistics-text")
-                        .html("<b>Average: </b>" + Math.round(d3.mean(userData.map(function (r) { return r.point; }))) + "<br>\n                            <b>Min: </b>" + d3.min(userData.map(function (r) { return r.point; })) + "<br>\n                            <b>Min date: </b>" + d3.sort(userData, function (r) { return r.point; })[0].timestamp.toDateString() + "<br>\n                            <b>Max: </b>" + d3.max(userData.map(function (r) { return r.point; })) + "<br>\n                            <b>Max date: </b>" + d3.sort(userData, function (r) { return r.point; })[userData.length - 1].timestamp.toDateString() + "<br>\n                            <b>Std Deviation: </b>" + chartFunctions.data.roundDecimal(d3.deviation(userData.map(function (r) { return r.point; }))) + "<br>\n                            <b>Variance: </b>" + chartFunctions.data.roundDecimal(d3.variance(userData.map(function (r) { return r.point; }))) + "<br>\n                            <b>Oldest reflection: </b>" + d3.min(userData.map(function (r) { return r.timestamp; })).toDateString() + "<br>\n                            <b>Newest reflection: </b>" + d3.max(userData.map(function (r) { return r.timestamp; })).toDateString() + "<br>");
+                        .html("<b>Mean: </b>" + userMean + " (<span class=\"" + ((userMean - stats.mean) < 0 ? "negative" : "positive") + "\">" + ((userMean - stats.mean) < 0 ? "" : "+") + (userMean - stats.mean) + "</span> compared to the group mean)<br>\n                            <b>Min: </b>" + d3.min(userData.map(function (r) { return r.point; })) + "<br>\n                            <b>Min date: </b>" + d3.sort(userData, function (r) { return r.point; })[0].timestamp.toDateString() + "<br>\n                            <b>Max: </b>" + d3.max(userData.map(function (r) { return r.point; })) + "<br>\n                            <b>Max date: </b>" + d3.sort(userData, function (r) { return r.point; })[userData.length - 1].timestamp.toDateString() + "<br>\n                            <b>Total: </b>" + userData.length + "<br>\n                            <b>Std Deviation: </b>" + chartFunctions.data.roundDecimal(d3.deviation(userData.map(function (r) { return r.point; }))) + "<br>\n                            <b>Variance: </b>" + chartFunctions.data.roundDecimal(d3.variance(userData.map(function (r) { return r.point; }))) + "<br>\n                            <b>Oldest reflection: </b>" + d3.min(userData.map(function (r) { return r.timestamp; })).toDateString() + "<br>\n                            <b>Newest reflection: </b>" + d3.max(userData.map(function (r) { return r.timestamp; })).toDateString() + "<br>");
                     //Draw user reflections container
-                    htmlContainer.reflections = chartFunctions.appendDiv("reflections-chart", "col-md-9 mt-3");
+                    htmlContainer.reflections = chartFunctions.appendDiv("reflections-list", "col-md-9 mt-3");
                     var reflectionsCard = chartFunctions.appendCard(htmlContainer.reflections, d.pseudonym + "'s reflections");
                     var reflectionsCardText = "";
                     d3.sort(userData, function (r) { return r.timestamp; }).forEach(function (c) {
@@ -494,6 +504,8 @@ export function buildAnalyticsCharts(entries) {
                     reflectionsCard.select(".card-body")
                         .attr("class", "card-body statistics-text")
                         .html(reflectionsCardText);
+                    //Scroll
+                    document.querySelector("#group-timeline").scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
                 //Append zoom bar
                 chart.renderElements.zoomSVG = chartFunctions.zoom.appendZoomBar(chart);
@@ -549,11 +561,11 @@ export function buildAnalyticsCharts(entries) {
             var groupData = d3.filter(data, function (d) { return groups.includes(d.group); });
             var currentData = [];
             groupData.forEach(function (c) {
-                var userAvg = Array.from(d3.rollup(c.value, function (d) { return Math.round(d3.mean(d.map(function (r) { return r.point; }))); }, function (d) { return d.pseudonym; }), function (_a) {
+                var userMean = Array.from(d3.rollup(c.value, function (d) { return Math.round(d3.mean(d.map(function (r) { return r.point; }))); }, function (d) { return d.pseudonym; }), function (_a) {
                     var pseudonym = _a[0], point = _a[1];
                     return ({ pseudonym: pseudonym, point: point });
                 });
-                currentData.push({ group: c.group, value: userAvg });
+                currentData.push({ group: c.group, value: userMean });
             });
             violinChart = chartFunctions.setChart("group-violin-chart", groupData);
             violinChart.padding.right = 85;
@@ -602,6 +614,7 @@ export function buildAnalyticsCharts(entries) {
                 //Start drag soaring functions
                 function dragStartSoaring(e, d) {
                     chart.renderElements.contentContainer.selectAll("." + chart.id + "-violin-text-container").remove();
+                    d3.select(this).attr("class", d3.select(this).attr("class") + " grabbing");
                 }
                 function draggingSoaring(e, d) {
                     if (chart.y.scale.invert(e.y) < 51 || chart.y.scale.invert(e.y) > 99) {
@@ -634,10 +647,12 @@ export function buildAnalyticsCharts(entries) {
                         newT = 99;
                     }
                     chartFunctions.transitions.violin(chart, data, tDistressed, newT);
+                    d3.select(this).attr("class", d3.select(this).attr("class").replace(" grabbing", ""));
                 }
                 //Start drag distressed functions
                 function dragStartDistressed(e, d) {
                     chart.renderElements.contentContainer.selectAll("." + chart.id + "-violin-text-container").remove();
+                    d3.select(this).attr("class", d3.select(this).attr("class") + " grabbing");
                 }
                 function draggingDistressed(e, d) {
                     if (chart.y.scale.invert(e.y) < 1 || chart.y.scale.invert(e.y) > 49) {
@@ -672,6 +687,7 @@ export function buildAnalyticsCharts(entries) {
                         newT = 49;
                     }
                     chartFunctions.transitions.violin(chart, data, newT, tSoaring);
+                    d3.select(this).attr("class", d3.select(this).attr("class").replace(" grabbing", ""));
                 }
             }
             function drawViolin(chart, data, tDistressed, tSoaring) {
@@ -741,11 +757,11 @@ export function buildAnalyticsCharts(entries) {
                 var groupData = d3.filter(data, function (d) { return currentGroups.includes(d.group); });
                 var currentData = [];
                 groupData.forEach(function (c) {
-                    var userAvg = Array.from(d3.rollup(c.value, function (d) { return Math.round(d3.mean(d.map(function (r) { return r.point; }))); }, function (d) { return d.pseudonym; }), function (_a) {
+                    var userMean = Array.from(d3.rollup(c.value, function (d) { return Math.round(d3.mean(d.map(function (r) { return r.point; }))); }, function (d) { return d.pseudonym; }), function (_a) {
                         var pseudonym = _a[0], point = _a[1];
                         return ({ pseudonym: pseudonym, point: point });
                     });
-                    currentData.push({ group: c.group, value: userAvg });
+                    currentData.push({ group: c.group, value: userMean });
                 });
                 violinChart.x = chartFunctions.axis.setSeriesAxis("Group Code", groupData.map(function (r) { return r.group; }), [0, violinChart.width - violinChart.padding.yAxis - violinChart.padding.right], "bottom");
                 violinUsersChart.x = chartFunctions.axis.setSeriesAxis("Group Code", groupData.map(function (r) { return r.group; }), [0, violinUsersChart.width - violinUsersChart.padding.yAxis - violinUsersChart.padding.right], "bottom");
@@ -840,7 +856,8 @@ var chartFunctions = {
                     newestReflection: d3.max(c.value.map(function (r) { return new Date(r.timestamp); })),
                     avgReflectionsPerUser: chartFunctions.data.roundDecimal(d3.mean(uniqueUsers.map(function (r) { return r.value; }))),
                     userMostReflective: d3.max(uniqueUsers.map(function (r) { return r.value; })),
-                    userLessReflective: d3.min(uniqueUsers.map(function (r) { return r.value; }))
+                    userLessReflective: d3.min(uniqueUsers.map(function (r) { return r.value; })),
+                    totalUsers: uniqueUsers.length
                 });
             });
             return result;
@@ -980,16 +997,17 @@ var chartFunctions = {
     },
     tooltip: {
         enableTooltip: function (chart, onMouseover, onMouseout) {
-            chart.renderElements.contentContainer.selectAll(".tooltip-container").remove();
             this.appendTooltipContainer(chart);
             chart.renderElements.content.on("mouseover", onMouseover)
                 .on("mouseout", onMouseout);
         },
         appendTooltipContainer: function (chart) {
+            chart.renderElements.contentContainer.selectAll(".tooltip-container").remove();
             return chart.renderElements.contentContainer.append("g")
                 .attr("class", "tooltip-container");
         },
         appendTooltipText: function (chart, title, values) {
+            if (values === void 0) { values = null; }
             var result = chart.renderElements.contentContainer.select(".tooltip-container").append("rect")
                 .attr("class", "tooltip-box");
             var text = chart.renderElements.contentContainer.select(".tooltip-container").append("text")
@@ -998,13 +1016,15 @@ var chartFunctions = {
                 .text(title);
             var textSize = text.node().getBBox().height;
             text.attr("y", textSize);
-            values.forEach(function (c, i) {
-                text.append("tspan")
-                    .attr("class", "tooltip-text")
-                    .attr("y", textSize * (i + 2))
-                    .attr("x", 15)
-                    .text(c.label + ": " + c.value);
-            });
+            if (values != null) {
+                values.forEach(function (c, i) {
+                    text.append("tspan")
+                        .attr("class", "tooltip-text")
+                        .attr("y", textSize * (i + 2))
+                        .attr("x", 15)
+                        .text(c.label + ": " + c.value);
+                });
+            }
             chart.renderElements.contentContainer.select(".tooltip-box").attr("width", text.node().getBBox().width + 20)
                 .attr("height", text.node().getBBox().height + 5);
             return result;
@@ -1111,6 +1131,7 @@ var chartFunctions = {
                 .attr("class", css);
         },
         appendText: function (chart, d, title, values) {
+            if (values === void 0) { values = null; }
             var container = chart.renderElements.contentContainer.append("g")
                 .datum(d)
                 .attr("class", "click-container");
@@ -1122,22 +1143,21 @@ var chartFunctions = {
                 .text(title);
             var textSize = text.node().getBBox().height;
             text.attr("y", textSize);
-            values.forEach(function (c, i) {
-                text.append("tspan")
-                    .attr("class", "click-text")
-                    .attr("y", textSize * (i + 2))
-                    .attr("x", 15)
-                    .text(c.label + ": " + c.value);
-            });
+            if (values != null) {
+                values.forEach(function (c, i) {
+                    text.append("tspan")
+                        .attr("class", "click-text")
+                        .attr("y", textSize * (i + 2))
+                        .attr("x", 15)
+                        .text(c.label + ": " + c.value);
+                });
+            }
             box.attr("width", text.node().getBBox().width + 20)
                 .attr("height", text.node().getBBox().height + 5)
                 .attr("clip-path", "url(#clip-" + chart.id + ")");
-            container.attr("transform", this.positionClickContainer(chart, d));
+            container.attr("transform", this.positionClickContainer(chart, box, text, d));
         },
-        positionClickContainer: function (chart, d) {
-            var container = chart.renderElements.contentContainer.selectAll(".click-container");
-            var box = container.selectAll(".click-box");
-            var text = container.selectAll(".click-text");
+        positionClickContainer: function (chart, box, text, d) {
             var positionX = chart.x.scale(d.timestamp);
             var positionY = chart.y.scale(d.point) - box.node().getBBox().height - 10;
             if (chart.width - chart.padding.yAxis < chart.x.scale(d.timestamp) + text.node().getBBox().width) {
@@ -1194,6 +1214,8 @@ var chartFunctions = {
     },
     zoom: {
         enableZoom: function (chart, zoomed) {
+            chart.renderElements.svg.selectAll(".zoom-rect")
+                .attr("class", "zoom-rect active");
             var zoom = d3.zoom()
                 .scaleExtent([1, 5])
                 .extent([[0, 0], [chart.width - chart.padding.yAxis, chart.height]])
@@ -1246,10 +1268,24 @@ var chartFunctions = {
                 .text(function (d) { return Math.round(d.percentage) + "%"; });
             binTextBox.attr("width", binText.node().getBBox().width + 10)
                 .attr("height", binText.node().getBBox().height + 5);
-            binTextBox.attr("y", function (d, i) { return chart.y.scale(i == 0 ? tDistressed / 2 : i == 1 ? 50 : (100 - tSoaring) / 2 + tSoaring) - binTextBox.node().getBBox().height / 2; })
+            binTextBox.attr("y", function (d, i) { return positionY(i); })
                 .attr("x", bandwithScale(0) - binTextBox.node().getBBox().width / 2);
-            binText.attr("y", function (d, i) { return chart.y.scale(i == 0 ? tDistressed / 2 : i == 1 ? 50 : (100 - tSoaring) / 2 + tSoaring) - binTextBox.node().getBBox().height / 2 + binText.node().getBBox().height; })
-                .attr("x", bandwithScale(0) - binText.node().getBBox().width / 2);
+            binText.attr("y", function (d, i) { return positionY(i) + binText.node().getBBox().height; })
+                .attr("x", bandwithScale(0) - binText.node().getBBox().width / 2)
+                .on("mouseover", onMouseover)
+                .on("mouseout", onMouseout);
+            function positionY(i) {
+                return chart.y.scale(i == 0 ? tDistressed / 2 : i == 1 ? 50 : (100 - tSoaring) / 2 + tSoaring) - binTextBox.node().getBBox().height / 2;
+            }
+            function onMouseover(e, d) {
+                chartFunctions.tooltip.appendTooltipText(chart, "Count: " + d.bin.length.toString());
+                chartFunctions.tooltip.positionTooltipContainer(chart, bandwithScale(0) + (3 * binTextBox.node().getBBox().width), parseInt(d3.select(this).attr("y")) - binTextBox.node().getBBox().height);
+            }
+            function onMouseout() {
+                chart.renderElements.svg.select(".tooltip-container").transition()
+                    .style("opacity", 0);
+                chartFunctions.tooltip.removeTooltip(chart);
+            }
         },
         getThresholdsValues: function (chart) {
             var result = [30, 70];
@@ -1322,6 +1358,8 @@ var chartFunctions = {
                     .x1(function (d) { return bandwithScale(d.length); })
                     .y(function (d, i) { return chart.y.scale(i == 0 ? 0 : i == 1 ? 50 : 100); })
                     .curve(d3.curveCatmullRom));
+            //Append tooltip container
+            chartFunctions.tooltip.appendTooltipContainer(chart);
             //Draw threshold percentages
             chartFunctions.drag.appendThresholdPercentages(chart, bin, bandwithScale, tDistressed, tSoaring);
         }

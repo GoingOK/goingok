@@ -28,7 +28,7 @@ class AnalyticsPage(user:Option[User]=None, analytics: Analytics, tester: Boolea
         NavBar.main(NavParams(user,Config.baseUrl,Some("analytics"))),
         div(`class`:="wrapper",
           if (tester){
-            SidePanel.display(analytics.charts.sortBy(r => r.timestamp).reverse.map(r => r.group).toList)
+            SidePanel.display(analytics.charts.sortBy(r => r.timestamp).map(r => r.group).toList)
           }else {},
           div(`class`:="content",
             div(`class`:="content-wrapper",
