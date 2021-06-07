@@ -64,6 +64,14 @@
     font-size: 0.875rem;
 }
 
+.statistics-text .positive {
+    color: #14A06AFF;
+}
+
+.statistics-text .negative {
+    color: #ff3300;
+}
+
 .bar, .line-circle, .violin-path, .zoom-line-circle, .legend-color {
     fill: #3399CC;
     fill-opacity: 0.2;
@@ -124,6 +132,13 @@
     font-weight: normal;
 }
 
+.violin-text {
+    fill: #ffffff;
+    font-size: 0.75rem;
+    font-weight: normal;
+    cursor: help;
+}
+
 .tooltip-text.title, .click-text.title {
     font-weight: bold;
 }
@@ -148,7 +163,7 @@
 }
 
 .click-text.positive {
-    fill: #00cc00;
+    fill: #14A06AFF;
     font-weight: bold;
     text-anchor: middle;
 }
@@ -161,8 +176,11 @@
 
 .threshold-line {
     stroke-width: 5;
-    stroke-dasharray: 5,5;
-    cursor: row-resize;
+    cursor: grab;
+}
+
+.threshold-line.grabbing {
+    cursor: grabbing;
 }
 
 .threshold-line.distressed {
@@ -216,6 +234,10 @@
 
 .zoom-rect {
     fill-opacity: 0;
+}
+
+.zoom-rect.active {
+    cursor: zoom-in;
 }
 
 .zoom-bar-content.zoom-line {
