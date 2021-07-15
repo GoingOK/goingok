@@ -16,8 +16,15 @@ object Visualisation {
 
   @JSExport
   /** Generates analytics page charts */
-  def analyticsCharts(entries:js.Array[js.Object]) :Unit = {
-    println("Generating Analytics Charts: analyticsCharts")
-    AnalyticsCharts.buildAnalyticsCharts(entries)
+  def controlAnalyticsCharts(entries:js.Array[js.Object]) :Unit = {
+    println("Generating Control Analytics Charts: controlAnalyticsCharts")
+    AnalyticsCharts.buildControlAdminAnalyticsCharts(entries)
+  }
+
+  @JSExport
+  /** Generates analytics page charts */
+  def expAnalyticsCharts(entries:js.Array[js.Object]) :Unit = {
+    println("Generating Experimental Analytics Charts: expAnalyticsCharts")
+    AnalyticsCharts.buildExperimentAdminAnalyticsCharts(entries)
   }
 }
