@@ -14,6 +14,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.buildExperimentAdminAnalyticsCharts = exports.buildControlAdminAnalyticsCharts = void 0;
 var d3 = require("d3");
 var AnalyticsChartsDataRaw = /** @class */ (function () {
     function AnalyticsChartsDataRaw(group, value, createDate) {
@@ -460,7 +462,7 @@ var AdminControlCharts = /** @class */ (function () {
         window.addEventListener("scroll", function () {
             var top = d3.select("#main-nav-bar").node().getBoundingClientRect().top;
             d3.select("#sidebar")
-                .style("top", top < 0 ? "0px" : "60px")
+                .style("top", top < 0 ? "0px" : "60px");
         });
         //Handle side bar btn click
         d3.select("#sidebar-btn").on("click", function (e) {
@@ -642,7 +644,6 @@ var AdminControlCharts = /** @class */ (function () {
         //Transition violins
         this.interactions.violin(chart);
         //Append tooltip container
-        this.interactions.tooltip.appendTooltipContainer(chart);
         this.handleViolinHover(chart);
         return chart;
     };
@@ -653,6 +654,7 @@ var AdminControlCharts = /** @class */ (function () {
             .on("mouseover", onMouseover)
             .on("mouseout", onMouseout);
         function onMouseover(e, d) {
+            _this.interactions.tooltip.appendTooltipContainer(chart);
             _this.interactions.tooltip.appendTooltipText(chart, "Count: " + d.bin.length.toString());
             _this.interactions.tooltip.positionTooltipContainer(chart, chart.x.scale(d.group) + parseInt(d3.select(this).attr("x")) + d3.select(".violin-text-box").node().getBBox().width, parseInt(d3.select(this).attr("y")) - d3.select(".violin-text-box").node().getBBox().height);
         }
@@ -1670,7 +1672,7 @@ var Sort = /** @class */ (function () {
 /* ------------------------------------------------
     End of admin experimental interfaces and classes
 -------------------------------------------------- */
-export function buildControlAdminAnalyticsCharts(entriesRaw) {
+function buildControlAdminAnalyticsCharts(entriesRaw) {
     var rawData = entriesRaw.map(function (d) { return new AnalyticsChartsDataRaw(d.group, d.value, d.createDate); });
     var entries = rawData.map(function (d) { return d.transformData(); });
     var colourScale = d3.scaleOrdinal(d3.schemeCategory10);
@@ -1812,8 +1814,8 @@ export function buildControlAdminAnalyticsCharts(entriesRaw) {
             });
     }
 }
-
-export function buildExperimentAdminAnalyticsCharts(entriesRaw) {
+exports.buildControlAdminAnalyticsCharts = buildControlAdminAnalyticsCharts;
+function buildExperimentAdminAnalyticsCharts(entriesRaw) {
     var rawData = entriesRaw.map(function (d) { return new AnalyticsChartsDataRaw(d.group, d.value, d.createDate); });
     var entries = rawData.map(function (d) { return d.transformData(); });
     var colourScale = d3.scaleOrdinal(d3.schemeCategory10);
@@ -1842,3 +1844,4 @@ export function buildExperimentAdminAnalyticsCharts(entriesRaw) {
         adminExperimentalCharts.handleGroupsSort(groupChart);
     }
 }
+exports.buildExperimentAdminAnalyticsCharts = buildExperimentAdminAnalyticsCharts;
