@@ -5,7 +5,7 @@ import scalatags.Text.all.{_}
 
 object SidePanel {
   def display(): TypedTag[String] = {
-    div(id:="sidebar", `class`:= "active",
+    div(id:="sidebar", `class`:= "active sticky-top",
       div(`class`:="sidebar-header",
         h3("Your groups")
       ),

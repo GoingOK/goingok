@@ -5,24 +5,19 @@
 }
 
 #sidebar {
-    min-width: 250px;
+    width: 250px;
     background: #000000;
     color: #0f856b;
     transition: all 0.3s;
     border-top: 2px solid #fff;
-    position: fixed;
-    top: 60px;
-    left: 0;
     height: 100vh;
-    z-index: 999;
-}
-
-#content {
-    margin-left: 250px;
+    margin-left: -250px;
 }
 
 #sidebar.active {
-    margin-left: 0px;
+    position: sticky;
+    top: 0;
+    margin-left: 0
 }
 
 #sidebar .sidebar-header {
@@ -75,11 +70,12 @@
 }
 
 .chart-container {
-    min-height: 40vh;
+    min-height: 30vh;
 }
 
 .statistics-text {
     font-size: 0.875rem;
+    overflow: auto;
 }
 
 .statistics-text .positive {
