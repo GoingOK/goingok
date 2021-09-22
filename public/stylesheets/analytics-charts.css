@@ -12,6 +12,7 @@
     border-top: 2px solid #fff;
     height: 100vh;
     margin-left: -250px;
+    overflow: auto;
 }
 
 #sidebar.active {
