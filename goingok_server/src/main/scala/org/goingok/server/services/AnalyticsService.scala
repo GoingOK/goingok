@@ -146,7 +146,7 @@ class AnalyticsService {
         logger.info(s"chart reflections found: ${result.value.size}")
         val analyticsChartsData = result.value.groupBy(c => c.group).map(c =>
           AnalyticsChartsData(c._1, c._2.head.timestamp, c._2.map(r => ReflectionAuthorEntry(r.timestamp, r.pseudonym, ReflectionData(r.point, r.text)))))
-        Some(analyticsChartsData.toList.sortBy(r => r.timestamp))
+        Some(analyticsChartsData.toList.sortBy(r => r.timestamp).reverse)
         }
       case Left(err) => {
         logger.error(err.getMessage)

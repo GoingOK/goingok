@@ -25,23 +25,23 @@ lazy val clientName = s"${projectName}_client"
 lazy val sharedName = s"${projectName}_shared"
 
 //Versions
-scalaVersion in ThisBuild := "2.13.4"
+scalaVersion in ThisBuild := "2.13.6"
 
-lazy val vScalaTags = "0.9.2"
+lazy val vScalaTags = "0.9.4"
 lazy val vSjsD3 = "0.3.4"
 
-lazy val vUpickle = "1.2.2"
-lazy val vDoobie = "0.10.0"
+lazy val vUpickle = "1.4.1"
+lazy val vDoobie = "0.13.4"
 lazy val vConfig = "1.4.1"
 
-lazy val vScalaJsDom = "1.1.0"
+lazy val vScalaJsDom = "1.2.0"
 lazy val vWebpack = "4.10.2"
 lazy val vWebpackDevServer = "3.1.4"
 lazy val vPopper = "1.14.4"
 lazy val vD3 = "6.5.0" //"5.9.7"
 
-lazy val vScalaTest = "3.2.3"
-lazy val vScalaLogging = "3.9.2"
+lazy val vScalaTest = "3.2.10"
+lazy val vScalaLogging = "3.9.4"
 
 //Settings
 val sharedSettings = Seq(
