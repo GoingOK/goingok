@@ -5,15 +5,20 @@
 }
 
 #sidebar {
-    min-width: 250px;
+    width: 250px;
     background: #000000;
     color: #0f856b;
     transition: all 0.3s;
     border-top: 2px solid #fff;
+    height: 100vh;
+    margin-left: -250px;
+    overflow: auto;
 }
 
 #sidebar.active {
-    margin-left: 0px;
+    position: sticky;
+    top: 0;
+    margin-left: 0
 }
 
 #sidebar .sidebar-header {
@@ -29,6 +34,15 @@
 
 #groups.active {
     display: none;
+}
+
+.group-row {
+    background-color: #000000 !important;
+    color: #fff !important;
+    border-bottom: 1px solid #0f856b !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
 }
 
 .content {
@@ -57,11 +71,12 @@
 }
 
 .chart-container {
-    min-height: 40vh;
+    min-height: 30vh;
 }
 
 .statistics-text {
     font-size: 0.875rem;
+    overflow: auto;
 }
 
 .statistics-text .positive {
@@ -72,7 +87,7 @@
     color: #ff3300;
 }
 
-.bar, .line-circle, .violin-path, .zoom-line-circle, .legend-color {
+.bar, .line-circle, .violin-rect, .zoom-circle, .legend-color {
     fill: #3399CC;
     fill-opacity: 0.2;
     stroke-width: 1;
@@ -93,7 +108,7 @@
     stroke-width: 1;
 }
 
-.bar:hover, .arc:hover, .line-circle:hover {
+.bar:hover, .arc:hover, .violin-rect:hover, .line-circle:hover {
     fill-opacity: 0.4;
     r: 10;
 }
@@ -214,7 +229,7 @@
     font-size: 0.75rem;
 }
 
-.y-label-container.zoom:hover {
+.y-label-container.sort:hover {
     cursor: pointer;
     font-weight: bold;
 }
@@ -251,4 +266,9 @@
 .zoom-content {
     fill-opacity: 0;
     stroke-opacity: 0;
+}
+
+.scroll-list {
+    height: 40vh;
+    overflow: auto;
 }

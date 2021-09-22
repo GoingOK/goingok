@@ -11,5 +11,11 @@ object AnalyticsCharts extends js.Object {
     * Builds analytics chart
     * @param entries reflections grouped by group code
     */
-  def buildAnalyticsCharts(entries:js.Any): js.Object = js.native
+  def buildControlAdminAnalyticsCharts(entries:js.Any): js.Object = js.native
+
+  /**
+   * Builds analytics chart
+   * @param entries reflections grouped by group code
+   */
+  def buildExperimentAdminAnalyticsCharts(entries:js.Any): js.Object = js.native
 }
