@@ -87,15 +87,23 @@
     color: #ff3300;
 }
 
-.bar, .line-circle, .violin-rect, .zoom-circle, .legend-color {
-    fill: #3399CC;
-    fill-opacity: 0.2;
-    stroke-width: 1;
-    stroke:#3399CC;
+.users-tab-pane {
+    height: 30vh;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
-.bar, .line-circle {
+.bar, .circle, .histogram-rect, .zoom-circle, .legend-color {
+    fill-opacity: 0.2;
+    stroke-width: 1;
+}
+
+.bar, .circle {
     cursor: pointer;
+}
+
+.bar.no-click {
+    cursor: auto;
 }
 
 .box-line {
@@ -108,9 +116,17 @@
     stroke-width: 1;
 }
 
-.bar:hover, .arc:hover, .violin-rect:hover, .line-circle:hover {
+.bar:hover, .arc:hover, .histogram-rect:hover, .circle:hover {
     fill-opacity: 0.4;
     r: 10;
+}
+
+.circle.circle.no-hover {
+    cursor: auto;
+}
+
+.circle.no-hover:hover {
+    r: 2
 }
 
 .dragging {
@@ -132,7 +148,7 @@
     opacity: 0;
 }
 
-.tooltip-box, .click-box, .violin-text-box {
+.tooltip-box, .click-box, .histogram-text-box {
     stroke-width: 1;
     stroke: #333;
     fill: #333;
@@ -141,13 +157,13 @@
     rx: 5;
 }
 
-.tooltip-text, .click-text, .violin-text {
+.tooltip-text, .click-text, .histogram-text {
     fill: #ffffff;
     font-size: 0.75rem;
     font-weight: normal;
 }
 
-.violin-text {
+.histogram-text {
     fill: #ffffff;
     font-size: 0.75rem;
     font-weight: normal;
@@ -166,8 +182,12 @@
 }
 
 .click-line {
+    fill: none;
     stroke: #3399CC;
     stroke-width: 1;
+}
+
+.click-line.dash {
     stroke-dasharray: 5,5;
 }
 
@@ -191,6 +211,9 @@
 
 .threshold-line {
     stroke-width: 5;
+}
+
+.threshold-line.grab {
     cursor: grab;
 }
 
