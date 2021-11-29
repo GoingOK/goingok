@@ -31,14 +31,14 @@ lazy val sharedName = s"${projectName}_shared"
 //Versions
 scalaVersion in ThisBuild := "2.13.7"
 
-lazy val vScalaTags = "0.9.4"
+lazy val vScalaTags = "0.10.0" //0.9.4
 lazy val vSjsD3 = "0.3.4"
 
-lazy val vUpickle = "1.4.1"
+lazy val vUpickle = "1.4.2"
 lazy val vDoobie = "0.13.4"
 lazy val vConfig = "1.4.1"
 
-lazy val vScalaJsDom = "1.2.0"
+lazy val vScalaJsDom = "2.0.0" //1.2.0
 lazy val vWebpack = "4.10.2"
 lazy val vWebpackDevServer = "3.1.4"
 lazy val vPopper = "1.14.4"
