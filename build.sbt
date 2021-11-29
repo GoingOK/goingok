@@ -15,9 +15,13 @@
 // limitations under the License.
 
 import LocalSbtSettings._
+import com.typesafe.sbt.packager.docker.DockerChmodType
+import com.typesafe.sbt.packager.docker.DockerPermissionStrategy
+dockerChmodType := DockerChmodType.UserGroupWriteExecute
+dockerPermissionStrategy := DockerPermissionStrategy.CopyChown
 
 lazy val projectName = "goingok"
-lazy val projectVersion = "4.2.10"
+lazy val projectVersion = "4.2.25"
 lazy val projectOrganisation = "org.goingok"
 
 lazy val serverName = s"${projectName}_server"
@@ -25,16 +29,16 @@ lazy val clientName = s"${projectName}_client"
 lazy val sharedName = s"${projectName}_shared"
 
 //Versions
-scalaVersion in ThisBuild := "2.13.6"
+scalaVersion in ThisBuild := "2.13.7"
 
-lazy val vScalaTags = "0.9.4"
+lazy val vScalaTags = "0.10.0" //0.9.4
 lazy val vSjsD3 = "0.3.4"
 
-lazy val vUpickle = "1.4.1"
+lazy val vUpickle = "1.4.2"
 lazy val vDoobie = "0.13.4"
 lazy val vConfig = "1.4.1"
 
-lazy val vScalaJsDom = "1.2.0"
+lazy val vScalaJsDom = "2.0.0" //1.2.0
 lazy val vWebpack = "4.10.2"
 lazy val vWebpackDevServer = "3.1.4"
 lazy val vPopper = "1.14.4"
@@ -51,9 +55,10 @@ val sharedSettings = Seq(
 
 //Dependencies
 
-val playDeps = Seq(ws, guice, ehcache) //, specs2 % Test)
+val playDeps = Seq(ws, guice, ehcache) //, guice specs2 % Test)
 
 val generalDeps = Seq(
+  "com.google.inject" % "guice" % "5.0.1", //To fix reflection error by old version in Play
   "com.typesafe" % "config" % vConfig,
   "com.lihaoyi" %% "scalatags" % vScalaTags, //Using ScalaTags instead of Twirl
   "com.lihaoyi" %% "upickle" % vUpickle, //Using uJson for main JSON
@@ -95,7 +100,7 @@ lazy val goingok = project.in(file("."))
     dockerRepository := Some(s"$dockerRepoURI"),
     defaultLinuxInstallLocation in Docker := "/opt/docker",
     dockerExposedVolumes := Seq("/opt/docker/logs"),
-    dockerBaseImage := "openjdk:latest",
+    dockerBaseImage := "adoptopenjdk/openjdk8:latest", //"openjdk:18-oracle", //"openjdk:stable",
     // Puts unified scaladocs into target/api
     siteSubdirName in ScalaUnidoc := "api",
     addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), siteSubdirName in ScalaUnidoc)
