@@ -110,6 +110,7 @@ var AnalyticsChartsDataStats = /** @class */ (function (_super) {
         _this_1.stats.push(new DataStats("q3", "Q3", Math.round(d3.quantile(entries.value.map(function (r) { return r.point; }), 0.75))));
         _this_1.stats.push(new DataStats("max", "Max", d3.max(entries.value.map(function (r) { return r.point; }))));
         _this_1.stats.push(new DataStats("min", "Min", d3.min(entries.value.map(function (r) { return r.point; }))));
+        _this_1.stats.push(new DataStats("iqr", "IQR", Math.round(d3.quantile(entries.value.map(function (r) { return r.point; }), 0.75) - d3.quantile(entries.value.map(function (r) { return r.point; }), 0.25))));
         _this_1.stats.push(new DataStats("oldRef", "Oldest reflection", d3.min(entries.value.map(function (r) { return new Date(r.timestamp); }))));
         _this_1.stats.push(new DataStats("newRef", "Newest reflection", d3.max(entries.value.map(function (r) { return new Date(r.timestamp); }))));
         _this_1.stats.push(new DataStats("totalRef", "Total reflections", entries.value.length));
@@ -625,7 +626,7 @@ var AdminControlCharts = /** @class */ (function () {
     ;
     AdminControlCharts.prototype.renderGroupChart = function (chart, data) {
         d3.select("#" + chart.id + " .card-subtitle")
-            .html(data.length != 1 ? "The reflections of the group code " + data[d3.minIndex(data.map(function (c) { return c.stats.find(function (d) { return d.stat == "q1"; }).value; }))].group + " tends to be distressed, while\n                the reflections of the group code " + data[d3.maxIndex(data.map(function (c) { return c.stats.find(function (d) { return d.stat == "q3"; }).value; }))].group + " tends to be soaring" :
+            .html(data.length != 1 ? "The reflections of the group code " + data[d3.minIndex(data.map(function (c) { return c.stats.find(function (d) { return d.stat == "iqr"; }).value; }))].group + " have the lowest variability, while\n                the reflections of the group code " + data[d3.maxIndex(data.map(function (c) { return c.stats.find(function (d) { return d.stat == "iqr"; }).value; }))].group + " have the highest variability" :
                 "You can add more group codes to this chart by selecting them from the left bar");
         //MinMax lines processing
         chart.elements.contentContainer.selectAll("#" + chart.id + "-data-min-max")
@@ -750,7 +751,7 @@ var AdminControlCharts = /** @class */ (function () {
         chart.setBin();
         var binData = data.map(function (d) { return chart.bin(d.value.map(function (d) { return d.point; })).map(function (c) { return new HistogramData(d.group, d.colour, c, Math.round(c.length / d.value.length * 100)); }); });
         d3.select("#" + chart.id + " .card-subtitle")
-            .html(data.length != 1 ? "The group code " + binData[d3.maxIndex(binData.map(function (d) { return d3.max(d.filter(function (d) { return d.bin.x0 == 0; }).map(function (d) { return d.percentage; })); }))][0].group + " has the highest percentage in the distressed bin, while\n                the group code " + binData[d3.maxIndex(binData.map(function (d) { return d3.max(d.filter(function (d) { return d.bin.x1 == 100; }).map(function (d) { return d.percentage; })); }))][0].group + " has the highest percentage in the soaring bin" :
+            .html(data.length != 1 ? "The group code " + binData[d3.maxIndex(binData.map(function (d) { return d3.max(d.filter(function (d) { return d.bin.x0 == 0; }).map(function (d) { return d.percentage; })); }))][0].group + " has the biggest distressed bin, while\n                the group code " + binData[d3.maxIndex(binData.map(function (d) { return d3.max(d.filter(function (d) { return d.bin.x1 == 100; }).map(function (d) { return d.percentage; })); }))][0].group + " has the biggest soaring bin" :
                 "Filtering by <span class=\"badge badge-pill badge-info\">" + data[0].group + " <i class=\"fas fa-window-close\"></i></span>");
         //Process histogram
         chart.elements.contentContainer.selectAll("." + chart.id + "-histogram-container")
@@ -972,15 +973,15 @@ var AdminControlCharts = /** @class */ (function () {
         });
     };
     ;
-    AdminControlCharts.prototype.renderUserStatistics = function (card, data, thresholds, pseudonym) {
+    AdminControlCharts.prototype.renderUserStatistics = function (card, data, thresholds, timelineData) {
         var _this = this;
         var userData = data.getUsersData();
         var groupMean = Math.round(d3.mean(data.value.map(function (d) { return d.point; })));
         d3.select("#user-statistics .card-subtitle")
-            .html(pseudonym == undefined ? "The user " + userData.value[d3.minIndex(userData.value.map(function (d) { return d.point; }))].pseudonym + " is the most distressed, while\n                the user " + userData.value[d3.maxIndex(userData.value.map(function (d) { return d.point; }))].pseudonym + " in the most soaring" :
-                "The user " + pseudonym + " has a total of " + data.value.filter(function (d) { return d.pseudonym == pseudonym; }).length + " reflections between\n                " + d3.min(data.value.filter(function (d) { return d.pseudonym == pseudonym; }).map(function (d) { return d.timestamp; })).toDateString() + " and\n                " + d3.max(data.value.filter(function (d) { return d.pseudonym == pseudonym; }).map(function (d) { return d.timestamp; })).toDateString());
+            .html(timelineData == undefined ? "The user " + userData.value[d3.minIndex(userData.value.map(function (d) { return d.point; }))].pseudonym + " is the most distressed, while\n                the user " + userData.value[d3.maxIndex(userData.value.map(function (d) { return d.point; }))].pseudonym + " is the most soaring" :
+                "The user " + timelineData.pseudonym + " has a total of " + data.value.filter(function (d) { return d.pseudonym == timelineData.pseudonym; }).length + " reflections between\n                " + d3.min(data.value.filter(function (d) { return d.pseudonym == timelineData.pseudonym; }).map(function (d) { return d.timestamp; })).toDateString() + " and\n                " + d3.max(data.value.filter(function (d) { return d.pseudonym == timelineData.pseudonym; }).map(function (d) { return d.timestamp; })).toDateString());
         card.selectAll("div")
-            .data(pseudonym == undefined ? userData.value : userData.value.filter(function (d) { return d.pseudonym == pseudonym; }))
+            .data(timelineData == undefined ? userData.value : userData.value.filter(function (d) { return d.pseudonym == timelineData.pseudonym; }))
             .enter()
             .append("div")
             .attr("class", "row statistics-text")
@@ -1001,6 +1002,7 @@ var AdminControlCharts = /** @class */ (function () {
                 .data(function (d) { return d3.sort(d3.filter(data.value, function (x) { return x.pseudonym == d.pseudonym; }), function (r) { return r.timestamp; }); })
                 .enter()
                 .append("p")
+                .classed("reflection-selected", function (d) { return timelineData != undefined ? d.timestamp == timelineData.timestamp : false; })
                 .html(function (d) { return "<i>" + d.timestamp.toDateString() + ":</i> " + d.text; }); })
             .each(function (d, i, g) { return drawUserChart(d3.select(d3.select(g[i]).node().parentElement).attr("id") + " #" + d3.select(g[i]).attr("id"), d); });
         function drawUserChart(id, data) {
@@ -1504,15 +1506,22 @@ var AdminExperimentalCharts = /** @class */ (function (_super) {
         });
         function onClick(e, d) {
             if (d3.select(this).attr("class").includes("clicked")) {
-                _this.interactions.click.removeClick(chart);
-                _this.removeUserStatistics();
-                return;
+                if (d3.select(this).attr("class").includes("main")) {
+                    _this.interactions.click.removeClick(chart);
+                    _this.removeUserStatistics();
+                    return;
+                }
+                else {
+                    chart.elements.content.classed("main", false);
+                }
             }
             _this.interactions.click.removeClick(chart);
             //Remove users html containers
             _this.removeUserStatistics();
             chart.click = true;
-            chart.elements.content.attr("class", function (data) { return "circle " + (data.pseudonym == d.pseudonym ? "clicked" : ""); });
+            chart.elements.content.classed("clicked", function (data) { return data.pseudonym == d.pseudonym; });
+            d3.select(this)
+                .classed("main", true);
             var userData = data.find(function (c) { return c.group == d.group; }).value.filter(function (c) { return c.pseudonym == d.pseudonym; });
             var line = d3.line()
                 .x(function (d) { return chart.x.scale(d.timestamp); })
@@ -1525,14 +1534,16 @@ var AdminExperimentalCharts = /** @class */ (function (_super) {
             //Draw click containers
             userData.forEach(function (c) { return _this.interactions.click.appendScatterText(chart, c, c.point.toString()); });
             //Draw user statistics container
-            _this.htmlContainers.userStatistics = _this.htmlContainers.appendDiv("user-statistics", "col-md-12 mt-3");
+            if (_this.htmlContainers.userStatistics == undefined) {
+                _this.htmlContainers.userStatistics = _this.htmlContainers.appendDiv("user-statistics", "col-md-12 mt-3");
+            }
             d3.select("#user-statistics .card-title")
                 .html("User " + d.pseudonym + " compared to their group");
             var userCard = d3.select("#user-statistics .card-body")
                 .append("div")
                 .attr("class", "users-tab-pane")
                 .attr("id", "user-statistics-" + d.pseudonym);
-            _this.renderUserStatistics(userCard, data.find(function (c) { return c.group == d.group; }), _this.usersHistogram.elements.getThresholdsValues(_this.usersHistogram), d.pseudonym);
+            _this.renderUserStatistics(userCard, data.find(function (c) { return c.group == d.group; }), _this.usersHistogram.elements.getThresholdsValues(_this.usersHistogram), d);
             _this.htmlContainers.removeHelp(chart);
             //Scroll
             document.querySelector("#group-timeline").scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1594,6 +1605,7 @@ var Click = /** @class */ (function () {
         chart.elements.contentContainer.selectAll(".click-line").remove();
         chart.elements.contentContainer.selectAll(".click-container").remove();
         chart.elements.content.classed("clicked", false);
+        chart.elements.content.classed("main", false);
     };
     ;
     Click.prototype.appendScatterText = function (chart, d, title, values) {
@@ -2040,7 +2052,7 @@ function buildControlAdminAnalyticsCharts(entriesRaw) {
                     return [4 /*yield*/, drawCharts(entries)];
                 case 1:
                     _a.sent();
-                    new Tutorial([new TutorialData("#groups", "All your groups are selected to visualise and colours assigned"),
+                    new Tutorial([new TutorialData("#groups", "All your groups are selected to visualise and colours assigned. You cannot change this section"),
                         new TutorialData(".card-title button", "Click the help symbol in any chart to get additional information"),
                         new TutorialData("#groups-chart .bar", "Hover for information on demand"),
                         new TutorialData("#group-histogram-chart .histogram-rect", "Hover for information on demand"),
@@ -2171,7 +2183,7 @@ function buildExperimentAdminAnalyticsCharts(entriesRaw) {
                     _a.sent();
                     new Tutorial([new TutorialData("#groups", "Add groups to the charts and change their colours"),
                         new TutorialData(".card-title button", "Click the help symbol in any chart to get additional information"),
-                        new TutorialData("#groups-chart .bar", "Hover for information on demand or click to compare and drill-down. Other visualisations will show only the selected group"),
+                        new TutorialData("#groups-chart .bar", "Hover for information on demand or click to compare and drill-down. Other charts will show only the selected group"),
                         new TutorialData("#group-histogram-chart .threshold-line", "Drag to change the threshold (soaring or distressed) and recalculate the bins"),
                         new TutorialData("#group-histogram-chart .histogram-rect", "Click to compare the bin with other's group bins"),
                         new TutorialData("#timeline-plot", "Swap chart types. Both charts have zoom available. In the scatter plot, click a bubble to access the user's information")]);
