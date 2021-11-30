@@ -5,15 +5,20 @@
 }
 
 #sidebar {
-    min-width: 250px;
+    width: 250px;
     background: #000000;
     color: #0f856b;
     transition: all 0.3s;
     border-top: 2px solid #fff;
+    height: 100vh;
+    margin-left: -250px;
+    overflow: auto;
 }
 
 #sidebar.active {
-    margin-left: 0px;
+    position: sticky;
+    top: 0;
+    margin-left: 0
 }
 
 #sidebar .sidebar-header {
@@ -29,6 +34,15 @@
 
 #groups.active {
     display: none;
+}
+
+.group-row {
+    background-color: #000000 !important;
+    color: #fff !important;
+    border-bottom: 1px solid #0f856b !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
 }
 
 .content {
@@ -57,22 +71,44 @@
 }
 
 .chart-container {
-    min-height: 40vh;
+    min-height: 30vh;
 }
 
 .statistics-text {
     font-size: 0.875rem;
+    overflow: auto;
 }
 
-.bar, .line-circle, .violin-path, .zoom-line-circle, .legend-color {
-    fill: #3399CC;
+.statistics-text .positive {
+    color: #14A06AFF;
+}
+
+.statistics-text .negative {
+    color: #ff3300;
+}
+
+.users-tab-pane {
+    height: 30vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.bar, .circle, .histogram-rect, .zoom-circle, .legend-color {
     fill-opacity: 0.2;
     stroke-width: 1;
-    stroke:#3399CC;
 }
 
-.bar, .line-circle {
+.bar, .circle {
     cursor: pointer;
+}
+
+.bar.no-click {
+    cursor: auto;
+}
+
+.bar.no-click:hover {
+    fill-opacity: 0.2;
+    stroke-width: 1;
 }
 
 .box-line {
@@ -85,9 +121,17 @@
     stroke-width: 1;
 }
 
-.bar:hover, .arc:hover, .line-circle:hover {
+.bar:hover, .arc:hover, .histogram-rect:hover, .circle:hover {
     fill-opacity: 0.4;
     r: 10;
+}
+
+.circle.no-hover {
+    cursor: auto;
+}
+
+.circle.no-hover:hover {
+    r: 2
 }
 
 .dragging {
@@ -100,6 +144,12 @@
     r: 10;
 }
 
+.clicked.main {
+    r: 15;
+    stroke: #ffff80;
+
+}
+
 .line {
     fill: none;
     stroke: #3399CC;
@@ -109,7 +159,7 @@
     opacity: 0;
 }
 
-.tooltip-box, .click-box, .violin-text-box {
+.tooltip-box, .click-box, .histogram-text-box {
     stroke-width: 1;
     stroke: #333;
     fill: #333;
@@ -118,10 +168,17 @@
     rx: 5;
 }
 
-.tooltip-text, .click-text, .violin-text {
+.tooltip-text, .click-text, .histogram-text {
     fill: #ffffff;
     font-size: 0.75rem;
     font-weight: normal;
+}
+
+.histogram-text {
+    fill: #ffffff;
+    font-size: 0.75rem;
+    font-weight: normal;
+    cursor: help;
 }
 
 .tooltip-text.title, .click-text.title {
@@ -136,8 +193,12 @@
 }
 
 .click-line {
+    fill: none;
     stroke: #3399CC;
     stroke-width: 1;
+}
+
+.click-line.dash {
     stroke-dasharray: 5,5;
 }
 
@@ -148,7 +209,7 @@
 }
 
 .click-text.positive {
-    fill: #00cc00;
+    fill: #14A06AFF;
     font-weight: bold;
     text-anchor: middle;
 }
@@ -161,8 +222,14 @@
 
 .threshold-line {
     stroke-width: 5;
-    stroke-dasharray: 5,5;
-    cursor: row-resize;
+}
+
+.threshold-line.grab {
+    cursor: grab;
+}
+
+.threshold-line.grabbing {
+    cursor: grabbing;
 }
 
 .threshold-line.distressed {
@@ -196,7 +263,7 @@
     font-size: 0.75rem;
 }
 
-.y-label-container.zoom:hover {
+.y-label-container.sort:hover {
     cursor: pointer;
     font-weight: bold;
 }
@@ -218,6 +285,10 @@
     fill-opacity: 0;
 }
 
+.zoom-rect.active {
+    cursor: zoom-in;
+}
+
 .zoom-bar-content.zoom-line {
     fill: none;
 }
@@ -229,4 +300,168 @@
 .zoom-content {
     fill-opacity: 0;
     stroke-opacity: 0;
+}
+
+.reflection-selected {
+    background-color:#ffff80;
+}
+
+.scroll-list {
+    height: 40vh;
+    overflow: auto;
+}
+
+/**************************************************
+Spinner CSS
+***************************************************/
+
+.loader {
+    background: #000;
+    background: radial-gradient(#222, #000);
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 99999;
+}
+
+.loader-inner {
+    bottom: 0;
+    height: 60px;
+    left: 0;
+    margin: auto;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 100px;
+}
+
+.loader-line-wrap {
+    animation:
+            spin 2000ms cubic-bezier(.175, .885, .32, 1.275) infinite
+;
+    box-sizing: border-box;
+    height: 50px;
+    left: 0;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    transform-origin: 50% 100%;
+    width: 100px;
+}
+.loader-line {
+    border: 4px solid transparent;
+    border-radius: 100%;
+    box-sizing: border-box;
+    height: 100px;
+    left: 0;
+    margin: 0 auto;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 100px;
+}
+.loader-line-wrap:nth-child(1) { animation-delay: -50ms; }
+.loader-line-wrap:nth-child(2) { animation-delay: -100ms; }
+.loader-line-wrap:nth-child(3) { animation-delay: -150ms; }
+.loader-line-wrap:nth-child(4) { animation-delay: -200ms; }
+.loader-line-wrap:nth-child(5) { animation-delay: -250ms; }
+
+.loader-line-wrap:nth-child(1) .loader-line {
+    border-color: hsl(0, 80%, 60%);
+    height: 90px;
+    width: 90px;
+    top: 7px;
+}
+.loader-line-wrap:nth-child(2) .loader-line {
+    border-color: hsl(60, 80%, 60%);
+    height: 76px;
+    width: 76px;
+    top: 14px;
+}
+.loader-line-wrap:nth-child(3) .loader-line {
+    border-color: hsl(120, 80%, 60%);
+    height: 62px;
+    width: 62px;
+    top: 21px;
+}
+.loader-line-wrap:nth-child(4) .loader-line {
+    border-color: hsl(180, 80%, 60%);
+    height: 48px;
+    width: 48px;
+    top: 28px;
+}
+.loader-line-wrap:nth-child(5) .loader-line {
+    border-color: hsl(240, 80%, 60%);
+    height: 34px;
+    width: 34px;
+    top: 35px;
+}
+
+@keyframes spin {
+    0%, 15% {
+        transform: rotate(0);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/**************************************************
+Tutorial CSS
+***************************************************/
+
+.no-overflow {
+    overflow: hidden;
+}
+
+.tutorial {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+}
+
+.tutorial .tutorial-backdrop {
+    z-index: 1050;
+    background-color: #000000;
+    opacity: 0.75;
+    height: inherit;
+    width: inherit;
+    position: inherit;
+}
+
+.tutorial .tutorial-content {
+    color: #ffffff;
+    z-index: 1100;
+    position: inherit;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 22px;
+    max-width: 500px;
+}
+
+.tutorial .tutorial-arrow {
+    position: inherit;
+    z-index: 1100;
+}
+
+.tutorial .tutorial-buttons {
+    z-index: 1100;
+    position: inherit;
+    width: 200px;
+    display: flex;
+}
+
+.arrow {
+    stroke: #ffffff;
+    stroke-width: 3px;
+    fill: none;
+}
+
+.arrow-head {
+    stroke: #ffffff;
+    fill: #ffffff;
 }
