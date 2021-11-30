@@ -1005,9 +1005,6 @@ var AdminControlCharts = /** @class */ (function () {
             .each(function (d, i, g) { return drawUserChart(d3.select(d3.select(g[i]).node().parentElement).attr("id") + " #" + d3.select(g[i]).attr("id"), d); });
         function drawUserChart(id, data) {
             var chart = new UserChart(id, "user-chart");
-            if (chart.x.scale(data.point) < 0) {
-                console.log(data, chart.x.scale(data.point), id);
-            }
             chart.elements.svg.select(".y-axis").remove();
             chart.elements.svg.select(".x-axis").attr("clip-path", null);
             chart.elements.contentContainer.append("rect")
@@ -1787,10 +1784,17 @@ var Loading = /** @class */ (function () {
     };
     return Loading;
 }());
+var TutorialData = /** @class */ (function () {
+    function TutorialData(id, content) {
+        this.id = id;
+        this.content = content;
+    }
+    return TutorialData;
+}());
 var Tutorial = /** @class */ (function () {
-    function Tutorial(constructor) {
+    function Tutorial(data) {
         this.tutorial = this.appendTutorial();
-        this.tutorialData = constructor;
+        this.tutorialData = data;
         this.slide = 0;
         this.appendTutorialBackdrop();
     }
@@ -1808,6 +1812,7 @@ var Tutorial = /** @class */ (function () {
             this.removeTutorial();
             return;
         }
+        window.scroll(0, 0);
         var tutorialData = this.tutorialData[this.slide];
         var tutorialFocus = d3.select(tutorialData.id).node().getBoundingClientRect();
         var TutorialContentData = /** @class */ (function () {
@@ -1819,6 +1824,7 @@ var Tutorial = /** @class */ (function () {
             }
             return TutorialContentData;
         }());
+        window.scroll(0, tutorialFocus.top - 200);
         var data = [new TutorialContentData("0px", "0px", "100%", tutorialFocus.top + "px"),
             new TutorialContentData(tutorialFocus.bottom + "px", "0px", "100%", "100%"),
             new TutorialContentData(tutorialFocus.top + "px", "0px", tutorialFocus.left + "px", tutorialFocus.height + "px"),
@@ -1843,7 +1849,6 @@ var Tutorial = /** @class */ (function () {
         if (tutorialFocus.left + 50 > window.innerWidth / 2) {
             isLeft = false;
         }
-        console.log(isLeft);
         if (this.tutorial.selectAll(".tutorial-content").empty()) {
             this.tutorial.append("div")
                 .attr("class", "tutorial-content")
@@ -2035,6 +2040,11 @@ function buildControlAdminAnalyticsCharts(entriesRaw) {
                     return [4 /*yield*/, drawCharts(entries)];
                 case 1:
                     _a.sent();
+                    new Tutorial([new TutorialData("#groups", "All your groups are selected to visualise and colours assigned"),
+                        new TutorialData(".card-title button", "Click the help symbol in any chart to get additional information"),
+                        new TutorialData("#groups-chart .bar", "Hover for information on demand"),
+                        new TutorialData("#group-histogram-chart .histogram-rect", "Hover for information on demand"),
+                        new TutorialData("#timeline-plot", "Swap chart types. Both charts have zoom available")]);
                     loading.isLoading = false;
                     loading.removeDiv();
                     return [2 /*return*/];
@@ -2159,12 +2169,12 @@ function buildExperimentAdminAnalyticsCharts(entriesRaw) {
                     return [4 /*yield*/, drawCharts(entries)];
                 case 1:
                     _a.sent();
-                    new Tutorial([{ id: "#groups", content: "Add groups to the charts and change their colours" },
-                        { id: ".fa-question-circle", content: "Click the help symbol in any chart to get additional information" },
-                        { id: "#groups-chart .bar", content: "Hover for information on demand or click to compare and drill-down. Other visualisations will show only the selected group" },
-                        { id: "#group-histogram-chart .threshold-line", content: "Drag to change the threshold (soaring or distressed) and recalculate the bins" },
-                        { id: "#group-histogram-chart .histogram-rect", content: "Click to compare the bin with other's group bins" },
-                        { id: "#timeline-plot", content: "Swap chart types. Both charts have zoom available. In the scatter plot, click a bubble to access the user's information" }]);
+                    new Tutorial([new TutorialData("#groups", "Add groups to the charts and change their colours"),
+                        new TutorialData(".card-title button", "Click the help symbol in any chart to get additional information"),
+                        new TutorialData("#groups-chart .bar", "Hover for information on demand or click to compare and drill-down. Other visualisations will show only the selected group"),
+                        new TutorialData("#group-histogram-chart .threshold-line", "Drag to change the threshold (soaring or distressed) and recalculate the bins"),
+                        new TutorialData("#group-histogram-chart .histogram-rect", "Click to compare the bin with other's group bins"),
+                        new TutorialData("#timeline-plot", "Swap chart types. Both charts have zoom available. In the scatter plot, click a bubble to access the user's information")]);
                     loading.isLoading = false;
                     loading.removeDiv();
                     return [2 /*return*/];
