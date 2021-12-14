@@ -70,6 +70,7 @@ var AnalyticsChartsDataRaw = /** @class */ (function () {
 }());
 var AnalyticsChartsData = /** @class */ (function () {
     function AnalyticsChartsData(group, value, createDate, colour, selected) {
+        if (createDate === void 0) { createDate = undefined; }
         if (colour === void 0) { colour = undefined; }
         if (selected === void 0) { selected = false; }
         this.group = group;
@@ -158,7 +159,7 @@ var ChartTime = /** @class */ (function () {
         this.width = containerDimensions.width;
         this.height = containerDimensions.height;
         this.padding = new ChartPadding(75, 75, 5);
-        this.htmlContainers = new HtmlContainers();
+        this.help = new Help();
         this.y = new ChartLinearAxis("Reflection Point", [0, 100], [this.height - this.padding.xAxis - this.padding.top, 0], "left");
         this.x = new ChartTimeAxis("Time", domain, [0, this.width - this.padding.yAxis]);
         this.click = false;
@@ -281,7 +282,7 @@ var ChartElements = /** @class */ (function () {
     ChartElements.prototype.appendSVG = function (chart, containerClass) {
         return d3.select("#" + chart.id + " " + (containerClass == undefined ? ".chart-container" : "." + containerClass))
             .append("svg")
-            .attr("id", "chart-" + chart.id)
+            .attr("class", "chart-svg")
             .attr("preserveAspectRatio", "xMinYMin meet")
             .attr("viewBox", "0 0 " + chart.width + " " + chart.height);
     };
@@ -440,15 +441,16 @@ var TimelineData = /** @class */ (function () {
     return TimelineData;
 }());
 // Class for bin hover data
-var HistogramData = /** @class */ (function () {
-    function HistogramData(group, colour, bin, percentage) {
-        this.group = group;
-        this.colour = colour;
-        this.bin = bin;
-        this.percentage = percentage;
+var HistogramData = /** @class */ (function (_super) {
+    __extends(HistogramData, _super);
+    function HistogramData(value, group, colour, bin, percentage) {
+        var _this_1 = _super.call(this, group, value, undefined, colour) || this;
+        _this_1.bin = bin;
+        _this_1.percentage = percentage;
+        return _this_1;
     }
     return HistogramData;
-}());
+}(AnalyticsChartsData));
 // Class click text data
 var ClickTextData = /** @class */ (function () {
     function ClickTextData(clickStat, dataStat, clickGroup, dataGroup) {
@@ -458,65 +460,10 @@ var ClickTextData = /** @class */ (function () {
     return ClickTextData;
 }());
 // Basic class for Html containers
-var HtmlContainers = /** @class */ (function () {
-    function HtmlContainers() {
+var Help = /** @class */ (function () {
+    function Help() {
     }
-    HtmlContainers.prototype.remove = function () {
-        if (this.statistics != undefined) {
-            this.statistics.remove();
-            this.statistics = undefined;
-        }
-        if (this.timeline != undefined) {
-            this.removeNavbarScrollspyItem(this.timeline.attr("id"));
-            this.timeline.remove();
-            this.timeline = undefined;
-        }
-        if (this.histogram != undefined) {
-            this.removeNavbarScrollspyItem(this.histogram.attr("id"));
-            this.histogram.remove();
-            this.histogram = undefined;
-        }
-        if (this.userHistogram != undefined) {
-            this.userHistogram.remove();
-            this.userHistogram = undefined;
-        }
-        if (this.compare != undefined) {
-            this.compare.remove();
-        }
-        this.removeUsers();
-    };
-    ;
-    HtmlContainers.prototype.removeUsers = function () {
-        if (this.userStatistics != undefined) {
-            this.removeNavbarScrollspyItem(this.userStatistics.attr("id"));
-            this.userStatistics.remove();
-            this.userStatistics = undefined;
-        }
-    };
-    ;
-    HtmlContainers.prototype.appendDiv = function (id, css) {
-        return d3.select("#analytics-charts").append("div")
-            .attr("id", id)
-            .attr("class", css);
-    };
-    ;
-    HtmlContainers.prototype.appendCard = function (div, header, id, help) {
-        if (help === void 0) { help = false; }
-        return div.append("div")
-            .attr("class", "card")
-            .attr("id", id != null ? id : "no-id")
-            .append("div")
-            .attr("class", "card-body")
-            .call(function (div) { return div.append("h5")
-                .attr("class", "card-title")
-                .html(!help ? header : header + "<button type=\"button\" class=\"btn btn-light btn-sm float-right\"><i class=\"fas fa-question-circle\"></i></button>"); })
-            .call(function (div) { return div.append("h6")
-                .attr("class", "card-subtitle mb-2 text-muted"); })
-            .call(function (div) { return div.append("div")
-                .attr("class", "chart-container"); });
-    };
-    ;
-    HtmlContainers.prototype.helpPopover = function (button, id, content) {
+    Help.prototype.helpPopover = function (button, id, content) {
         if (d3.select("#" + id).empty()) {
             var popover = d3.select("body").append("div")
                 .attr("id", id)
@@ -541,51 +488,21 @@ var HtmlContainers = /** @class */ (function () {
         }
     };
     ;
-    HtmlContainers.prototype.removeHelp = function (chart) {
+    Help.prototype.removeHelp = function (chart) {
         d3.select("#" + chart.id + "-help").remove();
         d3.select("#" + chart.id + "-help-button").remove();
         d3.select("#" + chart.id + "-help-data").remove();
         d3.select("#" + chart.id + "-help-drag").remove();
         d3.select("#" + chart.id + "-help-zoom").remove();
+        d3.select("#" + chart.id + " .card-title i")
+            .attr("class", "fas fa-question-circle");
     };
     ;
-    HtmlContainers.prototype.renderNavbarScrollspy = function () {
-        d3.select("body")
-            .attr("data-spy", "scroll")
-            .attr("data-target", "#analytics-navbar")
-            .attr("data-offset", 0);
-        this.renderNavbarScrollspyItem(this.boxPlot.attr("id"), "Reflections");
-        if (this.timeline != undefined) {
-            this.renderNavbarScrollspyItem(this.timeline.attr("id"), "Timeline");
-        }
-        if (this.userStatistics != undefined) {
-            this.renderNavbarScrollspyItem(this.userStatistics.attr("id"), "Users");
-        }
-    };
-    ;
-    HtmlContainers.prototype.renderNavbarScrollspyItem = function (id, name) {
-        var exists = d3.select("#analytics-navbar ul").selectAll("a").filter(function () {
-            return d3.select(this).attr("href") == "#" + id;
-        });
-        if (exists.empty()) {
-            d3.select("#analytics-navbar ul").append("li")
-                .attr("class", "nav-item")
-                .attr("id", id + "-li")
-                .append("a")
-                .attr("class", "nav-link")
-                .attr("href", "#" + id)
-                .html(name);
-        }
-    };
-    ;
-    HtmlContainers.prototype.removeNavbarScrollspyItem = function (id) {
-        d3.select("#analytics-navbar ul #" + id + "-li").remove();
-    };
-    return HtmlContainers;
+    return Help;
 }());
 var AdminControlCharts = /** @class */ (function () {
     function AdminControlCharts() {
-        this.htmlContainers = new HtmlContainers();
+        this.help = new Help();
         this.interactions = new AdminControlInteractions();
     }
     AdminControlCharts.prototype.sidebarBtn = function () {
@@ -593,7 +510,9 @@ var AdminControlCharts = /** @class */ (function () {
         d3.select("#sidebar-btn").on("click", function () {
             var isActive = d3.select("#sidebar").attr("class").includes("active");
             d3.select("#sidebar")
-                .attr("class", isActive ? "" : "active");
+                .classed("active", !isActive);
+            d3.select(this)
+                .classed("active", isActive);
         });
     };
     ;
@@ -625,9 +544,10 @@ var AdminControlCharts = /** @class */ (function () {
     };
     ;
     AdminControlCharts.prototype.renderGroupChart = function (chart, data) {
+        d3.select("#" + chart.id + " .card-title span")
+            .html();
         d3.select("#" + chart.id + " .card-subtitle")
-            .html(data.length != 1 ? "The reflections of the group code " + data[d3.minIndex(data.map(function (c) { return c.stats.find(function (d) { return d.stat == "iqr"; }).value; }))].group + " have the lowest variability, while\n                the reflections of the group code " + data[d3.maxIndex(data.map(function (c) { return c.stats.find(function (d) { return d.stat == "iqr"; }).value; }))].group + " have the highest variability" :
-                "You can add more group codes to this chart by selecting them from the left bar");
+            .html(data.length <= 1 ? "Add more group codes from the left bar" : "Click a group code to filter");
         //MinMax lines processing
         chart.elements.contentContainer.selectAll("#" + chart.id + "-data-min-max")
             .data(data)
@@ -749,10 +669,9 @@ var AdminControlCharts = /** @class */ (function () {
         var _this_1 = this;
         chart.setBandwidth(data);
         chart.setBin();
-        var binData = data.map(function (d) { return chart.bin(d.value.map(function (d) { return d.point; })).map(function (c) { return new HistogramData(d.group, d.colour, c, Math.round(c.length / d.value.length * 100)); }); });
         d3.select("#" + chart.id + " .card-subtitle")
-            .html(data.length != 1 ? "The group code " + binData[d3.maxIndex(binData.map(function (d) { return d3.max(d.filter(function (d) { return d.bin.x0 == 0; }).map(function (d) { return d.percentage; })); }))][0].group + " has the biggest distressed bin, while\n                the group code " + binData[d3.maxIndex(binData.map(function (d) { return d3.max(d.filter(function (d) { return d.bin.x1 == 100; }).map(function (d) { return d.percentage; })); }))][0].group + " has the biggest soaring bin" :
-                "Filtering by <span class=\"badge badge-pill badge-info\">" + data[0].group + " <i class=\"fas fa-window-close\"></i></span>");
+            .html(data.length == 1 ? "Filtering by <span class=\"badge badge-pill badge-info\">" + data[0].group + " <i class=\"fas fa-window-close\"></i></span>" :
+                "");
         //Process histogram
         chart.elements.contentContainer.selectAll("." + chart.id + "-histogram-container")
             .data(data)
@@ -760,7 +679,7 @@ var AdminControlCharts = /** @class */ (function () {
                 .attr("class", chart.id + "-histogram-container")
                 .attr("transform", function (d) { return "translate(" + chart.x.scale(d.group) + ", 0)"; })
                 .call(function (enter) { return enter.selectAll(".histogram-rect")
-                    .data(function (d) { return chart.bin(d.value.map(function (d) { return d.point; })).map(function (c) { return new HistogramData(d.group, d.colour, c, Math.round(c.length / d.value.length * 100)); }); })
+                    .data(function (d) { return chart.bin(d.value.map(function (d) { return d.point; })).map(function (c) { return new HistogramData(d.value, d.group, d.colour, c, Math.round(c.length / d.value.length * 100)); }); })
                     .enter()
                     .append("rect")
                     .attr("id", chart.id + "-data")
@@ -812,6 +731,8 @@ var AdminControlCharts = /** @class */ (function () {
     AdminControlCharts.prototype.renderTimelineDensity = function (chart, data) {
         var _this = this;
         d3.select("#" + chart.id + " .card-subtitle")
+            .classed("instructions", data.length <= 1)
+            .classed("text-muted", data.length != 1)
             .html(data.length != 1 ? "The oldest reflection was on " + d3.min(data.map(function (d) { return d3.min(d.value.map(function (d) { return d.timestamp; })); })).toDateString() + " in the group code " + data[d3.minIndex(data.map(function (d) { return d3.min(d.value.map(function (d) { return d.timestamp; })); }))].group + ", while\n                the newest reflection was on " + d3.max(data.map(function (d) { return d3.max(d.value.map(function (d) { return d.timestamp; })); })).toDateString() + " in the group code " + data[d3.maxIndex(data.map(function (d) { return d3.max(d.value.map(function (d) { return d.timestamp; })); }))].group :
                 "Filtering by <span class=\"badge badge-pill badge-info\">" + data[0].group + " <i class=\"fas fa-window-close\"></i></span>");
         //Remove scatter plot
@@ -849,7 +770,7 @@ var AdminControlCharts = /** @class */ (function () {
             drawContours();
             chart.x.axis.ticks(newChartRange[1] / 75);
             chart.elements.xAxis.call(chart.x.axis);
-            _this.htmlContainers.removeHelp(chart);
+            _this.help.removeHelp(chart);
         }
         return chart;
     };
@@ -859,6 +780,8 @@ var AdminControlCharts = /** @class */ (function () {
         chart.elements.contentContainer.selectAll(".contour").remove();
         var _this = this;
         d3.select("#" + chart.id + " .card-subtitle")
+            .classed("instructions", data.length <= 1)
+            .classed("text-muted", data.length != 1)
             .html(data.length != 1 ? "The oldest reflection was on " + d3.min(data.map(function (d) { return d3.min(d.value.map(function (d) { return d.timestamp; })); })).toDateString() + " in the group code " + data[d3.minIndex(data.map(function (d) { return d3.min(d.value.map(function (d) { return d.timestamp; })); }))].group + ", while\n                the newest reflection was on " + d3.max(data.map(function (d) { return d3.max(d.value.map(function (d) { return d.timestamp; })); })).toDateString() + " in the group code " + data[d3.maxIndex(data.map(function (d) { return d3.max(d.value.map(function (d) { return d.timestamp; })); }))].group :
                 "Filtering by <span class=\"badge badge-pill badge-info\">" + data[0].group + " <i class=\"fas fa-window-close\"></i></span>");
         //Draw circles
@@ -938,25 +861,11 @@ var AdminControlCharts = /** @class */ (function () {
                 .attr("transform", function (d) { return "translate(" + chart.x.scale(d.timestamp) + ", " + chart.y.scale(d.point) + ")"; });
             chart.x.axis.ticks(newChartRange[1] / 75);
             chart.elements.xAxis.call(chart.x.axis);
-            _this.htmlContainers.removeHelp(chart);
+            _this.help.removeHelp(chart);
         }
         return chart;
     };
     ;
-    AdminControlCharts.prototype.renderTimelineButtons = function (card) {
-        card.insert("div", ".chart-container")
-            .attr("class", "row mt-3")
-            .append("div")
-            .attr("id", "timeline-plot")
-            .attr("class", "btn-group btn-group-toggle mr-auto ml-auto")
-            .attr("data-toggle", "buttons")
-            .call(function (div) { return div.append("label")
-                .attr("class", "btn btn-light active")
-                .html("<input type=\"radio\" name=\"plot\" value=\"density\" checked>Density Plot<br>"); })
-            .call(function (div) { return div.append("label")
-                .attr("class", "btn btn-light")
-                .html("<input type=\"radio\" name=\"plot\" value=\"scatter\">Scatter Plot<br>"); });
-    };
     AdminControlCharts.prototype.handleTimelineButtons = function (chart, zoomChart, data, func) {
         var _this = this;
         d3.select("#" + chart.id + " #timeline-plot").on("click", func != undefined ? function (e) { return func(e); } : function (e) {
@@ -968,7 +877,7 @@ var AdminControlCharts = /** @class */ (function () {
                 _this.renderTimelineScatter(chart, zoomChart, data);
             }
             if (!d3.select("#" + chart.id + "-help").empty()) {
-                _this.htmlContainers.removeHelp(chart);
+                _this.help.removeHelp(chart);
             }
         });
     };
@@ -978,6 +887,8 @@ var AdminControlCharts = /** @class */ (function () {
         var userData = data.getUsersData();
         var groupMean = Math.round(d3.mean(data.value.map(function (d) { return d.point; })));
         d3.select("#user-statistics .card-subtitle")
+            .classed("text-muted", true)
+            .classed("instructions", false)
             .html(timelineData == undefined ? "The user " + userData.value[d3.minIndex(userData.value.map(function (d) { return d.point; }))].pseudonym + " is the most distressed, while\n                the user " + userData.value[d3.maxIndex(userData.value.map(function (d) { return d.point; }))].pseudonym + " is the most soaring" :
                 "The user " + timelineData.pseudonym + " has a total of " + data.value.filter(function (d) { return d.pseudonym == timelineData.pseudonym; }).length + " reflections between\n                " + d3.min(data.value.filter(function (d) { return d.pseudonym == timelineData.pseudonym; }).map(function (d) { return d.timestamp; })).toDateString() + " and\n                " + d3.max(data.value.filter(function (d) { return d.pseudonym == timelineData.pseudonym; }).map(function (d) { return d.timestamp; })).toDateString());
         card.selectAll("div")
@@ -990,23 +901,29 @@ var AdminControlCharts = /** @class */ (function () {
                 .attr("class", "col-md-4")
                 .call(function (div) { return div.append("h6")
                     .attr("class", "mb-0 mt-1")
-                    .html(function (d) { return d.pseudonym + " (<span class=\"" + ((d.point - groupMean) < 0 ? "negative" : "positive") + "\">" + ((d.point - groupMean) < 0 ? "" : "+") + (d.point - groupMean) + "</span>)"; }); })
+                    .html(function (d) { return d.pseudonym + " is"; }); })
                 .call(function (div) { return div.append("span")
                     .attr("class", "text-muted")
-                    .html(function (d) { return "<b>" + _this.getUserStaitsticBinName(d, thresholds) + "</b>"; }); }); })
+                    .html(function (d) { return "<b>" + _this.getUserStatisticBinName(d, thresholds) + "</b>"; }); }); })
             .call(function (div) { return div.append("div")
                 .attr("class", "col-md-8 mt-1 user-chart"); })
             .call(function (div) { return div.append("div")
                 .attr("class", "col-md-12")
-                .selectAll("p")
+                .append("p")
+                .attr("class", "mb-1")
+                .html(function (d) { return "User " + d.pseudonym + " reflections in chronological order:"; }); })
+            .call(function (div) { return div.append("ul")
+                .attr("class", "pr-3")
+                .selectAll("li")
                 .data(function (d) { return d3.sort(d3.filter(data.value, function (x) { return x.pseudonym == d.pseudonym; }), function (r) { return r.timestamp; }); })
                 .enter()
-                .append("p")
+                .append("li")
                 .classed("reflection-selected", function (d) { return timelineData != undefined ? d.timestamp == timelineData.timestamp : false; })
-                .html(function (d) { return "<i>" + d.timestamp.toDateString() + ":</i> " + d.text; }); })
+                .html(function (d) { return "<i>" + d.timestamp.toDateString() + " | Reflection point " + d.point + "</i><br> " + d.text; }); })
             .each(function (d, i, g) { return drawUserChart(d3.select(d3.select(g[i]).node().parentElement).attr("id") + " #" + d3.select(g[i]).attr("id"), d); });
         function drawUserChart(id, data) {
             var chart = new UserChart(id, "user-chart");
+            chart.elements.svg.classed("chart-svg", false);
             chart.elements.svg.select(".y-axis").remove();
             chart.elements.svg.select(".x-axis").attr("clip-path", null);
             chart.elements.contentContainer.append("rect")
@@ -1040,7 +957,7 @@ var AdminControlCharts = /** @class */ (function () {
         }
     };
     ;
-    AdminControlCharts.prototype.getUserStaitsticBinName = function (data, thresholds) {
+    AdminControlCharts.prototype.getUserStatisticBinName = function (data, thresholds) {
         var distressed = thresholds[0];
         var soaring = thresholds[1];
         if (data.point <= distressed) {
@@ -1074,7 +991,7 @@ var AdminControlTransitions = /** @class */ (function () {
     ;
     AdminControlTransitions.prototype.histogram = function (chart, update) {
         update.selectAll(".histogram-rect")
-            .data(function (d) { return chart.bin(d.value.map(function (d) { return d.point; })).map(function (c) { return new HistogramData(d.group, d.colour, c, Math.round(c.length / d.value.length * 100)); }); })
+            .data(function (d) { return chart.bin(d.value.map(function (d) { return d.point; })).map(function (c) { return new HistogramData(d.value, d.group, d.colour, c, Math.round(c.length / d.value.length * 100)); }); })
             .join(function (enter) { return enter; }, function (update) { return update.style("stroke", function (d) { return d.colour; })
                 .style("fill", function (d) { return d.colour; })
                 .call(function (update) { return update.transition()
@@ -1376,18 +1293,20 @@ var AdminExperimentalCharts = /** @class */ (function (_super) {
     };
     ;
     AdminExperimentalCharts.prototype.removeUserStatistics = function () {
-        d3.select("#user-statistics .card-title")
+        d3.select("#user-statistics .card-title span")
             .html("Users compared to their group");
         d3.select("#user-statistics .card-subtitle")
+            .classed("instructions", true)
+            .classed("text-muted", false)
             .html("Select a reflection from the scatter plot to view specific users");
         d3.select("#user-statistics .users-tab-pane").remove();
     };
     ;
     AdminExperimentalCharts.prototype.removeAllHelp = function (boxPlot) {
-        this.htmlContainers.removeHelp(boxPlot);
-        this.htmlContainers.removeHelp(this.histogram);
-        this.htmlContainers.removeHelp(this.usersHistogram);
-        this.htmlContainers.removeHelp(this.timeline);
+        this.help.removeHelp(boxPlot);
+        this.help.removeHelp(this.histogram);
+        this.help.removeHelp(this.usersHistogram);
+        this.help.removeHelp(this.timeline);
     };
     AdminExperimentalCharts.prototype.renderGroupChart = function (chart, data) {
         chart = _super.prototype.renderGroupChart.call(this, chart, data);
@@ -1434,7 +1353,7 @@ var AdminExperimentalCharts = /** @class */ (function (_super) {
             chart.elements.contentContainer.selectAll("." + chart.id + "-histogram-text-container").remove();
             d3.select(this).classed("grab", false);
             d3.select(this).classed("grabbing", true);
-            _this.htmlContainers.removeHelp(chart);
+            _this.help.removeHelp(chart);
         }
         function dragging(e, d) {
             if (d > 50) {
@@ -1476,7 +1395,7 @@ var AdminExperimentalCharts = /** @class */ (function (_super) {
             }
             if (chart.id == "group-histogram-users-chart" && !_this.timeline.elements.contentContainer.selectAll(".clicked").empty()) {
                 var userData_1 = _this.timeline.elements.contentContainer.selectAll(".clicked").datum();
-                var binName = _this.getUserStaitsticBinName(data.map(function (d) { return d.value.find(function (d) { return d.pseudonym == userData_1.pseudonym; }); })[0], chart.elements.getThresholdsValues(chart));
+                var binName = _this.getUserStatisticBinName(data.map(function (d) { return d.value.find(function (d) { return d.pseudonym == userData_1.pseudonym; }); })[0], chart.elements.getThresholdsValues(chart));
                 d3.select("#user-statistics #" + userData_1.pseudonym + " .text-muted")
                     .html("<b>" + binName + "</b>");
             }
@@ -1534,20 +1453,16 @@ var AdminExperimentalCharts = /** @class */ (function (_super) {
             //Draw click containers
             userData.forEach(function (c) { return _this.interactions.click.appendScatterText(chart, c, c.point.toString()); });
             //Draw user statistics container
-            if (_this.htmlContainers.userStatistics == undefined) {
-                _this.htmlContainers.userStatistics = _this.htmlContainers.appendDiv("user-statistics", "col-md-12 mt-3");
-            }
-            d3.select("#user-statistics .card-title")
+            d3.select("#user-statistics .card-title span")
                 .html("User " + d.pseudonym + " compared to their group");
             var userCard = d3.select("#user-statistics .card-body")
                 .append("div")
                 .attr("class", "users-tab-pane")
                 .attr("id", "user-statistics-" + d.pseudonym);
             _this.renderUserStatistics(userCard, data.find(function (c) { return c.group == d.group; }), _this.usersHistogram.elements.getThresholdsValues(_this.usersHistogram), d);
-            _this.htmlContainers.removeHelp(chart);
+            _this.help.removeHelp(chart);
             //Scroll
             document.querySelector("#group-timeline").scrollIntoView({ behavior: 'smooth', block: 'start' });
-            _this.htmlContainers.renderNavbarScrollspy();
         }
         return chart;
     };
@@ -1575,7 +1490,7 @@ var AdminExperimentalCharts = /** @class */ (function (_super) {
                 _this.renderTimelineScatter(chart, zoomChart, data);
             }
             if (!d3.select("#" + chart.id + "-help").empty()) {
-                _this.htmlContainers.removeHelp(chart);
+                _this.help.removeHelp(chart);
             }
         }
     };
@@ -1691,7 +1606,7 @@ var Click = /** @class */ (function () {
                 .attr("class", "click-container")
                 .attr("transform", function (c) { return "translate(" + (chart.x.scale(c.group) + chart.x.scale.bandwidth() / 2) + ", 0)"; })
                 .call(function (enter) { return enter.selectAll("text")
-                    .data(function (d) { return chart.bin(d.value.map(function (d) { return d.point; })).map(function (c) { return new HistogramData(d.group, d.colour, c, Math.round(c.length / d.value.length * 100)); }); })
+                    .data(function (d) { return chart.bin(d.value.map(function (d) { return d.point; })).map(function (c) { return new HistogramData(d.value, d.group, d.colour, c, Math.round(c.length / d.value.length * 100)); }); })
                     .enter()
                     .append("text")
                     .attr("class", "click-text black")
@@ -1703,7 +1618,7 @@ var Click = /** @class */ (function () {
                 .duration(750)
                 .attr("transform", function (c) { return "translate(" + (chart.x.scale(c.group) + chart.x.scale.bandwidth() / 2) + ", 0)"; }); })
                 .call(function (update) { return update.selectAll("text")
-                    .data(function (d) { return chart.bin(d.value.map(function (d) { return d.point; })).map(function (c) { return new HistogramData(d.group, d.colour, c, Math.round(c.length / d.value.length * 100)); }); })
+                    .data(function (d) { return chart.bin(d.value.map(function (d) { return d.point; })).map(function (c) { return new HistogramData(d.value, d.group, d.colour, c, Math.round(c.length / d.value.length * 100)); }); })
                     .join(function (enter) { return enter; }, function (update) { return update.attr("y", function (c) { return c.bin.x0 == 0 ? chart.y.scale(0 + tDistressed / 2) : c.bin.x1 == 100 ? chart.y.scale(tSoaring + (100 - tSoaring) / 2) : chart.y.scale(50); })
                         .text(function (c) { return c.percentage + "% "; })
                         .append("tspan")
@@ -1933,11 +1848,13 @@ var Tutorial = /** @class */ (function () {
             .attr("class", "arrow")
             .attr("marker-end", "url(#arrow-head)");
     };
+    ;
     Tutorial.prototype.removeTutorial = function () {
         d3.select("body")
             .classed("no-overflow", false);
         this.tutorial.remove();
     };
+    ;
     return Tutorial;
 }());
 /* ------------------------------------------------
@@ -1947,72 +1864,58 @@ function buildControlAdminAnalyticsCharts(entriesRaw) {
     return __awaiter(this, void 0, void 0, function () {
         function drawCharts(allEntries) {
             return __awaiter(this, void 0, void 0, function () {
-                var adminControlCharts, data, groupChart, histogramChart, timelineCard, timelineChart, timelineZoomChart, usersData, histogramUsersChart, userStatistics, users;
+                var adminControlCharts, data, groupChart, histogramChart, timelineChart, timelineZoomChart, usersData, histogramUsersChart, userStatistics, users;
                 return __generator(this, function (_a) {
                     adminControlCharts = new AdminControlCharts();
                     //Handle sidebar button
                     adminControlCharts.sidebarBtn();
                     adminControlCharts.preloadGroups(allEntries);
                     data = allEntries.map(function (d) { return new AnalyticsChartsDataStats(d); });
-                    //Append groups chart container
-                    adminControlCharts.htmlContainers.boxPlot = adminControlCharts.htmlContainers.appendDiv("groups-chart", "col-md-6");
-                    adminControlCharts.htmlContainers.appendCard(adminControlCharts.htmlContainers.boxPlot, "All reflections by group - Box plot", undefined, true);
                     groupChart = new ChartSeries("groups-chart", data.map(function (d) { return d.group; }));
                     adminControlCharts.renderGroupChart(groupChart, data);
+                    d3.select("#groups-chart .card-subtitle")
+                        .html("");
                     //Handle groups chart help
-                    adminControlCharts.htmlContainers.boxPlot.select(".card-title button")
+                    d3.select("#groups-chart .card-title button")
                         .on("click", function (e) {
-                            adminControlCharts.htmlContainers.helpPopover(d3.select(this), groupChart.id + "-help", "<b>Box plot</b><br>A box plot is used to show the data distribution<br><i>Q3:</i> The median of the upper half of the data set<br><i>Median:</i> The middle value of a dataset<br><i>Q1:</i> The median of the lower half of the dataset");
-                            adminControlCharts.htmlContainers.helpPopover(groupChart.elements.contentContainer.select(".bar"), groupChart.id + "-help-data", "<u><i>hover</i></u> me for information on demand");
+                            adminControlCharts.help.helpPopover(d3.select(this), groupChart.id + "-help", "<b>Box plot</b><br>A box plot is used to show the data distribution<br><i>Q3:</i> The median of the upper half of the data set<br><i>Median:</i> The middle value of a dataset<br><i>Q1:</i> The median of the lower half of the dataset");
+                            adminControlCharts.help.helpPopover(groupChart.elements.contentContainer.select(".bar"), groupChart.id + "-help-data", "<u><i>hover</i></u> me for information on demand");
                         });
-                    //Draw groups histogram container
-                    adminControlCharts.htmlContainers.histogram = adminControlCharts.htmlContainers.appendDiv("group-histogram-chart", "col-md-6");
-                    adminControlCharts.htmlContainers.appendCard(adminControlCharts.htmlContainers.histogram, "All reflections by group - Histogram", undefined, true);
                     histogramChart = new HistogramChartSeries("group-histogram-chart", data.map(function (d) { return d.group; }));
                     adminControlCharts.renderHistogram(histogramChart, data);
                     //Handle histogram chart help
-                    adminControlCharts.htmlContainers.histogram.select(".card-title button")
+                    d3.select("#group-histogram-chart .card-title button")
                         .on("click", function (e) {
-                            adminControlCharts.htmlContainers.helpPopover(d3.select(this), histogramChart.id + "-help", "<b>Histogram</b><br>A histogram group data points into user-specific ranges. The data points in this histogram are <i>reflections</i>");
-                            adminControlCharts.htmlContainers.helpPopover(histogramChart.elements.contentContainer.select(".histogram-rect"), histogramChart.id + "-help-data", "<u><i>hover</i></u> me for information on demand");
+                            adminControlCharts.help.helpPopover(d3.select(this), histogramChart.id + "-help", "<b>Histogram</b><br>A histogram group data points into user-specific ranges. The data points in this histogram are <i>reflections</i>");
+                            adminControlCharts.help.helpPopover(histogramChart.elements.contentContainer.select(".histogram-rect"), histogramChart.id + "-help-data", "<u><i>hover</i></u> me for information on demand");
                         });
-                    //Draw timeline
-                    adminControlCharts.htmlContainers.timeline = adminControlCharts.htmlContainers.appendDiv("group-timeline", "col-md-12 mt-3");
-                    timelineCard = adminControlCharts.htmlContainers.appendCard(adminControlCharts.htmlContainers.timeline, "Reflections by group vs time", undefined, true);
                     timelineChart = new ChartTime("group-timeline", [d3.min(data.map(function (d) { return d.getStat("oldRef").value; })), d3.max(data.map(function (d) { return d.getStat("newRef").value; }))]);
-                    adminControlCharts.renderTimelineDensity(timelineChart, data);
                     timelineZoomChart = new ChartTimeZoom(timelineChart, [d3.min(data.map(function (d) { return d.getStat("oldRef").value; })), d3.max(data.map(function (d) { return d.getStat("newRef").value; }))]);
-                    adminControlCharts.renderTimelineButtons(timelineCard);
+                    adminControlCharts.renderTimelineScatter(timelineChart, timelineZoomChart, data);
                     adminControlCharts.handleTimelineButtons(timelineChart, timelineZoomChart, data);
                     //Handle timeline chart help
-                    adminControlCharts.htmlContainers.timeline.select(".card-title button")
+                    d3.select("#group-timeline .card-title button")
                         .on("click", function (e) {
-                            adminControlCharts.htmlContainers.helpPopover(d3.select(this), timelineChart.id + "-help", "<b>Density plot</b><br>A density plot shows the distribution of a numeric variable<br><b>Scatter plot</b><br>The data is showed as a collection of points<br>The data represented are <i>reflections over time</i>");
-                            adminControlCharts.htmlContainers.helpPopover(adminControlCharts.htmlContainers.timeline.select("#timeline-plot"), timelineChart.id + "-help-button", "<u><i>click</i></u> me to change chart type");
-                            adminControlCharts.htmlContainers.helpPopover(adminControlCharts.htmlContainers.timeline.select(".zoom-rect.active"), timelineChart.id + "-help-zoom", "use the mouse <u><i>wheel</i></u> to zoom me<br><u><i>click and hold</i></u> while zoomed to move");
+                            adminControlCharts.help.helpPopover(d3.select(this), timelineChart.id + "-help", "<b>Density plot</b><br>A density plot shows the distribution of a numeric variable<br><b>Scatter plot</b><br>The data is showed as a collection of points<br>The data represented are <i>reflections over time</i>");
+                            adminControlCharts.help.helpPopover(d3.select("#group-timeline #timeline-plot"), timelineChart.id + "-help-button", "<u><i>click</i></u> me to change chart type");
+                            adminControlCharts.help.helpPopover(d3.select("#group-timeline .zoom-rect.active"), timelineChart.id + "-help-zoom", "use the mouse <u><i>wheel</i></u> to zoom me<br><u><i>click and hold</i></u> while zoomed to move");
                             if (!timelineChart.elements.contentContainer.select(".circle").empty()) {
-                                var showDataHelp = adminControlCharts.htmlContainers.helpPopover(timelineChart.elements.contentContainer.select(".circle"), timelineChart.id + "-help-data", "<u><i>hover</i></u> me for information on demand");
+                                var showDataHelp = adminControlCharts.help.helpPopover(timelineChart.elements.contentContainer.select(".circle"), timelineChart.id + "-help-data", "<u><i>hover</i></u> me for information on demand");
                                 if (showDataHelp) {
                                     d3.select("#" + timelineChart.id + "-help-data").style("top", parseInt(d3.select("#" + timelineChart.id + "-help-data").style("top")) - 14 + "px");
                                 }
                             }
                         });
-                    //Draw users histogram container
-                    adminControlCharts.htmlContainers.userHistogram = adminControlCharts.htmlContainers.appendDiv("group-histogram-users-chart", "col-md-6 mt-3");
-                    adminControlCharts.htmlContainers.appendCard(adminControlCharts.htmlContainers.userHistogram, "All reflections by users and group - Histogram", undefined, true);
                     usersData = data.map(function (d) { return d.getUsersData(); });
                     histogramUsersChart = new HistogramChartSeries("group-histogram-users-chart", data.map(function (d) { return d.group; }));
                     adminControlCharts.renderHistogram(histogramUsersChart, usersData);
                     //Handle users histogram chart help
-                    adminControlCharts.htmlContainers.userHistogram.select(".card-title button")
+                    d3.select("#group-histogram-users-chart .card-title button")
                         .on("click", function (e) {
-                            adminControlCharts.htmlContainers.helpPopover(d3.select(this), histogramUsersChart.id + "-help", "<b>Histogram</b><br>A histogram group data points into user-specific ranges. The data points in this histogram are <i>users average reflection point</i>");
-                            adminControlCharts.htmlContainers.helpPopover(histogramUsersChart.elements.contentContainer.select("#" + histogramUsersChart.id + "-data"), histogramUsersChart.id + "-help-data", "<u><i>hover</i></u> me for information on demand");
+                            adminControlCharts.help.helpPopover(d3.select(this), histogramUsersChart.id + "-help", "<b>Histogram</b><br>A histogram group data points into user-specific ranges. The data points in this histogram are <i>users average reflection point</i>");
+                            adminControlCharts.help.helpPopover(histogramUsersChart.elements.contentContainer.select("#" + histogramUsersChart.id + "-data"), histogramUsersChart.id + "-help-data", "<u><i>hover</i></u> me for information on demand");
                         });
-                    //Draw user statistics
-                    adminControlCharts.htmlContainers.userStatistics = adminControlCharts.htmlContainers.appendDiv("user-statistics", "col-md-6 mt-3");
-                    userStatistics = adminControlCharts.htmlContainers.appendCard(adminControlCharts.htmlContainers.userStatistics, "Users compared to their group", "user-statistics", false);
-                    userStatistics.select(".chart-container").remove();
+                    userStatistics = d3.select("#user-statistics .card-body");
                     userStatistics.append("ul")
                         .attr("class", "nav nav-tabs")
                         .selectAll("li")
@@ -2035,7 +1938,11 @@ function buildControlAdminAnalyticsCharts(entriesRaw) {
                         .attr("class", function (d, i) { return "tab-pane fade " + (i == 0 ? "show active" : "") + " users-tab-pane"; })
                         .attr("id", function (d) { return "user-statistics-" + d.group; });
                     users.each(function (d, i, g) { return i == 0 ? adminControlCharts.renderUserStatistics(d3.select(g[i]), d, [30, 70]) : ""; });
-                    adminControlCharts.htmlContainers.renderNavbarScrollspy();
+                    //Handle users histogram chart help
+                    d3.select("#user-statistics .card-title button")
+                        .on("click", function (e) {
+                            adminControlCharts.help.helpPopover(d3.select(this), "user-statistics-help", "<b>Users ststistics</b><br>Each user's reflections are shown sorted by time. The chart depicts the average reflection point of the user against their group average");
+                        });
                     return [2 /*return*/];
                 });
             });
@@ -2056,7 +1963,8 @@ function buildControlAdminAnalyticsCharts(entriesRaw) {
                         new TutorialData(".card-title button", "Click the help symbol in any chart to get additional information"),
                         new TutorialData("#groups-chart .bar", "Hover for information on demand"),
                         new TutorialData("#group-histogram-chart .histogram-rect", "Hover for information on demand"),
-                        new TutorialData("#timeline-plot", "Swap chart types. Both charts have zoom available")]);
+                        new TutorialData("#timeline-plot", "Swap chart types. Both charts have zoom available"),
+                        new TutorialData("#group-timeline .circle", "Hover for information on demand")]);
                     loading.isLoading = false;
                     loading.removeDiv();
                     return [2 /*return*/];
@@ -2069,16 +1977,14 @@ function buildExperimentAdminAnalyticsCharts(entriesRaw) {
     return __awaiter(this, void 0, void 0, function () {
         function drawCharts(allEntries) {
             return __awaiter(this, void 0, void 0, function () {
-                var adminExperimentalCharts, entries, data, groupCard, timelineCard, usersData, userStatistics;
+                var adminExperimentalCharts, entries, data, groupCard, usersData, userStatistics;
                 return __generator(this, function (_a) {
                     adminExperimentalCharts = new AdminExperimentalCharts();
                     //Handle sidebar button
                     adminExperimentalCharts.sidebarBtn();
                     entries = adminExperimentalCharts.preloadGroups(allEntries);
                     data = entries.map(function (d) { return new AnalyticsChartsDataStats(d); });
-                    //Append groups chart container
-                    adminExperimentalCharts.htmlContainers.boxPlot = adminExperimentalCharts.htmlContainers.appendDiv("groups-chart", "col-md-6");
-                    groupCard = adminExperimentalCharts.htmlContainers.appendCard(adminExperimentalCharts.htmlContainers.boxPlot, "Reflections of selected groups - Box plot", undefined, true);
+                    groupCard = d3.select("#groups-chart .card-body");
                     groupCard.insert("div", ".chart-container")
                         .attr("class", "row")
                         .call(function (div) { return div.append("span")
@@ -2093,74 +1999,68 @@ function buildExperimentAdminAnalyticsCharts(entriesRaw) {
                     adminExperimentalCharts.boxPlot = new ChartSeries("groups-chart", data.map(function (d) { return d.group; }));
                     adminExperimentalCharts.boxPlot = adminExperimentalCharts.renderGroupChart(adminExperimentalCharts.boxPlot, data);
                     //Handle groups chart help
-                    adminExperimentalCharts.htmlContainers.boxPlot.select(".card-title button")
+                    d3.select("#groups-chart .card-title button")
                         .on("click", function (e) {
-                            adminExperimentalCharts.htmlContainers.helpPopover(d3.select(this), adminExperimentalCharts.boxPlot.id + "-help", "<b>Box plot</b><br>A box plot is used to show the data distribution<br><i>Q3:</i> The median of the upper half of the data set<br><i>Median:</i> The middle value of a dataset<br><i>Q1:</i> The median of the lower half of the dataset");
-                            adminExperimentalCharts.htmlContainers.helpPopover(adminExperimentalCharts.boxPlot.elements.contentContainer.select("#" + adminExperimentalCharts.boxPlot.id + "-data"), adminExperimentalCharts.boxPlot.id + "-help-data", "<u><i>hover</i></u> me for information on demand<br><u><i>click</i></u> me to compare and drill-down");
-                            adminExperimentalCharts.htmlContainers.helpPopover(adminExperimentalCharts.htmlContainers.boxPlot.select("#sort-by"), adminExperimentalCharts.boxPlot.id + "-help-button", "<u><i>click</i></u> me to sort the groups");
+                            adminExperimentalCharts.help.helpPopover(d3.select(this), adminExperimentalCharts.boxPlot.id + "-help", "<b>Box plot</b><br>A box plot is used to show the data distribution<br><i>Q3:</i> The median of the upper half of the data set<br><i>Median:</i> The middle value of a dataset<br><i>Q1:</i> The median of the lower half of the dataset");
+                            adminExperimentalCharts.help.helpPopover(adminExperimentalCharts.boxPlot.elements.contentContainer.select("#" + adminExperimentalCharts.boxPlot.id + "-data"), adminExperimentalCharts.boxPlot.id + "-help-data", "<u><i>hover</i></u> me for information on demand<br><u><i>click</i></u> me to compare and drill-down");
+                            adminExperimentalCharts.help.helpPopover(d3.select("#groups-chart #sort-by"), adminExperimentalCharts.boxPlot.id + "-help-button", "<u><i>click</i></u> me to sort the groups");
                         });
                     //Draw groups histogram container
-                    adminExperimentalCharts.htmlContainers.histogram = adminExperimentalCharts.htmlContainers.appendDiv("group-histogram-chart", "col-md-6");
-                    adminExperimentalCharts.htmlContainers.appendCard(adminExperimentalCharts.htmlContainers.histogram, "Selected groups reflections - Histogram", undefined, true);
                     adminExperimentalCharts.histogram = new HistogramChartSeries("group-histogram-chart", data.map(function (d) { return d.group; }));
                     adminExperimentalCharts.renderHistogram(adminExperimentalCharts.histogram, data);
                     //Handle histogram chart help
-                    adminExperimentalCharts.htmlContainers.histogram.select(".card-title button")
+                    d3.select("#group-histogram-chart .card-title button")
                         .on("click", function (e) {
-                            adminExperimentalCharts.htmlContainers.helpPopover(d3.select(this), adminExperimentalCharts.histogram.id + "-help", "<b>Histogram</b><br>A histogram group data points into user-specific ranges. The data points in this histogram are <i>reflections point</i>");
-                            adminExperimentalCharts.htmlContainers.helpPopover(adminExperimentalCharts.histogram.elements.contentContainer.select(".histogram-rect"), adminExperimentalCharts.histogram.id + "-help-data", "<u><i>hover</i></u> me for information on demand<br><u><i>click</i></u> me to compare");
-                            var showDragHelp = adminExperimentalCharts.htmlContainers.helpPopover(adminExperimentalCharts.histogram.elements.contentContainer.select(".threshold-line.soaring"), adminExperimentalCharts.histogram.id + "-help-drag", "<u><i>drag</i></u> me to change the thresholds");
+                            adminExperimentalCharts.help.helpPopover(d3.select(this), adminExperimentalCharts.histogram.id + "-help", "<b>Histogram</b><br>A histogram group data points into user-specific ranges. The data points in this histogram are <i>reflections point</i>");
+                            adminExperimentalCharts.help.helpPopover(adminExperimentalCharts.histogram.elements.contentContainer.select(".histogram-rect"), adminExperimentalCharts.histogram.id + "-help-data", "<u><i>hover</i></u> me for information on demand<br><u><i>click</i></u> me to compare");
+                            var showDragHelp = adminExperimentalCharts.help.helpPopover(adminExperimentalCharts.histogram.elements.contentContainer.select(".threshold-line.soaring"), adminExperimentalCharts.histogram.id + "-help-drag", "<u><i>drag</i></u> me to change the thresholds");
                             if (showDragHelp) {
                                 d3.select("#" + adminExperimentalCharts.histogram.id + "-help-drag").style("top", parseInt(d3.select("#" + adminExperimentalCharts.histogram.id + "-help-drag").style("top")) - 19 + "px");
                             }
                         });
                     //Draw timeline
-                    adminExperimentalCharts.htmlContainers.timeline = adminExperimentalCharts.htmlContainers.appendDiv("group-timeline", "col-md-12 mt-3");
-                    timelineCard = adminExperimentalCharts.htmlContainers.appendCard(adminExperimentalCharts.htmlContainers.timeline, "Selected group reflections vs time - Timeline", undefined, true);
                     adminExperimentalCharts.timeline = new ChartTime("group-timeline", [d3.min(data.map(function (d) { return d.getStat("oldRef").value; })), d3.max(data.map(function (d) { return d.getStat("newRef").value; }))]);
-                    adminExperimentalCharts.renderTimelineDensity(adminExperimentalCharts.timeline, data);
                     adminExperimentalCharts.timelineZoom = new ChartTimeZoom(adminExperimentalCharts.timeline, [d3.min(data.map(function (d) { return d.getStat("oldRef").value; })), d3.max(data.map(function (d) { return d.getStat("newRef").value; }))]);
-                    adminExperimentalCharts.renderTimelineButtons(timelineCard);
+                    adminExperimentalCharts.renderTimelineScatter(adminExperimentalCharts.timeline, adminExperimentalCharts.timelineZoom, data);
                     adminExperimentalCharts.handleTimelineButtons(adminExperimentalCharts.timeline, adminExperimentalCharts.timelineZoom, data);
                     //Handle timeline chart help
-                    adminExperimentalCharts.htmlContainers.timeline.select(".card-title button")
+                    d3.select("#group-timeline .card-title button")
                         .on("click", function (e) {
-                            adminExperimentalCharts.htmlContainers.helpPopover(adminExperimentalCharts.htmlContainers.timeline.select("#timeline-plot"), adminExperimentalCharts.timeline.id + "-help-button", "<u><i>click</i></u> me to change chart type");
-                            adminExperimentalCharts.htmlContainers.helpPopover(adminExperimentalCharts.htmlContainers.timeline.select(".zoom-rect.active"), adminExperimentalCharts.timeline.id + "-help-zoom", "use the mouse <u><i>wheel</i></u> to zoom me<br><u><i>click and hold</i></u> while zoomed to move");
+                            adminExperimentalCharts.help.helpPopover(d3.select("#group-timeline #timeline-plot"), adminExperimentalCharts.timeline.id + "-help-button", "<u><i>click</i></u> me to change chart type");
+                            adminExperimentalCharts.help.helpPopover(d3.select("#group-timeline .zoom-rect.active"), adminExperimentalCharts.timeline.id + "-help-zoom", "use the mouse <u><i>wheel</i></u> to zoom me<br><u><i>click and hold</i></u> while zoomed to move");
                             if (!adminExperimentalCharts.timeline.elements.contentContainer.select(".circle").empty()) {
-                                adminExperimentalCharts.htmlContainers.helpPopover(d3.select(this), adminExperimentalCharts.timeline.id + "-help", "<b>Scatter plot</b><br>A scatter plot shows the data as a collection of points<br>The data represented are <i>reflections over time</i>");
-                                var showDataHelp = adminExperimentalCharts.htmlContainers.helpPopover(adminExperimentalCharts.timeline.elements.contentContainer.select(".circle"), adminExperimentalCharts.timeline.id + "-help-data", "<u><i>hover</i></u> me for information on demand<br><u><i>click</i></u> me to connect the user's reflections");
+                                adminExperimentalCharts.help.helpPopover(d3.select(this), adminExperimentalCharts.timeline.id + "-help", "<b>Scatter plot</b><br>A scatter plot shows the data as a collection of points<br>The data represented are <i>reflections over time</i>");
+                                var showDataHelp = adminExperimentalCharts.help.helpPopover(adminExperimentalCharts.timeline.elements.contentContainer.select(".circle"), adminExperimentalCharts.timeline.id + "-help-data", "<u><i>hover</i></u> me for information on demand<br><u><i>click</i></u> me to connect the user's reflections");
                                 if (showDataHelp) {
                                     d3.select("#" + adminExperimentalCharts.timeline.id + "-help-data").style("top", parseInt(d3.select("#" + adminExperimentalCharts.timeline.id + "-help-data").style("top")) - 14 + "px");
                                 }
                             }
                             else {
-                                adminExperimentalCharts.htmlContainers.helpPopover(d3.select(this), adminExperimentalCharts.timeline.id + "-help", "<b>Density plot</b><br>A density plot shows the distribution of a numeric variable<br>The data represented are <i>reflections over time</i>");
+                                adminExperimentalCharts.help.helpPopover(d3.select(this), adminExperimentalCharts.timeline.id + "-help", "<b>Density plot</b><br>A density plot shows the distribution of a numeric variable<br>The data represented are <i>reflections over time</i>");
                             }
                         });
-                    //Draw users histogram container
-                    adminExperimentalCharts.htmlContainers.userHistogram = adminExperimentalCharts.htmlContainers.appendDiv("group-histogram-users-chart", "col-md-6 mt-3");
-                    adminExperimentalCharts.htmlContainers.appendCard(adminExperimentalCharts.htmlContainers.userHistogram, "Selected groups reflections by users - Histogram", undefined, true);
                     usersData = data.map(function (d) { return d.getUsersData(); });
                     adminExperimentalCharts.usersHistogram = new HistogramChartSeries("group-histogram-users-chart", data.map(function (d) { return d.group; }));
                     adminExperimentalCharts.renderHistogram(adminExperimentalCharts.usersHistogram, usersData);
                     //Handle users histogram chart help
-                    adminExperimentalCharts.htmlContainers.userHistogram.select(".card-title button")
+                    d3.select("#group-histogram-users-chart .card-title button")
                         .on("click", function (e) {
-                            adminExperimentalCharts.htmlContainers.helpPopover(d3.select(this), adminExperimentalCharts.usersHistogram.id + "-help", "<b>Histogram</b><br>A histogram group data points into user-specific ranges. The data points in this histogram are <i>users average reflection point</i>");
-                            adminExperimentalCharts.htmlContainers.helpPopover(adminExperimentalCharts.usersHistogram.elements.contentContainer.select(".histogram-rect"), adminExperimentalCharts.usersHistogram.id + "-help-data", "<u><i>hover</i></u> me for information on demand<br><u><i>click</i></u> me to compare");
-                            var showDragHelp = adminExperimentalCharts.htmlContainers.helpPopover(adminExperimentalCharts.usersHistogram.elements.contentContainer.select(".threshold-line.soaring"), adminExperimentalCharts.usersHistogram.id + "-help-drag", "<u><i>drag</i></u> me to change the thresholds");
+                            adminExperimentalCharts.help.helpPopover(d3.select(this), adminExperimentalCharts.usersHistogram.id + "-help", "<b>Histogram</b><br>A histogram group data points into user-specific ranges. The data points in this histogram are <i>users average reflection point</i>");
+                            adminExperimentalCharts.help.helpPopover(adminExperimentalCharts.usersHistogram.elements.contentContainer.select(".histogram-rect"), adminExperimentalCharts.usersHistogram.id + "-help-data", "<u><i>hover</i></u> me for information on demand<br><u><i>click</i></u> me to compare");
+                            var showDragHelp = adminExperimentalCharts.help.helpPopover(adminExperimentalCharts.usersHistogram.elements.contentContainer.select(".threshold-line.soaring"), adminExperimentalCharts.usersHistogram.id + "-help-drag", "<u><i>drag</i></u> me to change the thresholds");
                             if (showDragHelp) {
                                 d3.select("#" + adminExperimentalCharts.usersHistogram.id + "-help-drag").style("top", parseInt(d3.select("#" + adminExperimentalCharts.usersHistogram.id + "-help-drag").style("top")) - 19 + "px");
                             }
                         });
-                    //Draw user statistics
-                    adminExperimentalCharts.htmlContainers.userStatistics = adminExperimentalCharts.htmlContainers.appendDiv("user-statistics", "col-md-6 mt-3");
-                    userStatistics = adminExperimentalCharts.htmlContainers.appendCard(adminExperimentalCharts.htmlContainers.userStatistics, "Users compared to their group", "user-statistics", false);
+                    userStatistics = d3.select("#user-statistics .card");
                     userStatistics.select(".chart-container").remove();
                     userStatistics.select(".card-subtitle")
                         .html("Select a reflection from the scatter plot to view specific users");
-                    adminExperimentalCharts.htmlContainers.renderNavbarScrollspy();
+                    //Handle users histogram chart help
+                    d3.select("#user-statistics .card-title button")
+                        .on("click", function (e) {
+                            adminExperimentalCharts.help.helpPopover(d3.select(this), "user-statistics-help", "<b>Users ststistics</b><br>The selected user's reflections are shown sorted by time. The chart depicts the average reflection point of the user against their group average");
+                        });
                     //Update charts depending on group
                     adminExperimentalCharts.handleGroups();
                     adminExperimentalCharts.handleGroupsColours();
@@ -2186,7 +2086,8 @@ function buildExperimentAdminAnalyticsCharts(entriesRaw) {
                         new TutorialData("#groups-chart .bar", "Hover for information on demand or click to compare and drill-down. Other charts will show only the selected group"),
                         new TutorialData("#group-histogram-chart .threshold-line", "Drag to change the threshold (soaring or distressed) and recalculate the bins"),
                         new TutorialData("#group-histogram-chart .histogram-rect", "Click to compare the bin with other's group bins"),
-                        new TutorialData("#timeline-plot", "Swap chart types. Both charts have zoom available. In the scatter plot, click a bubble to access the user's information")]);
+                        new TutorialData("#timeline-plot", "Swap chart types. Both charts have zoom available"),
+                        new TutorialData("#group-timeline .circle", "Hover for information on demand or click to connect the user's reflections")]);
                     loading.isLoading = false;
                     loading.removeDiv();
                     return [2 /*return*/];

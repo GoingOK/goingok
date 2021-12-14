@@ -13,7 +13,7 @@ import views.components.analytics.{Charts, SidePanel, Tables, TopPanel}
 
 
 
-class AnalyticsPage(user:Option[User]=None, analytics: Analytics, tester: Boolean, control: Boolean) extends GenericPage {
+class AnalyticsPage(user:Option[User]=None, analytics: Analytics, tester: Boolean, exp: Boolean) extends GenericPage {
 
   val title = "GoingOK :: analytics"
 
@@ -28,31 +28,29 @@ class AnalyticsPage(user:Option[User]=None, analytics: Analytics, tester: Boolea
         NavBar.main(NavParams(user,Config.baseUrl,Some("analytics"))),
         div(`class`:="wrapper",
           if (tester){
-            SidePanel.display()
-          },
+            SidePanel.display(exp)
+          } else {},
           div(id :="content", `class`:="content",
-            if (tester){
-              TopPanel.display(control)
-            },
               div(`class`:="content-wrapper",
                 div(id := "analytics-content",`class` := "container-fluid",
                   showMessage(message),
                   if (tester){
                     Charts.display()
-                  },
-                  div(`class`:="row mt-3",
-                    div(`class`:="col",
-                      Includes.panel("groups-table","","Groups", Tables.groups(analytics.mergedCounts))
-                    ),
-                    div(`class`:="col",
-                      Includes.panel("download-reflections-table", "","Download reflections", Tables.reflectionsDownload(analytics.mergedCounts))
-                    ),
-                    div(`class`:="col"
-                      //              card("...",
-                      //                div()
-                      //              )
+                  } else {
+                    div(`class`:="row mt-3",
+                      div(`class`:="col",
+                        Includes.panel("groups-table","","Groups", Tables.groups(analytics.mergedCounts))
+                      ),
+                      div(`class`:="col",
+                        Includes.panel("download-reflections-table", "","Download reflections", Tables.reflectionsDownload(analytics.mergedCounts))
+                      ),
+                      div(`class`:="col"
+                        //              card("...",
+                        //                div()
+                        //              )
+                      )
                     )
-                  )
+                  },
                 )
               )
           )
@@ -69,10 +67,10 @@ class AnalyticsPage(user:Option[User]=None, analytics: Analytics, tester: Boolea
         ujson.Obj("timestamp" -> c.timestamp, "pseudonym" -> c.pseudonym, "point" -> c.reflection.point, "text" -> c.reflection.text)),
       "createDate" -> r.timestamp))
     val entries:String = ujson.write(chartData)
-    if (control){
-      script(raw(s"Visualisation.controlAnalyticsCharts($entries)"))
-    } else {
+    if (exp){
       script(raw(s"Visualisation.expAnalyticsCharts($entries)"))
+    } else {
+      script(raw(s"Visualisation.controlAnalyticsCharts($entries)"))
     }
   }
 }

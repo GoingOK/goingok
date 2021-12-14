@@ -5,7 +5,7 @@
 }
 
 #sidebar {
-    width: 250px;
+    width: 300px;
     background: #000000;
     color: #0f856b;
     transition: all 0.3s;
@@ -22,14 +22,17 @@
 }
 
 #sidebar .sidebar-header {
-    padding: 20px;
     background: #000000;
     color: #fff;
     display: flex;
 }
 
-#sidebar .sidebar-header.active {
-    padding: 20px 10px 20px 10px;
+#sidebar-btn {
+    transition: all 0.3s;
+}
+
+#sidebar-btn.active {
+    margin-left: 7px;
 }
 
 #groups.active {
@@ -74,9 +77,18 @@
     min-height: 30vh;
 }
 
+.chart-svg {
+    margin-top: 10px;
+}
+
+.instructions {
+    color: #ff6600;
+}
+
 .statistics-text {
     font-size: 0.875rem;
     overflow: auto;
+    margin-top: 0.75rem;
 }
 
 .statistics-text .positive {
