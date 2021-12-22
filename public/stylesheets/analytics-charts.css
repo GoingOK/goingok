@@ -88,7 +88,7 @@
 .statistics-text {
     font-size: 0.875rem;
     overflow: auto;
-    margin-top: 0.75rem;
+    margin-top: 1rem;
 }
 
 .statistics-text .positive {
@@ -99,15 +99,23 @@
     color: #ff3300;
 }
 
+.user-chart {
+    height: 15vh;
+}
+
 .users-tab-pane {
-    height: 30vh;
+    height: 60vh;
     overflow-y: auto;
     overflow-x: hidden;
 }
 
-.bar, .circle, .histogram-rect, .zoom-circle, .legend-color {
+.bar, .circle, .circle-group, .histogram-rect, .zoom-circle, .legend-color {
     fill-opacity: 0.2;
     stroke-width: 1;
+}
+
+.circle-user {
+    fill-opacity: 0.75;
 }
 
 .bar, .circle {
@@ -314,13 +322,25 @@
     stroke-opacity: 0;
 }
 
+.user-legend-text {
+    dominant-baseline: central;
+    font-size: 10px;
+}
+
 .reflection-selected {
     background-color:#ffff80;
 }
 
-.scroll-list {
-    height: 40vh;
-    overflow: auto;
+.bin-name.distressed {
+    color: #00e6e6;
+}
+
+.bin-name.soaring {
+    color: #ff9900;
+}
+
+.bin-name.goingok {
+    color: #2eb82e;
 }
 
 /**************************************************

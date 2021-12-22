@@ -35,7 +35,7 @@ class AnalyticsPage(user:Option[User]=None, analytics: Analytics, tester: Boolea
                 div(id := "analytics-content",`class` := "container-fluid",
                   showMessage(message),
                   if (tester){
-                    Charts.display()
+                    Charts.display(exp)
                   } else {
                     div(`class`:="row mt-3",
                       div(`class`:="col",
