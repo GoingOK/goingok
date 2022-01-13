@@ -1303,6 +1303,7 @@ var AdminExperimentalCharts = /** @class */ (function (_super) {
         this.interactions.click.removeClick(this.barChart);
         this.updateHistogram(data.map(function (d) { return d.getUsersData(); }), data.map(function (d) { return d.group; }));
         this.updateTimeline(data);
+        this.renderTotals(data);
     };
     ;
     AdminExperimentalCharts.prototype.getUpdatedData = function () {
