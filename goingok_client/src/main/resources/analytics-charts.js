@@ -557,7 +557,7 @@ var AdminControlCharts = /** @class */ (function () {
                 .attr("class", "input-group-prepend")
                 .call(function (div) { return div.append("div")
                     .attr("class", "input-group-text group-row")
-                    .html(function (d, i) { return " <input type=\"checkbox\" value=\"" + d.group + "\" " + (!enable ? "checked disabled" : i == 0 ? "checked" : "") + " />"; }); }); })
+                    .html(function (d, i) { return " <input type=\"checkbox\" value=\"" + d.group + "\" checked " + (!enable ? "disabled" : "") + " />"; }); }); })
             .call(function (div) { return div.append("input")
                 .attr("type", "text")
                 .attr("class", "form-control group-row")
@@ -2107,7 +2107,7 @@ function buildExperimentAdminAnalyticsCharts(entriesRaw) {
                     rawData = entriesRaw.map(function (d) { return new AnalyticsChartsDataRaw(d.group, d.value, d.createDate); });
                     entries = rawData.map(function (d) { return d.transformData(); });
                     colourScale = d3.scaleOrdinal(d3.schemeCategory10);
-                    entries = entries.map(function (d, i) { return new AnalyticsChartsData(d.group, d.value, d.creteDate, colourScale(d.group), i == 0 ? true : false); });
+                    entries = entries.map(function (d) { return new AnalyticsChartsData(d.group, d.value, d.creteDate, colourScale(d.group), true); });
                     return [4 /*yield*/, drawCharts(entries)];
                 case 1:
                     _a.sent();
