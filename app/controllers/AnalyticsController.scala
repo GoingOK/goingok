@@ -55,7 +55,7 @@ class AnalyticsController @Inject()(components: ControllerComponents, profileSer
     val userCounts = analyticsService.groupedUserCounts.getOrElse(Seq())
     val reflectionCounts = analyticsService.groupedReflectionCounts(user.goingok_id).getOrElse(Seq())
     val chartsData = analyticsService.analyticsChartsData((user.goingok_id)).getOrElse(Seq())
-    val control = isControl(request)
+    val exp = isExp(request)
     val tester = isTester(user)
     if(tester) {
       analyticsService.registerAnalyticActivity(user.goingok_id,"Tester accessing analytics page")
@@ -64,7 +64,7 @@ class AnalyticsController @Inject()(components: ControllerComponents, profileSer
     val msg = Some(UiMessage(s"This page is a work in progress. For now, there are only basic stats here. More coming soon.", "info"))
     //val page = AnalyticsPage.page("GoingOK :: analytics", message, Some(user), Analytics(userCounts, reflectionCounts))
     //Ok(AnalyticsPage.getHtml(page))
-    Ok(new AnalyticsPage(Some(user), Analytics(merge(userCounts, reflectionCounts), chartsData), tester, control).buildPage())
+    Ok(new AnalyticsPage(Some(user), Analytics(merge(userCounts, reflectionCounts), chartsData), tester, exp).buildPage())
   }
 
   private val makeCSV = (user:User, request:Request[AnyContent]) => {
@@ -88,8 +88,8 @@ class AnalyticsController @Inject()(components: ControllerComponents, profileSer
     isT
   }
 
-  private def isControl(request: Request[AnyContent]) : Boolean = {
-    request.getQueryString("control").contains("true");
+  private def isExp(request: Request[AnyContent]) : Boolean = {
+    request.getQueryString("exp").contains("true");
   }
 
   /** Merges users and reflections */
