@@ -7,24 +7,17 @@
 #sidebar {
     width: 300px;
     background: #000000;
-    color: #0f856b;
+    color: #fff;
     transition: all 0.3s;
     border-top: 2px solid #fff;
     height: 100vh;
-    margin-left: -250px;
-    overflow: auto;
+    margin-left: -225px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 #sidebar.active {
-    position: sticky;
-    top: 0;
     margin-left: 0
-}
-
-#sidebar .sidebar-header {
-    background: #000000;
-    color: #fff;
-    display: flex;
 }
 
 #sidebar-btn {
@@ -35,8 +28,16 @@
     margin-left: 7px;
 }
 
+#groups {
+    transition: all 0.3s;
+}
+
 #groups.active {
-    display: none;
+    opacity: 0;
+}
+
+#switch-dashboard.active {
+    opacity: 0;
 }
 
 .group-row {
@@ -60,12 +61,21 @@
 }
 
 @media(max-width:768px) {
+    .wrapper {
+        display: block;
+    }
+
     #sidebar {
-        margin-left: -250px
+        height: 65px;
+        width: 100%;
+        margin-left: 0;
+        overflow: hidden;
     }
 
     #sidebar.active {
-        margin-left: 0px
+        margin-left: 0px;
+        height: 250px;
+        overflow-y: auto;
     }
 
     #sidebarCollapse span {
