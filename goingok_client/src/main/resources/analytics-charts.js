@@ -110,7 +110,7 @@ var AnalyticsChartsDataStats = /** @class */ (function (_super) {
         _this_1.stats.push(new DataStats("mean", "Mean", Math.round(d3.mean(entries.value.map(function (r) { return r.point; })))));
         _this_1.stats.push(new DataStats("oldRef", "Oldest reflection", d3.min(entries.value.map(function (r) { return new Date(r.timestamp); }))));
         _this_1.stats.push(new DataStats("newRef", "Newest reflection", d3.max(entries.value.map(function (r) { return new Date(r.timestamp); }))));
-        _this_1.stats.push(new DataStats("ruRate", "Reflections per user", Math.round(entries.value.length / uniqueUsers.length)));
+        _this_1.stats.push(new DataStats("ruRate", "Reflections per user", Math.round(entries.value.length / uniqueUsers.length * 100) / 100));
         return _this_1;
     }
     ;
@@ -539,6 +539,10 @@ var AdminControlCharts = /** @class */ (function () {
             var isActive = d3.select("#sidebar").attr("class").includes("active");
             d3.select("#sidebar")
                 .classed("active", !isActive);
+            d3.select("#groups")
+                .classed("active", isActive);
+            d3.select("#switch-dashboard")
+                .classed("active", isActive);
             d3.select(this)
                 .classed("active", isActive);
         });
@@ -608,12 +612,12 @@ var AdminControlCharts = /** @class */ (function () {
             });
         var ruRate = d3.select("#ru-rate .card-title span").datum();
         d3.select("#ru-rate .card-title span")
-            .datum(Math.round(d3.mean(data.map(function (d) { return d.getStat("ruRate").value * 100; }))) / 100)
+            .datum(data.length != 0 ? Math.round(d3.mean(data.map(function (d) { return d.getStat("ruRate").value * 100; }))) / 100 : 0)
             .transition()
             .duration(1000)
             .tween("html", function () {
                 var oldRURate = ruRate == undefined ? 0 : ruRate;
-                var newRURate = Math.round(d3.mean(data.map(function (d) { return d.getStat("ruRate").value * 100; }))) / 100;
+                var newRURate = data.length != 0 ? Math.round(d3.mean(data.map(function (d) { return d.getStat("ruRate").value * 100; }))) / 100 : 0;
                 return function (t) {
                     if (oldRURate < newRURate) {
                         this.innerHTML = (oldRURate + (t * (newRURate - oldRURate))).toFixed(2);
@@ -765,6 +769,11 @@ var AdminControlCharts = /** @class */ (function () {
     };
     AdminControlCharts.prototype.renderTimelineDensity = function (chart, data) {
         var _this = this;
+        if (data.length == 0) {
+            d3.select("#" + chart.id + " .card-subtitle")
+                .html("");
+            return chart;
+        }
         d3.select("#" + chart.id + " .card-subtitle")
             .classed("instructions", data.length <= 1)
             .classed("text-muted", data.length != 1)
@@ -813,6 +822,11 @@ var AdminControlCharts = /** @class */ (function () {
     AdminControlCharts.prototype.renderTimelineScatter = function (chart, zoomChart, data) {
         //Remove density plot
         chart.elements.contentContainer.selectAll(".contour").remove();
+        if (data.length == 0) {
+            d3.select("#" + chart.id + " .card-subtitle")
+                .html("");
+            return chart;
+        }
         var _this = this;
         d3.select("#" + chart.id + " .card-subtitle")
             .classed("instructions", data.length <= 1)
@@ -1318,9 +1332,11 @@ var AdminExperimentalCharts = /** @class */ (function (_super) {
     };
     ;
     AdminExperimentalCharts.prototype.updateBarChart = function (chart, data) {
-        chart.y.scale.domain([0, d3.max(data.map(function (d) { return d.getStat("usersTotal").value; }))]);
-        this.interactions.axisSeries(chart, data);
-        this.interactions.axisLinear(chart);
+        if (data.length != 0) {
+            chart.y.scale.domain([0, d3.max(data.map(function (d) { return d.getStat("usersTotal").value; }))]);
+            this.interactions.axisSeries(chart, data);
+            this.interactions.axisLinear(chart);
+        }
         this.renderBarChart(chart, data);
     };
     AdminExperimentalCharts.prototype.updateHistogram = function (data, scale) {
@@ -1477,6 +1493,15 @@ var AdminExperimentalCharts = /** @class */ (function (_super) {
     AdminExperimentalCharts.prototype.renderTimelineScatter = function (chart, zoomChart, data) {
         var _this = this;
         chart = _super.prototype.renderTimelineScatter.call(this, chart, zoomChart, data);
+        if (data.length == 0) {
+            //Remove scatter plot
+            chart.elements.contentContainer.selectAll(".circle").remove();
+            chart.elements.svg.selectAll(".zoom-container").remove();
+            chart.elements.contentContainer.selectAll(".click-line").remove();
+            chart.elements.zoomSVG = undefined;
+            chart.elements.zoomFocus = undefined;
+            return chart;
+        }
         d3.select("#" + chart.id + " .badge").on("click", function () { return _this.handleFilterButton(); });
         //Enable click
         _this.interactions.click.enableClick(chart, onClick);
@@ -1531,6 +1556,11 @@ var AdminExperimentalCharts = /** @class */ (function (_super) {
     AdminExperimentalCharts.prototype.renderTimelineDensity = function (chart, data) {
         var _this_1 = this;
         chart = _super.prototype.renderTimelineDensity.call(this, chart, data);
+        if (data.length == 0) {
+            //Remove density plot
+            chart.elements.contentContainer.selectAll(".contour").remove();
+            return chart;
+        }
         d3.select("#" + chart.id + " .badge").on("click", function () { return _this_1.handleFilterButton(); });
         this.interactions.click.removeClick(chart);
         return chart;

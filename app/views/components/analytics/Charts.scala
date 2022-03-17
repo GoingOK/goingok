@@ -48,7 +48,7 @@ object Charts {
           div(`class`:="card",
             div(`class`:="card-body",
               h6(`class`:="card-subtitle",
-                span("Sort groups by:"),
+                span(`class`:= "mr-2", "Sort groups by:"),
                 div(`class`:="btn-group btn-group-toggle", data("toggle"):="buttons",
                   label(`class`:="btn btn-light active",
                     input(`type`:="radio", name:="sort", value:="date", checked, "Create date")
