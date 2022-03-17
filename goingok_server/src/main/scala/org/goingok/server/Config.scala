@@ -22,5 +22,6 @@ object Config {
   lazy val dbSecret:Option[String] = stringOpt("db.password")
   lazy val awsCognitoAppClientId:Option[String] = stringOpt("aws.cognito.app_client_id")
   lazy val awsCognitoAppClientSecret:Option[String] = stringOpt("aws.cognito.app_client_secret")
-
+  lazy val awsCognitoAuthUrl:Option[String] = stringOpt("aws.cognito.auth_url")
+  lazy val awsCognitoRedirectUrl:Option[String] = stringOpt("aws.cognito.redirect_url")
 }

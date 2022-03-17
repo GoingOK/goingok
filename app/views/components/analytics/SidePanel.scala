@@ -23,6 +23,9 @@ object SidePanel {
             a(`class`:="btn btn-warning btn-block m-3", href:="/analytics?exp=true", "Switch dashboard")
           }
         )
+      ),
+      div(`class`:="row",
+        div(id:="old-analytics", `class`:="col-md-12 d-flex",a(`class`:="btn btn-default btn-block m-3", href:="/analytics_old", "Old Page"))
       )
     )
   }

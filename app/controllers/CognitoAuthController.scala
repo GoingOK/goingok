@@ -25,13 +25,13 @@ class CognitoAuthController @Inject()(components: ControllerComponents, userServ
 
   val logger: Logger = Logger(this.getClass)
 
-  private lazy val clientId = Config.awsCognitoAppClientId
-  private lazy val authUrl = Config.string("aws.cognito.auth_url")
-  private lazy val redirectUrl = Config.string("aws.cognito.redirect_url")
+  private lazy val clientId = Config.awsCognitoAppClientId.get
+  private lazy val authUrl = Config.awsCognitoAuthUrl.get
+  private lazy val redirectUrl = Config.awsCognitoRedirectUrl.get
 
   /** Builds Cognito URL*/
   def url:String = {
-    s"${authUrl}/login?response_type=code&client_id=${clientId.get}&redirect_uri=${redirectUrl}"
+    s"${authUrl}/login?response_type=code&client_id=${clientId}&redirect_uri=${redirectUrl}"
   }
 
 
@@ -109,7 +109,7 @@ class CognitoAuthController @Inject()(components: ControllerComponents, userServ
 
   private def getCognitoUserwithAuthCode(code:Option[String]):Either[Throwable,CognitoUser] = {
     //logger.debug(s"Asking for token with code: $code")
-    val clientId = Config.awsCognitoAppClientId.get
+    //val clientId = Config.awsCognitoAppClientId.get
     //val baseUrl = "https://goingok-auth.auth.ap-southeast-2.amazoncognito.com"
     val url = authUrl+"/oauth2/token"
     //val redirect = "http://localhost:9000/auth"

@@ -1,7 +1,6 @@
 package controllers
 
 import java.util.UUID
-
 import javax.inject.Inject
 import org.goingok.server.data.models.{ReflectionData, User}
 import org.goingok.server.data._
@@ -28,6 +27,7 @@ class AnalyticsController @Inject()(components: ControllerComponents, profileSer
   /** Authorises user and calls 'pageMaker' to create an HTML file of reflection analytics */
   def analytics: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] => authorise(request,makePage)}
 
+  def analytics_old: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] => authorise(request,makeOldPage)}
   /** Authorises user and calls 'pageMaker' to create a CSV file of reflection analytics */
   def reflectionsCsv: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] => authorise(request,makeCSV)}
 
@@ -57,14 +57,29 @@ class AnalyticsController @Inject()(components: ControllerComponents, profileSer
     val chartsData = analyticsService.analyticsChartsData((user.goingok_id)).getOrElse(Seq())
     val exp = isExp(request)
     val tester = isTester(user)
-    if(tester) {
+    val analytics_page = if(tester) {
       analyticsService.registerAnalyticActivity(user.goingok_id,"Tester accessing analytics page")
       logger.warn("Making analytics page for tester")
+      new AnalyticsPage(Some(user), Analytics(merge(userCounts, reflectionCounts), chartsData), tester, exp).buildPage()
+    } else {
+      analyticsService.registerAnalyticActivity(user.goingok_id,"Accessing old analytics page")
+      logger.warn("Making analytics old page")
+      new AnalyticsPage(Some(user), Analytics(merge(userCounts, reflectionCounts), chartsData), false, false).buildPage()
     }
     val msg = Some(UiMessage(s"This page is a work in progress. For now, there are only basic stats here. More coming soon.", "info"))
     //val page = AnalyticsPage.page("GoingOK :: analytics", message, Some(user), Analytics(userCounts, reflectionCounts))
     //Ok(AnalyticsPage.getHtml(page))
-    Ok(new AnalyticsPage(Some(user), Analytics(merge(userCounts, reflectionCounts), chartsData), tester, exp).buildPage())
+    Ok(analytics_page)
+  }
+
+  private val makeOldPage = (user: User,request:Request[AnyContent]) => {
+    val userCounts = analyticsService.groupedUserCounts.getOrElse(Seq())
+    val reflectionCounts = analyticsService.groupedReflectionCounts(user.goingok_id).getOrElse(Seq())
+    val chartsData = analyticsService.analyticsChartsData((user.goingok_id)).getOrElse(Seq())
+    val msg = Some(UiMessage(s"This page is a work in progress. For now, there are only basic stats here. More coming soon.", "info"))
+    //val page = AnalyticsPage.page("GoingOK :: analytics", message, Some(user), Analytics(userCounts, reflectionCounts))
+    //Ok(AnalyticsPage.getHtml(page))
+    Ok(new AnalyticsPage(Some(user), Analytics(merge(userCounts, reflectionCounts), chartsData), false, false).buildPage())
   }
 
   private val makeCSV = (user:User, request:Request[AnyContent]) => {

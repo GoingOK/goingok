@@ -36,20 +36,9 @@ class AnalyticsPage(user:Option[User]=None, analytics: Analytics, tester: Boolea
                   showMessage(message),
                   if (tester){
                     Charts.display(exp)
+
                   } else {
-                    div(`class`:="row mt-3",
-                      div(`class`:="col",
-                        Includes.panel("groups-table","","Groups", Tables.groups(analytics.mergedCounts))
-                      ),
-                      div(`class`:="col",
-                        Includes.panel("download-reflections-table", "","Download reflections", Tables.reflectionsDownload(analytics.mergedCounts))
-                      ),
-                      div(`class`:="col"
-                        //              card("...",
-                        //                div()
-                        //              )
-                      )
-                    )
+                    downloadsSection(analytics)
                   },
                 )
               )
@@ -60,6 +49,23 @@ class AnalyticsPage(user:Option[User]=None, analytics: Analytics, tester: Boolea
       )
     )
   }
+
+  private def downloadsSection(analytics: Analytics) = {
+    div(`class`:="row mt-3",
+      div(`class`:="col",
+        Includes.panel("groups-table","","Groups", Tables.groups(analytics.mergedCounts))
+      ),
+      div(`class`:="col",
+        Includes.panel("download-reflections-table", "","Download reflections", Tables.reflectionsDownload(analytics.mergedCounts))
+      ),
+      div(`class`:="col"
+        //              card("...",
+        //                div()
+        //              )
+      )
+    )
+  }
+
   /** Creates analytics charts */
   private def createChart(data:Seq[models.AnalyticsChartsData]) = {
     val chartData:List[ujson.Obj] = data.toList.map(r => ujson.Obj("group" -> r.group,

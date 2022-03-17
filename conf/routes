@@ -23,6 +23,7 @@ GET     /profile                controllers.ProfileController.profile
 POST     /profile         controllers.ProfileController.profile
 
 GET     /analytics              controllers.AnalyticsController.analytics
+GET     /analytics_old          controllers.AnalyticsController.analytics_old
 GET     /analytics/csv          controllers.AnalyticsController.reflectionsCsv
 
 GET     /admin                  controllers.AdminController.admin
