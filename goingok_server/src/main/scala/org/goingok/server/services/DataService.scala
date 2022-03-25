@@ -238,6 +238,33 @@ class DataService {
   }
 
   /**
+   * Updates supervisor boolean for a given GoingOK user
+   * @param pseudonym GoingOK user pseudonym
+   * @param supervisor new supervisor value
+   */
+  def updateSupervisorForUser(pseudonym: String, supervisor: Boolean): Either[Throwable,Int] = {
+    val time = LocalDateTime.now().toString
+    val query = sql"""update users
+                    set supervisor=$supervisor, register_timestamp=$time
+                    where pseudonym=$pseudonym
+                """.update.run
+
+    runQuery(query)
+  }
+
+  /**
+   * Inserts anew tester into DB
+   * @param pseudonym GoingOK user pseudonym
+   */
+  def insertTester(pseudonym: String): Either[Throwable,Int] = {
+    val query = sql"""insert into testers (pseudonym, scope)
+                    values ($pseudonym, null)
+                """.update.run
+
+    runQuery(query)
+  }
+
+  /**
     * Inserts new reflection into DB
     * @param reflection new reflection
     * @param goingok_id GoingOK user ID
