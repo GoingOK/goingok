@@ -108,6 +108,18 @@ class AdminService {
     } yield usr
   }
 
+  def updateUser(pseudonym:String, supervisor: Boolean): Either[Throwable,Int] = {
+    for {
+      u <- ds.updateSupervisorForUser(pseudonym, supervisor)
+    } yield u
+  }
+
+  def insertTester(pseudonym: String): Either[Throwable,Int] = {
+    for {
+      t <- ds.insertTester(pseudonym)
+    } yield t
+  }
+
 
   /**
     * Helper to check if a user has admin role

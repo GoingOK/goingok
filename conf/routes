@@ -33,6 +33,8 @@ POST    /admin/addGroup         controllers.AdminController.addGroup
 POST    /admin/addGroupAdmin         controllers.AdminController.addGroupAdmin
 +nocsrf
 POST    /admin/addPseudonyms    controllers.AdminController.addPseudonyms
++nocsrf
+POST    /admin/updateUsers    controllers.AdminController.updateUsers
 
 #GET     /profile/records/csv    controllers.ProfileController.reflectionsCsv
 

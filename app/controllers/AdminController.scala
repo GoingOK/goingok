@@ -36,6 +36,8 @@ class AdminController @Inject()(components: ControllerComponents,profileService:
   /** Authorises user and calls 'pageMaker' to add more pseudonyms */
   def addPseudonyms: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] => authorise(request,addMorePseudonyms)}
 
+  def updateUsers: Action[AnyContent] = Action.async { implicit  request: Request[AnyContent] => authorise(request,updateUser)}
+
   //def reflectionsCsv: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] => authorise(request,makeCSV)}
 
   /**
@@ -87,9 +89,9 @@ class AdminController @Inject()(components: ControllerComponents,profileService:
     val formValues = request.body.asFormUrlEncoded
     val result = if (formValues.nonEmpty) {
       System.out.println("formValues:",formValues)
-      val pseuodnym:String = formValues.get.getOrElse("admin",Vector("")).head
+      val pseudonym:String = formValues.get.getOrElse("admin",Vector("")).head
       val group:String = formValues.get.getOrElse("group",Vector("")).head
-      adminService.addGroupAdmin(pseuodnym,group)
+      adminService.addGroupAdmin(pseudonym,group)
     } else {
       Left("There was a problem adding the group")
     }
@@ -122,6 +124,32 @@ class AdminController @Inject()(components: ControllerComponents,profileService:
       case Right(num) => Ok(s"Created $num pseudonyms")
       case Left(error) => Ok(error.getMessage)
     }
+  }
+
+  private val updateUser = (user:User, request:Request[AnyContent]) => {
+    val query = request.queryString
+    val formValues = request.body.asFormUrlEncoded
+    val result = if (formValues.nonEmpty) {
+      System.out.println("formValues:",formValues)
+      val pseudonym:String = formValues.get.getOrElse("user",Vector("")).head
+      val supervisor:Boolean = formValues.get.getOrElse("supervisor",Vector("false")).head == "on"
+      val tester:Boolean = formValues.get.getOrElse("tester",Vector("false")).head == "on"
+      if (tester) {
+        adminService.insertTester(pseudonym)
+      }
+      adminService.updateUser(pseudonym, supervisor)
+    } else {
+      Left("There was a problem updating the user")
+    }
+    val message = result match {
+      case Right(v) => if (v==1) {
+        Some(UiMessage(s"User updated successfully","info"))
+      } else {
+        Some(UiMessage(s"The user was not updated [Pseudonym: $v]", "warn"))
+      }
+      case Left(e) => Some(UiMessage(s"ERROR: $e", "danger"))
+    }
+    makePageWithMessage(message,user)
   }
 
   //  private val makeCSV = (user:User, request:Request[AnyContent]) => {
