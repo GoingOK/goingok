@@ -138,6 +138,19 @@ class DataService {
   }
 
   /**
+    *
+    */
+
+  def getAllSupervisorUsers(): Either[Throwable,DbResults.Result] = {
+    val query = sql"""select pseudonym, group_code, supervisor
+                  from users
+                  where supervisor=true
+                  order by group_code""".query[(String,String,Boolean)]
+
+    runQuery(query.to[Vector]).map(r => DbResults.Supervisors(r))
+  }
+
+  /**
     * Gets all reflections for a given group by GoingOK group code
     * @param group_code GoingOK group code
     * @return Sequence of group reflections
