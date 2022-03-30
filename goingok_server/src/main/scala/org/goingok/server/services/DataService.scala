@@ -256,9 +256,9 @@ class DataService {
    * Inserts anew tester into DB
    * @param pseudonym GoingOK user pseudonym
    */
-  def insertTester(pseudonym: String): Either[Throwable,Int] = {
+  def insertTester(pseudonym: String,scope: String): Either[Throwable,Int] = {
     val query = sql"""insert into testers (pseudonym, scope)
-                    values ($pseudonym, null)
+                    values ($pseudonym, $scope)
                 """.update.run
 
     runQuery(query)

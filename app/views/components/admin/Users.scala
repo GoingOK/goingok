@@ -11,7 +11,7 @@ object Users extends GenericComponents {
     card("Pseudonyms",
       div(userList(adminData.userInfo),
         pseudonymsForm,
-        userForm(adminData.groupAdminInfo)
+        //userForm(adminData.groupAdminInfo)
       )
     )
   }

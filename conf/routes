@@ -34,7 +34,7 @@ POST    /admin/addGroupAdmin         controllers.AdminController.addGroupAdmin
 +nocsrf
 POST    /admin/addPseudonyms    controllers.AdminController.addPseudonyms
 +nocsrf
-POST    /admin/updateUsers    controllers.AdminController.updateUsers
+POST    /admin/addDashboardTester    controllers.AdminController.addDashboardTester
 
 #GET     /profile/records/csv    controllers.ProfileController.reflectionsCsv
 

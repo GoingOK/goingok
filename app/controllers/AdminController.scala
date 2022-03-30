@@ -6,7 +6,6 @@ import javax.inject.Inject
 import org.goingok.server.data.{AdminData, UiMessage}
 import org.goingok.server.data.models.User
 import org.goingok.server.services.{AdminService, ProfileService}
-import play.api.Logger
 import play.api.mvc.{AnyContent, _}
 import views.AdminPage
 
@@ -36,7 +35,7 @@ class AdminController @Inject()(components: ControllerComponents,profileService:
   /** Authorises user and calls 'pageMaker' to add more pseudonyms */
   def addPseudonyms: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] => authorise(request,addMorePseudonyms)}
 
-  def updateUsers: Action[AnyContent] = Action.async { implicit  request: Request[AnyContent] => authorise(request,updateUser)}
+  def addDashboardTester: Action[AnyContent] = Action.async { implicit  request: Request[AnyContent] => authorise(request,addNewTester)}
 
   //def reflectionsCsv: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] => authorise(request,makeCSV)}
 
@@ -116,7 +115,8 @@ class AdminController @Inject()(components: ControllerComponents,profileService:
     val groupInfo = adminService.groupInfo
     val groupAdminInfo = adminService.groupAdminInfo
     val userInfo = adminService.userInfo
-    Ok(new AdminPage(Some(user),AdminData(groupInfo,groupAdminInfo,userInfo)).buildPage(message=message))
+    val testers = adminService.testers
+    Ok(new AdminPage(Some(user),AdminData(groupInfo,groupAdminInfo,userInfo,testers)).buildPage(message=message))
   }
 
   private val addMorePseudonyms = (user:User, request:Request[AnyContent]) => {
@@ -126,26 +126,21 @@ class AdminController @Inject()(components: ControllerComponents,profileService:
     }
   }
 
-  private val updateUser = (user:User, request:Request[AnyContent]) => {
-    val query = request.queryString
+  private val addNewTester = (user:User, request:Request[AnyContent]) => {
+    //val query = request.queryString
     val formValues = request.body.asFormUrlEncoded
     val result = if (formValues.nonEmpty) {
-      System.out.println("formValues:",formValues)
-      val pseudonym:String = formValues.get.getOrElse("user",Vector("")).head
-      val supervisor:Boolean = formValues.get.getOrElse("supervisor",Vector("false")).head == "on"
-      val tester:Boolean = formValues.get.getOrElse("tester",Vector("false")).head == "on"
-      if (tester) {
-        adminService.insertTester(pseudonym)
-      }
-      adminService.updateUser(pseudonym, supervisor)
+      logger.warn(s"formvalues: $formValues")
+      val pseudonym: String = formValues.get.getOrElse("tester", Vector("")).head
+      adminService.addTester(pseudonym,user.goingok_id)
     } else {
-      Left("There was a problem updating the user")
+      Left(s"There was a problem adding the tester ${request.body.asText}")
     }
     val message = result match {
       case Right(v) => if (v==1) {
-        Some(UiMessage(s"User updated successfully","info"))
+        Some(UiMessage(s"New tester created successfully","info"))
       } else {
-        Some(UiMessage(s"The user was not updated [Pseudonym: $v]", "warn"))
+        Some(UiMessage(s"There was a problem adding the tester [Pseudonym: $v]", "warn"))
       }
       case Left(e) => Some(UiMessage(s"ERROR: $e", "danger"))
     }

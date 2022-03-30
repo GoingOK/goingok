@@ -25,7 +25,7 @@ class AdminPage(user:Option[User]=None,adminData:AdminData) extends GenericPage 
           showMessage(message),
           div(`class`:="row",
             div(`class`:="col-4",
-              Projects.display()
+              Projects.display(adminData)
             ),
             div(`class`:="col-5",
               Groups.display(adminData)

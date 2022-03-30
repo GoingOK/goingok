@@ -64,6 +64,20 @@ class AdminService {
     }
   }
 
+  /**
+    *
+    */
+
+  def testers: Seq[String] = ds.getTesters() match {
+    case Right(result:DbResults.Testers) => {
+      logger.info(s"Get testers result: ${result.value.toString}")
+      result.value
+    }
+    case Left(err) => {
+      logger.error(err.getMessage)
+      Seq(err.getMessage)
+    }
+  }
 
   /**
     * Adds new group and inserts it into DB
@@ -81,6 +95,14 @@ class AdminService {
       i <- ds.getGoingokIdForPseudonym(pseudonym)
       g <- ds.insertGroupAdmin(i,group,permission)
     } yield g
+  }
+
+  def addTester(pseudonym:String,goingokId:UUID,scope:String = "all"): Either[Throwable,Int] = {
+    for {
+      //i <- ds.getGoingokIdForPseudonym(pseudonym)
+      u <- ds.updateSupervisorForUser(pseudonym,true)
+      t <- ds.insertTester(pseudonym,scope)
+    } yield t
   }
 
   /**
@@ -114,11 +136,6 @@ class AdminService {
     } yield u
   }
 
-  def insertTester(pseudonym: String): Either[Throwable,Int] = {
-    for {
-      t <- ds.insertTester(pseudonym)
-    } yield t
-  }
 
 
   /**
