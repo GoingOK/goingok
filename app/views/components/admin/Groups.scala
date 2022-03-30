@@ -1,6 +1,7 @@
 package views.components.admin
 
 import org.goingok.server.data.AdminData
+import org.goingok.server.data.DbResults.Supervisors
 import scalatags.Text.TypedTag
 import scalatags.Text.all._
 import views.GenericComponents
@@ -12,7 +13,7 @@ object Groups extends GenericComponents {
       div(groupList(adminData.groupInfo),
         groupForm,
         groupAdminList(adminData.groupAdminInfo),
-        groupAdminForm(adminData.groupAdminInfo, adminData.groupInfo)
+        groupAdminForm(adminData.supervisors, adminData.groupInfo)
       )
     )
   }
@@ -60,13 +61,13 @@ object Groups extends GenericComponents {
     )
   }
 
-  private def groupAdminForm(groupAdminInfo:Seq[(String,String,String)],groupInfo:Seq[(String,Int)]): TypedTag[String] = {
+  private def groupAdminForm(supervisors: Seq[(String,String,Boolean)],groupInfo:Seq[(String,Int)]): TypedTag[String] = {
     form(`class` := "needs-validation", action := "/admin/addGroupAdmin", method := "POST", attr("novalidate") := "",
       div(`class` := "form-group",
         label(`for` := "admin-pseudonym", `class` := "col-form-label")("Admin:"),
         select(id := "admin-pseudonym", name := "admin",
-          uniqueAdmins(groupAdminInfo).map{ case (pseudonym:String,email:String) =>
-            option(value:=s"$pseudonym")(s"$pseudonym ($email)")
+          supervisors.map{ case (pseudonym:String,group_code:String,supervisor:Boolean) =>
+            option(value:=s"$pseudonym")(s"$pseudonym ($group_code)")
           }.toList
         )
       ),
@@ -85,6 +86,31 @@ object Groups extends GenericComponents {
     )
   }
 
+//  private def groupAdminForm(groupAdminInfo:Seq[(String,String,String)],groupInfo:Seq[(String,Int)]): TypedTag[String] = {
+//    form(`class` := "needs-validation", action := "/admin/addGroupAdmin", method := "POST", attr("novalidate") := "",
+//      div(`class` := "form-group",
+//        label(`for` := "admin-pseudonym", `class` := "col-form-label")("Admin:"),
+//        select(id := "admin-pseudonym", name := "admin",
+//          uniqueAdmins(groupAdminInfo).map{ case (pseudonym:String,email:String) =>
+//            option(value:=s"$pseudonym")(s"$pseudonym ($email)")
+//          }.toList
+//        )
+//      ),
+//      div(`class` := "form-group",
+//        label(`for` := "admin-group", `class` := "col-form-label")("Group:"),
+//        select(id := "admin-group", name := "group",
+//          uniqueGroups(groupInfo).map{ case (group:String) =>
+//            option(value:=s"$group")(s"$group")
+//          }.toList
+//        )
+//      ),
+//      div(`class` := "form-group text-right",
+//        input(`type` := "submit", value := "add", `class` := "btn btn-success")
+//      ),
+//      script(validationScript)
+//    )
+//  }
+//
   private def uniqueAdmins(groupAdminInfo:Seq[(String,String,String)]):Seq[(String,String)] = groupAdminInfo.map(g => (g._2,g._3)).distinct
   private def uniqueGroups(groupInfo:Seq[(String,Int)]):Seq[String] = groupInfo.map(_._1).distinct
 }

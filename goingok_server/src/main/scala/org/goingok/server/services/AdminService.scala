@@ -80,6 +80,22 @@ class AdminService {
   }
 
   /**
+    *
+    */
+
+  def supervisors: Seq[(String,String,Boolean)] = ds.getAllSupervisorUsers() match {
+    case Right(result:DbResults.Supervisors) => {
+      logger.info(s"Get supervisors result: ${result.value.toString}")
+      result.value
+    }
+    case Left(err) => {
+      logger.error(err.getMessage)
+      Seq()
+    }
+  }
+
+
+  /**
     * Adds new group and inserts it into DB
     * @param groupCode user's group code
     * @param goingokId user's GoingOk ID

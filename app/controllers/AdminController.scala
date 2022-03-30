@@ -116,7 +116,8 @@ class AdminController @Inject()(components: ControllerComponents,profileService:
     val groupAdminInfo = adminService.groupAdminInfo
     val userInfo = adminService.userInfo
     val testers = adminService.testers
-    Ok(new AdminPage(Some(user),AdminData(groupInfo,groupAdminInfo,userInfo,testers)).buildPage(message=message))
+    val supervisors = adminService.supervisors
+    Ok(new AdminPage(Some(user),AdminData(groupInfo,groupAdminInfo,userInfo,testers,supervisors)).buildPage(message=message))
   }
 
   private val addMorePseudonyms = (user:User, request:Request[AnyContent]) => {
