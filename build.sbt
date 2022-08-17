@@ -21,7 +21,7 @@ dockerChmodType := DockerChmodType.UserGroupWriteExecute
 dockerPermissionStrategy := DockerPermissionStrategy.CopyChown
 
 lazy val projectName = "goingok"
-lazy val projectVersion = "4.2.30"
+lazy val projectVersion = "4.3.0"
 lazy val projectOrganisation = "org.goingok"
 
 lazy val serverName = s"${projectName}_server"
@@ -36,18 +36,18 @@ lazy val vGuice = "5.1.0"
 lazy val vScalaTags = "0.11.1" //0.9.4
 lazy val vSjsD3 = "0.3.4"
 
-lazy val vUpickle = "1.5.0"
+lazy val vUpickle = "2.0.0"
 lazy val vDoobie = "0.13.4"
 lazy val vConfig = "1.4.2"
 
-lazy val vScalaJsDom = "2.1.0" //1.2.0
+lazy val vScalaJsDom = "2.2.0" //1.2.0
 lazy val vWebpack = "4.10.2"
 lazy val vWebpackDevServer = "3.1.4"
 lazy val vPopper = "1.14.4"
 lazy val vD3 = "6.5.0" //"5.9.7"
 
-lazy val vScalaTest = "3.2.11"
-lazy val vScalaLogging = "3.9.4"
+lazy val vScalaTest = "3.2.13"
+lazy val vScalaLogging = "3.9.5"
 
 //Settings
 val sharedSettings = Seq(
