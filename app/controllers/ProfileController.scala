@@ -65,7 +65,28 @@ class ProfileController @Inject()(components: ControllerComponents,profileServic
           None
         }
 
-        val reflections = profileService.getReflections(goingok_id).map(_.reverse)
+        //val reflections:String = profileService.getReflections(goingok_id).map(_.reverse)
+        //val reflections = profileService.getAuthorReflections(goingok_id) // new reflections format for analytics
+        val analytics = profileService.getAuthorAnalytics(goingok_id)
+        logger.warn(s"GRAPHS: ${analytics.map(_.graphs)}")
+        logger.warn(s"NODES: ${analytics.map(_.nodes)}")
+        logger.warn(s"EDGES: ${analytics.map(_.edges)}")
+        logger.warn(s"CHARTS: ${analytics.map(_.charts)}")
+        logger.warn(s"NODELABELS: ${analytics.map(_.nodeLabels)}")
+        logger.warn(s"EDGELABELS: ${analytics.map(_.edgeLabels)}")
+        logger.warn(s"LABELS: ${analytics.map(_.labels)}")
+        // for compatibility with prior reflections
+        val reflections: Option[Vector[ReflectionEntry]] = analytics match {
+          case Right(analytics) => Some(analytics.refs.map(r => ReflectionEntry(r.timestamp, ReflectionData(r.point, r.text))).reverse)
+          case Left(error) => {
+            logger.error(error.getMessage)
+            None
+          }
+        }
+
+
+
+
 
         if(user.getOrElse(User(UUID.randomUUID())).group_code!="none") {
 //          val page = ProfilePage.page("GoingOK :: profile", message, Profile(user, reflections))

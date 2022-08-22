@@ -17,6 +17,7 @@ import org.goingok.server.data.models._
 
 
 
+//noinspection ScalaStyle
 class DataService {
 
   val logger = Logger(this.getClass)
@@ -33,7 +34,8 @@ class DataService {
 
   //private implicit val uuidImplicit:AdvancedMeta[UUID] =  doobie.postgres.implicits.UuidType
 
-  def runQuery[A](query:ConnectionIO[A]):Either[Throwable,A] = query.transact(db).attempt.unsafeRunSync
+  type DBResult[T] = Either[Throwable,T]
+  def runQuery[A](query:ConnectionIO[A]):DBResult[A] = query.transact(db).attempt.unsafeRunSync
 
   /**
     * Gets GoingOK user from DB by Google user ID
@@ -434,4 +436,105 @@ class DataService {
                 """.update.run
     runQuery(query)
   }
+
+  //---------------------------------------------------------------------------------------------------------
+  // Analytics functions
+
+  def getReflectionsforAuthor(goingok_id:UUID): DBResult[Vector[Reflection]] = {
+    val query =
+      sql"""select r.ref_id, r.timestamp, r.text, r.point
+            from reflections r
+            where goingok_id = $goingok_id
+            order by r.timestamp desc;""".query[Reflection]
+    runQuery(query.to[Vector])
+  }
+  def getGraphsforAuthor(goingok_id: UUID): DBResult[Vector[AnltxGraph]] = {
+    val query =
+      sql"""select g.graph_id, g.graph_type, g.name, g.description
+            from anltx_graphs g, anltx_author_graphs a
+            where a.goingok_id = $goingok_id
+            and a.graph_id = g.graph_id;
+           """.query[AnltxGraph]
+    runQuery(query.to[Vector])
+  }
+  def getNodesForGraph(graph_id:Int): DBResult[Vector[Int]] = {
+    val query =
+      sql"""select node_id
+           from anlytx_graph_nodes
+           where graph_id = $graph_id""".query[Int]
+   runQuery(query.to[Vector])
+  }
+
+  def getEdgesForGraph(graph_id:Int): DBResult[Vector[AnltxEdge]] = {
+    val query =
+      sql"""select e.edge_id, e.graph_id, e.edge_type, e.source_node_id, e.target_node_id, e.directional, e.weight
+           from anltx_edges e
+           where e.graph_id = $graph_id""".query[AnltxEdge]
+    runQuery(query.to[Vector])
+  }
+  def getNodesForReflection(ref_id:Int): DBResult[Vector[AnltxNode]] = {
+    val query =
+      sql"""select n.node_id, n.node_type, n.ref_id, n.start_idx, n.end_idx
+            from anltx_nodes n
+            where n.ref_id = $ref_id;
+           """.query[AnltxNode]
+    runQuery(query.to[Vector])
+  }
+
+  def getChartForGraph(graph_id:Int): DBResult[AnltxChart] = {
+    val query =
+      sql"""select c.chart_id, c.graph_id, c.name, c.description
+            from anltx_charts c
+            where c.graph_id = $graph_id;
+           """.query[AnltxDBChart].unique
+    val result = runQuery(query)
+    result.map(c => new AnltxChart(c))
+  }
+
+//  def getLabelsForChart(chart_id: Int): DBResult[Vector[AnltxLabel]] = {
+//    val query =
+//      sql"""select
+//            from anlytx_labels l
+//            where l.label_id in (
+//                select label_id
+//                from anltx_edge_labels e
+//                where e.chart_id = $chart_id
+//            )
+//            or l.label_id in (
+//                select n.label_id
+//                from anltx_node_labels n
+//                where n.chart_id = $chart_id
+//            )
+//           """.query[AnltxLabel]
+//    runQuery(query.to[Vector])
+//  }
+
+  def getNodeLabelsForChart(chart_id:Int): DBResult[Vector[AnltxNodeLabel]] = {
+    val query =
+      sql"""select n.node_id, n.label_id, n.expression, n.chart_id
+    from anltx_node_labels n
+    where n.chart_id = $chart_id
+   """.query[AnltxNodeLabel]
+    runQuery(query.to[Vector])
+  }
+
+  def getEdgeLabelsForChart(chart_id: Int): DBResult[Vector[AnltxEdgeLabel]] = {
+    val query =
+      sql"""select e.edge_id, e.label_id, e.chart_id
+        from anltx_edge_labels e
+        where e.chart_id = $chart_id
+       """.query[AnltxEdgeLabel]
+    runQuery(query.to[Vector])
+  }
+
+  def getLabelsForLabelIds(label_ids:Vector[Int]): DBResult[Vector[AnltxLabel]] = {
+    val query =
+      sql"""select l.label_id, l.label_type, l.ui_name, l.description, l.selected, l.properties
+        from anlytx_labels l
+        where l.label_id = ANY(${label_ids})
+       """.query[AnltxLabel]
+    runQuery(query.to[Vector])
+  }
+
+
 }

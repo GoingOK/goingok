@@ -1,6 +1,6 @@
 package org.goingok.server.data
 
-import org.goingok.server.data.models.{GroupCode, ReflectionAuthorEntry, ReflectionAuthorEntryAndGroup, ReflectionEntry,User}
+import org.goingok.server.data.models.{AnltxChart, AnltxEdge, AnltxEdgeLabel, AnltxGraph, GroupCode, AnltxLabel, AnltxNode, AnltxNodeLabel, ReflectionAuthorEntry, ReflectionAuthorEntryAndGroup, ReflectionEntry, Reflection}
 
 object DbResults {
 
@@ -27,4 +27,22 @@ object DbResults {
   case class Testers(value:Seq[String]) extends Result
 
   case class Supervisors(value:Seq[(String,String,Boolean)]) extends Result
+
+  //case class Reflections(value:Seq[Reflection]) extends Result
+
+  //type Reflections = DBResult[Seq[Reflection]]
+  //case class AnltxNodes(value:Seq[AnltxNode]) extends Result
+
+  //type AnltxNodes = DBResult[Seq[AnltxNode]]
+  //case class AnltxGraphs(value:Seq[AnltxGraph]) extends Result
+
+  //type AnltxGraphs = DBResult[Seq[AnltxGraph]]
+
+  //case class AnltxGraphNodes(value:Seq[(Int,Int)]) extends Result
+  //case class AnltxEdges(value:Seq[Edge]) extends Result
+  //case class AnltxCharts(value:Seq[Chart]) extends Result
+  //case class AnltxLabels(value:Seq[Label]) extends Result
+  //case class AnltxNodeLabels(value:Seq[NodeLabel]) extends Result
+  //case class AnltxEdgeLabels(value:Seq[EdgeLabel]) extends Result
+
 }

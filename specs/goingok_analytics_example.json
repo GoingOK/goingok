@@ -1,0 +1,80 @@
+{
+	"timestamp": "2022-08-02",
+	"analytics": {
+		"reflections": [
+			{
+				"goingok_id":"UUID",
+				"refs":[
+					{"ref_id":99,"timestamp":"2022-07-31","text":"my reflection","point":89}
+				]
+			}
+		],
+		"charts": [
+			{
+				"chart_id": 99,
+				"graph_id": 99,
+				"node_labels":[
+					{"node_id": 99, "label_id": 66, "expression": "I'm so tired..."},
+					{"node_id": 98, "label_id": 67, "expression": "Jupyter"},
+					{"node_id": 97, "label_id": 68, "expression": "is driving me crazy"}
+				],
+				"labels":[
+					{
+						"label_id":66,
+						"label_type":"system",
+						"ui_name":"stress",
+						"selected":true,
+						"properties": {}
+					},
+					{
+						"label_id":67,
+						"label_type":"system",
+						"ui_name":"name",
+						"selected":false,
+						"properties": {}
+					}
+				]
+			}
+		],
+			"graphs": [
+				{
+					"graph_id": 99,
+					"graph_type": "system",
+					"nodes": [
+						{
+							"node_id": 99,
+							"ref_id": 99,
+							"start_idx": 23,
+							"end_idx": 31
+						},
+						{
+							"node_id": 98,
+							"ref_id": 99,
+							"start_idx": 23,
+							"end_idx": 31
+						},
+						{
+							"node_id": 97,
+							"ref_id": 99,
+							"start_idx": 23,
+							"end_idx": 31
+						}
+						],
+					"edges": [
+						{
+							"source":99,
+							"target":98,
+							"directional":true,
+							"weight":0.5
+						},
+						{
+							"source":97,
+							"target":98,
+							"directional":false,
+							"weight":1
+						}
+					]
+				}
+			]
+		}
+}

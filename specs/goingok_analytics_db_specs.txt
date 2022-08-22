@@ -1,0 +1,77 @@
+Analytics db mapping
+
+Reflections - reflections table
+
+Graphs - anltx_nodes, anltx_graphs, anltx_graph_nodes, anltx_edges
+
+Charts - anltx_charts, anltx_node_labels, anltx_labels, anltx_edge_labels
+
+-----
+
+anltx_nodes(				# A node is a unique location range in a unique reflective text
+	node_id		Int, 
+	node_type	String, # SYS/USR
+	start_idx	Int,
+	end_idx		Int,
+	ref_id		Int (FK) 
+)
+
+anltx_author_graphs(       # An author_graph relates a graph to an author
+    graph_id    Int,
+    goingok_id  UUID
+)
+
+anltx_group_graphs(       # A group_graph relates a graph to a group, and thus a group of authors
+    graph_id    Int,
+    group_code  String
+)
+
+anltx_graphs(				# A graph is an analysis unit to which nodes and edges are related
+	graph_id	Int,
+	graph_type	String,
+	name		String,
+	description	String
+)
+
+anltx_graph_nodes(			# A graph_node relates nodes to graphs (Many - many)
+	node_id		Int  (FK)
+	graph_id	Int	 (FK)
+)
+
+anltx_edges(			# A graph_edge relates nodes to nodes within a graph
+	edge_id		Int
+	edge_type	String, # SYS/USR
+	directional	Boolean,
+	weight		Numeric,
+	graph_id	Int,	(FK)
+	source_node_id	Int,	(FK)
+	target_node_id	Int,	(FK)
+)
+
+anltx_charts(				# A chart is a visualisation of a graph
+	chart_id	Int,
+	name		String,
+	description	String,
+	graph_id	Int (FK)
+)
+
+anltx_labels(				# A label is a visualisation ascribed to nodes, edges or paths
+	label_id	Int,
+	label_type	String,
+	ui_name		String,
+	description	String,
+	selected	Boolean,
+	properties	JSON
+)
+anltx_node_labels(
+	expression String,# A node_label relates labels to nodes within a chart
+	chart_id_fk	Int,
+	node_id_fk	Int,
+	label_id_fk	Int,
+)
+	
+anltx_edge_labels(			# An edge_label relates labels to edges within a chart
+	chart_id_fk Int,
+	edge_id_fk	Int,
+	label_id_fk	Int
+)
