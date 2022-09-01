@@ -222,8 +222,9 @@ export function buildExperimentAuthorAnalyticsCharts(entriesRaw, analyticsRaw) {
         function drawCharts(entries) {
             return __awaiter(this, void 0, void 0, function* () {
                 let authorExperimentalCharts = new AuthorExperimentalCharts();
+                authorExperimentalCharts.resizeTimeline();
                 authorExperimentalCharts.preloadTags(entries, true);
-                authorExperimentalCharts.networkChart = new ChartNetwork("network", "chart-container-network", entries.map(d => d.timestamp));
+                authorExperimentalCharts.networkChart = new ChartNetwork("network", "chart-container.network", entries.map(d => d.timestamp));
                 authorExperimentalCharts.allNetworkData = authorExperimentalCharts.processNetworkData(authorExperimentalCharts.networkChart, entries);
                 authorExperimentalCharts.networkChart.simulation = authorExperimentalCharts.processSimulation(authorExperimentalCharts.networkChart, authorExperimentalCharts.allNetworkData);
                 authorExperimentalCharts.renderNetwork(authorExperimentalCharts.networkChart, authorExperimentalCharts.allNetworkData);

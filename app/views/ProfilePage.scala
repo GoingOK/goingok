@@ -32,7 +32,7 @@ class ProfilePage(profile:Profile = Profile(), tester: Boolean, exp: Boolean) ex
                   div(id := "analytics-charts", `class` := "row",
                     div(`class` := "col-md-4 mt-3",
                       div(`class` := "row",
-                        div(`class` := "col-md-12 mt-3",
+                        div(`class` := "col-md-12",
                           Includes.panel("reflection-entry", "fas fa-edit", "Enter a reflection", ReflectionEntry.display(sliderStartPoint),
                             "Use the slider to indicate how you are going from 'distressed' to 'soaring', " +
                               "and in the text box below write anything you like to describe how you how you are going. " +
@@ -48,7 +48,7 @@ class ProfilePage(profile:Profile = Profile(), tester: Boolean, exp: Boolean) ex
                         )
                       )
                     ),
-                    div(`class` := "col-md-8 mt-3",
+                    div(`class` := "col-md-8",
                       div(`class` := "row",
                         div(id := "timeline", `class` := "col-md-12 mt-3",
                           Timeline.display()

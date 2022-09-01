@@ -6,6 +6,7 @@ import { IRelfectionAuthorAnalytics, ITags, INetworkData, IReflectionAuthor, IRe
 export interface IAuthorControlCharts {
     help: IHelp;
     interactions: IAuthorControlInteractions;
+    resizeTimeline(): void;
     preloadTags(entries: IRelfectionAuthorAnalytics[], enable?: boolean): ITags[];
     processNetworkData(chart: ChartNetwork, entries: IRelfectionAuthorAnalytics[]): INetworkData;
     processSimulation(chart: ChartNetwork, data: INetworkData): void;
@@ -17,6 +18,7 @@ export interface IAuthorControlCharts {
 export declare class AuthorControlCharts implements IAuthorControlCharts {
     help: Help;
     interactions: AuthorControlInteractions;
+    resizeTimeline(): void;
     preloadTags(entries: IRelfectionAuthorAnalytics[], enable?: boolean): ITags[];
     processNetworkData(chart: ChartNetwork, entries: IRelfectionAuthorAnalytics[]): INetworkData;
     processSimulation(chart: ChartNetwork, data: INetworkData): d3.Simulation<ITags, undefined>;

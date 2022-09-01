@@ -342,10 +342,6 @@ Admin CSS
 Author CSS
 ***************************************************/
 
-.chart-container.timeline {
-    min-height: 57vh;
-}
-
 .chart-container.network {
     min-height: 70vh;
 }

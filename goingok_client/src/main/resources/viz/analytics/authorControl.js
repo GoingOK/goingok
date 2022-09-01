@@ -19,6 +19,10 @@ export class AuthorControlCharts {
         this.help = new Help();
         this.interactions = new AuthorControlInteractions();
     }
+    resizeTimeline() {
+        let height = document.querySelector("#reflection-entry").getBoundingClientRect().height;
+        document.querySelector(".chart-container.timeline").setAttribute("style", `min-height:${height - 80}px`);
+    }
     preloadTags(entries, enable = false) {
         let allTags = [];
         entries.forEach(c => {
@@ -361,6 +365,7 @@ export function buildControlAuthorAnalyticsCharts(entriesRaw, analyticsRaw) {
         function drawCharts(entries) {
             return __awaiter(this, void 0, void 0, function* () {
                 let authorControlCharts = new AuthorControlCharts();
+                authorControlCharts.resizeTimeline();
                 authorControlCharts.preloadTags(entries);
                 let networkChart = new ChartNetwork("network", "chart-container-network", entries.map(d => d.timestamp));
                 let networkData = authorControlCharts.processNetworkData(networkChart, entries);
