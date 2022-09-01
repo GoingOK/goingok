@@ -4,6 +4,21 @@
     align-items: stretch
 }
 
+.content {
+    width: 100%;
+    padding: 20px;
+    min-height: 100vh;
+    transition: all 0.3s
+}
+
+.content-wrapper {
+    padding: 15px
+}
+
+/**************************************************
+Admin CSS
+***************************************************/
+
 #sidebar {
     width: 300px;
     background: #000000;
@@ -40,6 +55,7 @@
     opacity: 0;
 }
 
+
 .group-row {
     background-color: #000000 !important;
     color: #fff !important;
@@ -47,17 +63,6 @@
     border-top: none !important;
     border-left: none !important;
     border-right: none !important;
-}
-
-.content {
-    width: 100%;
-    padding: 20px;
-    min-height: 100vh;
-    transition: all 0.3s
-}
-
-.content-wrapper {
-    padding: 15px
 }
 
 @media(max-width:768px) {
@@ -85,10 +90,6 @@
 
 .chart-container {
     min-height: 30vh;
-}
-
-.chart-svg {
-    margin-top: 10px;
 }
 
 .instructions {
@@ -141,17 +142,7 @@
     stroke-width: 1;
 }
 
-.box-line {
-    stroke-width: 1;
-    stroke:#3399CC;
-}
-
-.arc {
-    fill-opacity: 0.2;
-    stroke-width: 1;
-}
-
-.bar:hover, .arc:hover, .histogram-rect:hover, .circle:hover {
+.bar:hover, .histogram-rect:hover, .circle:hover {
     fill-opacity: 0.4;
     r: 10;
 }
@@ -180,9 +171,16 @@
 
 }
 
-.line {
+.author-line, .line {
     fill: none;
     stroke: #3399CC;
+}
+
+.group-area {
+    fill: #ff6600;
+    fill-opacity: 0.2;
+    stroke: #ff6600;
+    opacity: 0.3;
 }
 
 .tooltip-container {
@@ -293,19 +291,6 @@
     font-size: 0.75rem;
 }
 
-.y-label-container.sort:hover {
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.sort-arrow {
-    fill: #f2f2f2;
-}
-
-.sort-arrow.active {
-    fill: #333;
-}
-
 .zoom-bar-content {
     fill-opacity: 0.2;
     fill:  #3399CC;
@@ -351,6 +336,118 @@
 
 .bin-name.goingok {
     color: #2eb82e;
+}
+
+/**************************************************
+Author CSS
+***************************************************/
+
+.chart-container.timeline {
+    min-height: 57vh;
+}
+
+.chart-container.network {
+    min-height: 70vh;
+}
+
+.reflections-tab {
+    height: 70vh;
+    overflow-y: auto;
+}
+
+.tag-row {
+    background-color: #fff !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    text-align: center;
+}
+
+.hardline {
+    fill: none;
+    stroke: #bbeeff;
+    stroke-width: 2px;
+    stroke-opacity: 0.6;
+}
+
+.softline {
+    fill: none;
+    stroke: #cc0000;
+    stroke-width: 2px;
+}
+
+.meanline {
+    fill: none;
+    stroke: #ffff00;
+    stroke-width: 10px;
+    stroke-opacity: 0.3;
+}
+
+.point {
+    fill: #0000FF;
+    stroke: none;
+    stroke-width: 0px;
+    opacity: 0.5;
+}
+
+.point:hover {
+    r: 10;
+}
+
+.network-node {
+    stroke-width: 1;
+    ry: 10;
+    rx: 10;
+}
+
+.ar {
+    background-color: #0f856b;
+    fill: #0f856b;
+    stroke: #0f856b;
+}
+
+.af {
+    background-color: #3399CC;
+    fill: #3399CC;
+    stroke: #3399CC;
+}
+
+.ep {
+    background-color: #ff9900;
+    fill: #ff9900;
+    stroke: #ff9900;
+}
+
+.ref {
+    background-color: #f2f2f2;
+    fill: #f2f2f2;
+}
+
+.hover {
+    opacity: 0;
+}
+
+.network-text {
+    text-anchor: middle;
+    dominant-baseline: central;
+    font-size: 75%;
+    font-weight: 500;
+}
+
+.network-link, .reflection-link {
+    fill: none;
+    stroke: #6c757d;
+    stroke-width: 1;
+}
+
+.network-link {
+    stroke-linecap: round ;
+    stroke-opacity: 0.5;
+}
+
+.reflection-link {
+    stroke-opacity: 0.25;
+    stroke-dasharray: 5,5;
 }
 
 /**************************************************
@@ -483,6 +580,8 @@ Tutorial CSS
     font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-size: 22px;
     max-width: 500px;
+    padding: 0.75rem;
+    border: #ffffff solid;
 }
 
 .tutorial .tutorial-arrow {

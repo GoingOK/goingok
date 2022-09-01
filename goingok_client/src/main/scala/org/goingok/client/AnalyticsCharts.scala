@@ -3,7 +3,7 @@ package org.goingok.client
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSImport
 
-@JSImport("./analytics-charts", JSImport.Namespace)
+@JSImport("./viz/index", JSImport.Namespace)
 @js.native
 object AnalyticsCharts extends js.Object {
 
@@ -18,4 +18,12 @@ object AnalyticsCharts extends js.Object {
    * @param entries reflections grouped by group code
    */
   def buildExperimentAdminAnalyticsCharts(entries:js.Any): js.Object = js.native
+
+  /**
+   * Builds authors analytics chart
+   *
+   * @param entries reflections grouped by group code
+   * @param analytics text analytics
+   */
+  def buildControlAuthorAnalyticsCharts(entries: js.Any, analytics: js.Any): js.Object = js.native
 }

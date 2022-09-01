@@ -27,4 +27,11 @@ object Visualisation {
     println("Generating Experimental Analytics Charts: expAnalyticsCharts")
     AnalyticsCharts.buildExperimentAdminAnalyticsCharts(entries)
   }
+
+  @JSExport
+  /** Generates author control analytics page charts */
+  def authorControlAnalyticsCharts(entries: js.Array[js.Object], analytics: js.Array[js.Object]): Unit = {
+    println("Generating Author Control Analytics Charts: authorControlAnalyticsCharts")
+    AnalyticsCharts.buildControlAuthorAnalyticsCharts(entries, analytics)
+  }
 }
