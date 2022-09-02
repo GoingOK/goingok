@@ -460,7 +460,7 @@ class DataService {
   def getNodesForGraph(graph_id:Int): DBResult[Vector[Int]] = {
     val query =
       sql"""select node_id
-           from anlytx_graph_nodes
+           from anltx_graph_nodes
            where graph_id = $graph_id""".query[Int]
    runQuery(query.to[Vector])
   }
@@ -530,7 +530,7 @@ class DataService {
   def getLabelsForLabelIds(label_ids:Vector[Int]): DBResult[Vector[AnltxLabel]] = {
     val query =
       sql"""select l.label_id, l.label_type, l.ui_name, l.description, l.selected, l.properties
-        from anlytx_labels l
+        from anltx_labels l
         where l.label_id = ANY(${label_ids})
        """.query[AnltxLabel]
     runQuery(query.to[Vector])
