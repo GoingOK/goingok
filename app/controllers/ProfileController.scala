@@ -1,11 +1,10 @@
 package controllers
 
 import java.util.UUID
-
 import javax.inject.Inject
 import org.goingok.server.data.{Profile, Reflection, UiMessage, models}
-import org.goingok.server.data.models.{ReflectionData, ReflectionEntry, User}
-import org.goingok.server.services.{ProfileService, UserService, AnalyticsService}
+import org.goingok.server.data.models.{AnalyticsAuthorChartsData, ReflectionData, ReflectionEntry, User}
+import org.goingok.server.services.{AnalyticsService, ProfileService, UserService}
 import play.api.Logger
 import play.api.mvc._
 import views.{ProfilePage, RegisterPage}
@@ -75,6 +74,7 @@ class ProfileController @Inject()(components: ControllerComponents,profileServic
         logger.warn(s"NODELABELS: ${analytics.map(_.nodeLabels)}")
         logger.warn(s"EDGELABELS: ${analytics.map(_.edgeLabels)}")
         logger.warn(s"LABELS: ${analytics.map(_.labels)}")
+        val chartAnalytics = profileService.getAuthorChartsAnalytics(analytics.toOption.get)
         // for compatibility with prior reflections
         val reflections: Option[Vector[ReflectionEntry]] = analytics match {
           case Right(analytics) => Some(analytics.refs.map(r => ReflectionEntry(r.timestamp, ReflectionData(r.point, r.text))).reverse)
@@ -89,7 +89,7 @@ class ProfileController @Inject()(components: ControllerComponents,profileServic
 //          Ok(ProfilePage.getHtml(page))
           val exp = isExp(request)
           val tester = isTester(user)
-          Ok(new ProfilePage(Profile(user,reflections), tester, exp).buildPage(message = message))
+          Ok(new ProfilePage(Profile(user,reflections), chartAnalytics, tester, exp).buildPage(message = message))
         } else {
           Redirect("/register")
         }
@@ -123,6 +123,10 @@ class ProfileController @Inject()(components: ControllerComponents,profileServic
 
   private def isExp(request: Request[AnyContent]): Boolean = {
     request.getQueryString("exp").contains("true");
+  }
+
+  private def getAnalyticsChartData: Option[List[AnalyticsAuthorChartsData]] = {
+
   }
 
 //  def reflectionsCsv :Action[AnyContent] = silhouette.SecuredAction(errorHandler).async { implicit request: SecuredRequest[DefaultEnv, AnyContent] =>
