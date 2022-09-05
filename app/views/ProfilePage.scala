@@ -2,6 +2,7 @@ package views
 
 
 import org.goingok.server.Config
+import org.goingok.server.data.models.AnalyticsAuthorChartsData
 import org.goingok.server.data.{Profile, UiMessage, models}
 import scalatags.Text.all._
 import scalatags.Text.{TypedTag, tags}
@@ -10,7 +11,7 @@ import views.components._
 import views.components.profile.{MessagesList, Network, ReflectionEntry, ReflectionList, ReflectionPointChart, Reflections, Sort, Tags, Timeline}
 
 
-class ProfilePage(profile:Profile = Profile(), tester: Boolean, exp: Boolean) extends GenericPage {
+class ProfilePage(profile:Profile = Profile(), analytics: Vector[AnalyticsAuthorChartsData], tester: Boolean, exp: Boolean) extends GenericPage {
 
   private val sliderStartPoint:Double = 50.0
 
