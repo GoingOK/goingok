@@ -75,6 +75,7 @@ class ProfileController @Inject()(components: ControllerComponents,profileServic
         logger.warn(s"EDGELABELS: ${analytics.map(_.edgeLabels)}")
         logger.warn(s"LABELS: ${analytics.map(_.labels)}")
         val chartAnalytics = profileService.getAuthorChartsAnalytics(analytics.toOption.get)
+        logger.warn(s"ChartData: ${chartAnalytics}")
         // for compatibility with prior reflections
         val reflections: Option[Vector[ReflectionEntry]] = analytics match {
           case Right(analytics) => Some(analytics.refs.map(r => ReflectionEntry(r.timestamp, ReflectionData(r.point, r.text))).reverse)
@@ -123,10 +124,6 @@ class ProfileController @Inject()(components: ControllerComponents,profileServic
 
   private def isExp(request: Request[AnyContent]): Boolean = {
     request.getQueryString("exp").contains("true");
-  }
-
-  private def getAnalyticsChartData: Option[List[AnalyticsAuthorChartsData]] = {
-
   }
 
 //  def reflectionsCsv :Action[AnyContent] = silhouette.SecuredAction(errorHandler).async { implicit request: SecuredRequest[DefaultEnv, AnyContent] =>

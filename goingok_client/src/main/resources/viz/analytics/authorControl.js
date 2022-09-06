@@ -348,6 +348,8 @@ export class AuthorControlCharts {
 export function buildControlAuthorAnalyticsCharts(entriesRaw, analyticsRaw) {
     return __awaiter(this, void 0, void 0, function* () {
         let loading = new Loading();
+        console.log(entriesRaw)
+        console.log(analyticsRaw)
         const colourScale = d3.scaleOrdinal(d3.schemeCategory10);
         const entries = d3.sort(entriesRaw.map((d, i) => { return { "timestamp": new Date(d.timestamp), "pseudonym": d.pseudonym, "point": d.point, "text": d.text, "tags": analyticsRaw[i].tags.map(d => processColour(d)), "matrix": analyticsRaw[i].matrix }; }), d => d.timestamp);
         yield drawCharts(entries);
