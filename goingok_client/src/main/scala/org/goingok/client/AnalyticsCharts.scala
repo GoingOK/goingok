@@ -22,8 +22,16 @@ object AnalyticsCharts extends js.Object {
   /**
    * Builds authors analytics chart
    *
-   * @param entries reflections grouped by group code
+   * @param entries author reflections
    * @param analytics text analytics
    */
   def buildControlAuthorAnalyticsCharts(entries: js.Any, analytics: js.Any): js.Object = js.native
+
+  /**
+   * Builds authors analytics chart
+   *
+   * @param entries   author reflections
+   * @param analytics text analytics
+   */
+  def buildExperimentAuthorAnalyticsCharts(entries: js.Any, analytics: js.Any): js.Object = js.native
 }

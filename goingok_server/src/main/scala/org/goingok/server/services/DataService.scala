@@ -117,7 +117,7 @@ class DataService {
     * @return Vector of reflections
     */
   def getReflectionsForUser(goingokId:UUID): Either[Throwable,Vector[ReflectionEntry]] = {
-    val query = sql"""select timestamp, point, text
+    val query = sql"""select refId, timestamp, point, text
                   from reflections
                   where goingok_id=$goingokId
                   order by timestamp desc""".query[ReflectionEntry]

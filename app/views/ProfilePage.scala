@@ -106,12 +106,12 @@ class ProfilePage(profile:Profile = Profile(), analytics: Vector[AnalyticsAuthor
   /** Creates user chart */
   private def createChart(data:Option[Vector[models.ReflectionEntry]], analytics: Vector[models.AnalyticsAuthorChartsData]) = {
     val refs = data.getOrElse(Vector()).toList
-    val chartData:List[ujson.Obj] = refs.map(r => ujson.Obj("timestamp" -> r.bneDateTimeString, "point" -> r.reflection.point))
+    val chartData:List[ujson.Obj] = refs.map(r => ujson.Obj("refId" -> r.refId, "timestamp" -> r.bneDateTimeString, "point" -> r.reflection.point, "text" -> r.reflection.text))
     val entries:String = ujson.write(chartData)
     if (tester) {
       val analyticsData: List[ujson.Obj] = analytics.map(r => ujson.Obj("name" -> r.name,
         "description" -> r.description,
-        "nodes" -> r.nodes.map(c => ujson.Obj("id" -> c.id,
+        "nodes" -> r.nodes.map(c => ujson.Obj("idx" -> c.id,
           "nodeType" -> c.nodeType,
           "refId" -> c.refId,
           "startIdx" -> c.startIdx,
@@ -123,7 +123,7 @@ class ProfilePage(profile:Profile = Profile(), analytics: Vector[AnalyticsAuthor
           "selected" -> c.selected,
           "properties" -> c.properties
         )).toList,
-        "edges" -> r.edges.map(c => ujson.Obj("id" -> c.id,
+        "edges" -> r.edges.map(c => ujson.Obj("idx" -> c.id,
           "edgeType" -> c.edgeType,
           "source" -> c.source,
           "target" -> c.target,
@@ -137,7 +137,11 @@ class ProfilePage(profile:Profile = Profile(), analytics: Vector[AnalyticsAuthor
         )).toList
       )).toList
       val analyticsEntries: String = ujson.write(analyticsData)
-      script(raw(s"Visualisation.authorControlAnalyticsCharts($entries, $analyticsEntries)"))
+      if (exp){
+        script(raw(s"Visualisation.authorExpAnalyticsCharts($entries, $analyticsEntries)"))
+      } else {
+        script(raw(s"Visualisation.authorControlAnalyticsCharts($entries, $analyticsEntries)"))
+      }
     } else {
       script(raw(s"Visualisation.rpChart($entries)"))
     }

@@ -78,7 +78,7 @@ class ProfileController @Inject()(components: ControllerComponents,profileServic
         logger.warn(s"ChartData: ${chartAnalytics}")
         // for compatibility with prior reflections
         val reflections: Option[Vector[ReflectionEntry]] = analytics match {
-          case Right(analytics) => Some(analytics.refs.map(r => ReflectionEntry(r.timestamp, ReflectionData(r.point, r.text))).reverse)
+          case Right(analytics) => Some(analytics.refs.map(r => ReflectionEntry(r.ref_id, r.timestamp, ReflectionData(r.point, r.text))).reverse)
           case Left(error) => {
             logger.error(error.getMessage)
             None

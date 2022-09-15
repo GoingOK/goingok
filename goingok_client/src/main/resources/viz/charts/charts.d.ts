@@ -1,5 +1,5 @@
 var d3 = require("d3");
-import { IAdminAnalyticsData, ITags } from "../data/data.js";
+import { IAdminAnalyticsData, INodes } from "../data/data.js";
 import { ChartSeriesAxis, ChartTimeAxis, ChartLinearAxis } from "./scales.js";
 import { IHelp } from "./help.js";
 import { IChartPadding, IChartElements, IHistogramChartElements, ChartPadding } from "./render.js";
@@ -85,7 +85,7 @@ export declare class ChartNetwork implements IChart {
     elements: IChartElements;
     padding: IChartPadding;
     click: boolean;
-    simulation: d3.Simulation<ITags, undefined>;
+    simulation: d3.Simulation<INodes, undefined>;
     constructor(id: string, containerClass: string, domain: Date[]);
     addDays(date: Date, days: number): Date;
     resetZoomRange(): void;

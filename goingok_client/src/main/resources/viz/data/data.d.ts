@@ -1,8 +1,11 @@
-export interface IReflectionAuthor {
+export interface IReflection {
+    refId: number;
     timestamp: Date;
-    pseudonym: string;
     point: number;
     text: string;
+}
+export interface IReflectionAuthor extends IReflection {
+    pseudonym: string;
 }
 export interface IAdminAnalyticsData {
     group: string;
@@ -46,6 +49,7 @@ export interface ITimelineData extends IReflectionAuthor {
     group: string;
 }
 export declare class TimelineData implements ITimelineData {
+    refId: number;
     timestamp: Date;
     pseudonym: string;
     point: number;
@@ -97,25 +101,34 @@ export declare class ClickTextData implements IClickTextData {
     };
     constructor(clickStat: IDataStats | number, dataStat: IDataStats | number, clickGroup: string, dataGroup: string);
 }
-export interface ITags extends d3.SimulationNodeDatum {
-    start_index?: number;
-    tag: string;
-    phrase: string;
-    colour?: string;
-    end_index?: number;
+export interface INodes extends d3.SimulationNodeDatum {
+    idx: number;
+    nodeType: string;
+    refId: number;
+    startIdx?: number;
+    endIdx?: number;
+    expression: string;
+    labelType: string;
+    name: string;
+    description: string;
     selected?: boolean;
+    properties: any;
 }
-export interface ILinks<T> extends d3.SimulationLinkDatum<T> {
+export interface IEdges<T> extends d3.SimulationLinkDatum<T> {
+    idx: number;
+    edgeType: string;
+    directional: boolean;
     weight: number;
+    labelType: string;
+    name: string;
+    description: string;
+    selected?: boolean;
+    properties: any;
     isReflection?: boolean;
 }
 export interface IReflectionAnalytics {
-    tags: ITags[];
-    matrix: number[][];
-}
-export interface IRelfectionAuthorAnalytics extends IReflectionAuthor, IReflectionAnalytics {
-}
-export interface INetworkData {
-    nodes: ITags[];
-    links: ILinks<ITags>[];
+    name: string;
+    description: string;
+    nodes: INodes[];
+    edges: IEdges<INodes>[];
 }

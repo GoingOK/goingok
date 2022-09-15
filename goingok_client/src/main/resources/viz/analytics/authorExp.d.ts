@@ -1,12 +1,10 @@
 import { ChartTimeNetwork, ChartNetwork } from "../charts/charts.js";
 import { IAuthorExperimentalInteractions, AuthorExperimentalInteractions } from "../charts/interactions.js";
-import { IRelfectionAuthorAnalytics, INetworkData, ITags, IReflectionAnalytics, IReflectionAuthor } from "../data/data.js";
+import { IReflectionAnalytics, IReflection, INodes } from "../data/data.js";
 import { AuthorControlCharts, IAuthorControlCharts } from "./authorControl.js";
 export interface IAuthorExperimentalCharts extends IAuthorControlCharts {
     interactions: IAuthorExperimentalInteractions;
-    allEntries: IRelfectionAuthorAnalytics[];
-    allNetworkData: INetworkData;
-    allTags: ITags[];
+    allAnalytics: IReflectionAnalytics[];
     timelineChart: ChartTimeNetwork;
     networkChart: ChartNetwork;
     sorted: string;
@@ -16,21 +14,19 @@ export interface IAuthorExperimentalCharts extends IAuthorControlCharts {
 }
 export declare class AuthorExperimentalCharts extends AuthorControlCharts implements IAuthorExperimentalCharts {
     interactions: AuthorExperimentalInteractions;
-    allEntries: IRelfectionAuthorAnalytics[];
-    allNetworkData: INetworkData;
-    allTags: ITags[];
+    allAnalytics: IReflectionAnalytics[];
     timelineChart: ChartTimeNetwork;
     networkChart: ChartNetwork;
     sorted: string;
-    preloadTags(entries: IRelfectionAuthorAnalytics[], enable?: boolean): ITags[];
+    preloadTags(entries: IReflectionAnalytics[], enable?: boolean): INodes[];
     handleTags(): void;
     handleTagsColours(): void;
     handleReflectionsSort(): void;
     handleFilterButton(): void;
-    private getUpdatedEntriesData;
+    private getUpdatedAnalyticsData;
     private getUpdatedNetworkData;
-    renderTimeline(chart: ChartTimeNetwork, data: IRelfectionAuthorAnalytics[]): ChartTimeNetwork;
-    renderNetwork(chart: ChartNetwork, data: INetworkData): ChartNetwork;
-    renderReflections(data: IRelfectionAuthorAnalytics[]): void;
+    renderTimeline(chart: ChartTimeNetwork, data: IReflection[], analytics: IReflectionAnalytics): ChartTimeNetwork;
+    renderNetwork(chart: ChartNetwork, data: IReflectionAnalytics): ChartNetwork;
+    renderReflections(data: IReflection[]): void;
 }
-export declare function buildExperimentAuthorAnalyticsCharts(entriesRaw: IReflectionAuthor[], analyticsRaw: IReflectionAnalytics[]): Promise<void>;
+export declare function buildExperimentAuthorAnalyticsCharts(entriesRaw: IReflection[], analyticsRaw: IReflectionAnalytics[]): Promise<void>;

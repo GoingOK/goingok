@@ -2,30 +2,32 @@ var d3 = require("d3");
 import { ChartNetwork, ChartTimeNetwork } from "../charts/charts.js";
 import { IHelp, Help } from "../charts/help.js";
 import { IAuthorControlInteractions, AuthorControlInteractions } from "../charts/interactions.js";
-import { IRelfectionAuthorAnalytics, ITags, INetworkData, IReflectionAuthor, IReflectionAnalytics } from "../data/data.js";
+import { IReflectionAuthor, IReflectionAnalytics, IReflection, INodes } from "../data/data.js";
 export interface IAuthorControlCharts {
     help: IHelp;
     interactions: IAuthorControlInteractions;
+    allNodes: INodes[];
+    allEntries: IReflection[];
     resizeTimeline(): void;
-    preloadTags(entries: IRelfectionAuthorAnalytics[], enable?: boolean): ITags[];
-    processNetworkData(chart: ChartNetwork, entries: IRelfectionAuthorAnalytics[]): INetworkData;
-    processSimulation(chart: ChartNetwork, data: INetworkData): void;
-    processTimelineSimulation(chart: ChartTimeNetwork, centerX: number, centerY: number, nodes: ITags[]): void;
-    renderTimeline(chart: ChartTimeNetwork, data: IReflectionAuthor[]): ChartTimeNetwork;
-    renderNetwork(chart: ChartNetwork, data: INetworkData): ChartNetwork;
+    preloadTags(entries: IReflectionAnalytics[], enable?: boolean): INodes[];
+    processSimulation(chart: ChartNetwork, data: IReflectionAnalytics): void;
+    processTimelineSimulation(chart: ChartTimeNetwork, centerX: number, centerY: number, nodes: INodes[]): void;
+    renderTimeline(chart: ChartTimeNetwork, data: IReflection[], analytics: IReflectionAnalytics): ChartTimeNetwork;
+    renderNetwork(chart: ChartNetwork, data: IReflectionAnalytics): ChartNetwork;
     renderReflections(data: IReflectionAuthor[]): void;
 }
 export declare class AuthorControlCharts implements IAuthorControlCharts {
     help: Help;
     interactions: AuthorControlInteractions;
+    allNodes: INodes[];
+    allEntries: IReflection[];
     resizeTimeline(): void;
-    preloadTags(entries: IRelfectionAuthorAnalytics[], enable?: boolean): ITags[];
-    processNetworkData(chart: ChartNetwork, entries: IRelfectionAuthorAnalytics[]): INetworkData;
-    processSimulation(chart: ChartNetwork, data: INetworkData): d3.Simulation<ITags, undefined>;
-    processTimelineSimulation(chart: ChartTimeNetwork, centerX: number, centerY: number, nodes: ITags[]): void;
-    renderTimeline(chart: ChartTimeNetwork, data: IRelfectionAuthorAnalytics[]): ChartTimeNetwork;
-    renderNetwork(chart: ChartNetwork, data: INetworkData): ChartNetwork;
-    renderReflections(data: IRelfectionAuthorAnalytics[]): void;
-    processReflectionsText(data: IRelfectionAuthorAnalytics): string;
+    preloadTags(analytics: IReflectionAnalytics[], enable?: boolean): INodes[];
+    processSimulation(chart: ChartNetwork, data: IReflectionAnalytics): d3.Simulation<INodes, undefined>;
+    processTimelineSimulation(chart: ChartTimeNetwork, centerX: number, centerY: number, nodes: INodes[]): void;
+    renderTimeline(chart: ChartTimeNetwork, data: IReflection[], analytics: IReflectionAnalytics): ChartTimeNetwork;
+    renderNetwork(chart: ChartNetwork, data: IReflectionAnalytics): ChartNetwork;
+    renderReflections(data: IReflection[]): void;
+    processReflectionsText(data: IReflection): string;
 }
-export declare function buildControlAuthorAnalyticsCharts(entriesRaw: IReflectionAuthor[], analyticsRaw: IReflectionAnalytics[]): Promise<void>;
+export declare function buildControlAuthorAnalyticsCharts(entriesRaw: IReflection[], analyticsRaw: IReflectionAnalytics[]): Promise<void>;

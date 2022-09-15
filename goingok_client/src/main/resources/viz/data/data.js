@@ -44,6 +44,7 @@ export class AdminAnalyticsDataStats extends AdminAnalyticsData {
 }
 export class TimelineData {
     constructor(data, colour, group) {
+        this.refId = data.refId;
         this.timestamp = data.timestamp;
         this.pseudonym = data.pseudonym;
         this.point = data.point;

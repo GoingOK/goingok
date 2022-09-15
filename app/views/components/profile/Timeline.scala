@@ -14,7 +14,7 @@ object Timeline {
           )
         ),
         h6(`class` := "card-subtitle mb-2 instructions"),
-        div(`class` := "chart-container timeline")
+        div(`class` := "chart-container")
       )
     )
   }
