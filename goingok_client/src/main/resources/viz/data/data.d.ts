@@ -6,23 +6,26 @@ export interface IReflection {
 }
 export interface IReflectionAuthor extends IReflection {
     pseudonym: string;
+    selected: boolean;
 }
 export interface IAdminAnalyticsData {
     group: string;
     value: IReflectionAuthor[];
-    creteDate: Date;
+    createDate: Date;
     colour: string;
     selected: boolean;
-    getUsersData(): AdminAnalyticsData;
+    stats: IDataStats[];
+    getStat(stat: string): IDataStats;
 }
 export declare class AdminAnalyticsData implements IAdminAnalyticsData {
     group: string;
     value: IReflectionAuthor[];
-    creteDate: Date;
+    createDate: Date;
     colour: string;
     selected: boolean;
+    stats: IDataStats[];
     constructor(group: string, value: IReflectionAuthor[], createDate?: Date, colour?: string, selected?: boolean);
-    getUsersData(): AdminAnalyticsData;
+    getStat(stat: string): IDataStats;
 }
 export interface IDataStats {
     stat: string;
@@ -35,15 +38,6 @@ export declare class DataStats implements IDataStats {
     value: number | Date;
     constructor(stat: string, displayName: string, value: number | Date);
 }
-export interface IAdminAnalyticsDataStats extends IAdminAnalyticsData {
-    stats: IDataStats[];
-    getStat(stat: string): IDataStats;
-}
-export declare class AdminAnalyticsDataStats extends AdminAnalyticsData implements IAdminAnalyticsDataStats {
-    stats: IDataStats[];
-    constructor(entries: IAdminAnalyticsData);
-    getStat(stat: string): IDataStats;
-}
 export interface ITimelineData extends IReflectionAuthor {
     colour: string;
     group: string;
@@ -54,6 +48,7 @@ export declare class TimelineData implements ITimelineData {
     pseudonym: string;
     point: number;
     text: string;
+    selected: boolean;
     colour: string;
     group: string;
     constructor(data: IReflectionAuthor, colour: string, group: string);
@@ -126,9 +121,27 @@ export interface IEdges<T> extends d3.SimulationLinkDatum<T> {
     properties: any;
     isReflection?: boolean;
 }
-export interface IReflectionAnalytics {
+export interface IAnalytics {
     name: string;
     description: string;
     nodes: INodes[];
     edges: IEdges<INodes>[];
+}
+export interface IReflectionAnalytics extends IReflection {
+    nodes: INodes[];
+}
+export interface ITags {
+    name: string;
+    properties: any;
+    selected?: boolean;
+}
+export interface IAuthorAnalyticsData {
+    reflections: IReflectionAnalytics[];
+    analytics: IAnalytics;
+}
+export declare class AuthorAnalyticsData implements IAuthorAnalyticsData {
+    reflections: IReflectionAnalytics[];
+    analytics: IAnalytics;
+    constructor(reflections: IReflection[], analytics: IAnalytics, colourScale: Function);
+    private processColour;
 }

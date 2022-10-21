@@ -2,7 +2,7 @@ package views
 
 
 import org.goingok.server.Config
-import org.goingok.server.data.models.AnalyticsAuthorChartsData
+import org.goingok.server.data.models.{AnalyticsAuthorChartsData, AnalyticsChartEdge, AnalyticsChartNode}
 import org.goingok.server.data.{Profile, UiMessage, models}
 import scalatags.Text.all._
 import scalatags.Text.{TypedTag, tags}
@@ -40,7 +40,7 @@ class ProfilePage(profile:Profile = Profile(), analytics: Vector[AnalyticsAuthor
                               "When finished, click the 'save' button to record your reflection.")
                         ),
                         if (exp) {
-                          div(id := "sort", `class` := "col-md-12 mt-3",
+                          div(id := "sort", `class` := "col-md-12",
                             Sort.display()
                           )
                         } else {},
@@ -109,32 +109,15 @@ class ProfilePage(profile:Profile = Profile(), analytics: Vector[AnalyticsAuthor
     val chartData:List[ujson.Obj] = refs.map(r => ujson.Obj("refId" -> r.refId, "timestamp" -> r.bneDateTimeString, "point" -> r.reflection.point, "text" -> r.reflection.text))
     val entries:String = ujson.write(chartData)
     if (tester) {
-      val analyticsData: List[ujson.Obj] = analytics.map(r => ujson.Obj("name" -> r.name,
+      val analyticsData: ujson.Obj = ujson.Obj("name" -> analytics.head.name,
+        "description" -> analytics.head.description,
+        "nodes" -> parseNodes(analytics.head.nodes),
+        "edges" -> parseEdges(analytics.head.edges)
+      )
+      val analyticsDataMultipleCharts: List[ujson.Obj] = analytics.map(r => ujson.Obj("name" -> r.name,
         "description" -> r.description,
-        "nodes" -> r.nodes.map(c => ujson.Obj("idx" -> c.id,
-          "nodeType" -> c.nodeType,
-          "refId" -> c.refId,
-          "startIdx" -> c.startIdx,
-          "endIdx" -> c.endIdx,
-          "expression" -> c.expression,
-          "labelType" -> c.labelType,
-          "name" -> c.name,
-          "description" -> c.description,
-          "selected" -> c.selected,
-          "properties" -> c.properties
-        )).toList,
-        "edges" -> r.edges.map(c => ujson.Obj("idx" -> c.id,
-          "edgeType" -> c.edgeType,
-          "source" -> c.source,
-          "target" -> c.target,
-          "directional" -> c.directional,
-          "weight" -> c.weight,
-          "labelType" -> c.labelType,
-          "name" -> c.name,
-          "description" -> c.description,
-          "selected" -> c.selected,
-          "properties" -> c.properties
-        )).toList
+        "nodes" -> parseNodes(r.nodes),
+        "edges" -> parseEdges(r.edges)
       )).toList
       val analyticsEntries: String = ujson.write(analyticsData)
       if (exp){
@@ -145,6 +128,36 @@ class ProfilePage(profile:Profile = Profile(), analytics: Vector[AnalyticsAuthor
     } else {
       script(raw(s"Visualisation.rpChart($entries)"))
     }
+  }
+
+  private def parseNodes(nodes: Vector[AnalyticsChartNode]): List[ujson.Obj] = {
+    nodes.map(c => ujson.Obj("idx" -> c.id,
+      "nodeType" -> c.nodeType,
+      "refId" -> c.refId,
+      "startIdx" -> c.startIdx,
+      "endIdx" -> c.endIdx,
+      "expression" -> c.expression,
+      "labelType" -> c.labelType,
+      "name" -> c.name,
+      "description" -> c.description,
+      "selected" -> c.selected,
+      "properties" -> c.properties
+    )).toList
+  }
+
+  private def parseEdges(edges: Vector[AnalyticsChartEdge]): List[ujson.Obj] = {
+    edges.map(c => ujson.Obj("idx" -> c.id,
+      "edgeType" -> c.edgeType,
+      "source" -> c.source,
+      "target" -> c.target,
+      "directional" -> c.directional,
+      "weight" -> c.weight,
+      "labelType" -> c.labelType,
+      "name" -> c.name,
+      "description" -> c.description,
+      "selected" -> c.selected,
+      "properties" -> c.properties
+    )).toList
   }
 }
 

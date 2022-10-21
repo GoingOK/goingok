@@ -44,20 +44,26 @@ object Charts {
         )
       ),
       if(exp){
-        div(`class`:="col-md-12 mt-3", id:="sort",
+        div(`class`:="col-md-12 mt-3", id:="sort-groups",
           div(`class`:="card",
             div(`class`:="card-body",
               h6(`class`:="card-subtitle",
                 span(`class`:= "mr-2", "Sort groups by:"),
                 div(`class`:="btn-group btn-group-toggle", data("toggle"):="buttons",
                   label(`class`:="btn btn-light active",
-                    input(`type`:="radio", name:="sort", value:="date", checked, "Create date")
+                    input(`type`:="radio", name:="sort", value:="date", "Create date",
+                      i(`class`:= "fa fa-chevron-down")
+                    )
                   ),
                   label(`class`:="btn btn-light",
-                    input(`type`:="radio", name:="sort", value:="name", checked, "Name")
+                    input(`type`:="radio", name:="sort", value:="name", "Name",
+                      i(`class`:= "fa fa-chevron-down d-none")
+                    )
                   ),
                   label(`class`:="btn btn-light",
-                    input(`type`:="radio", name:="sort", value:="mean", checked, "Mean")
+                    input(`type`:="radio", name:="sort", value:="mean", "Mean",
+                      i(`class`:= "fa fa-chevron-down d-none")
+                    )
                   )
                 )
               )
@@ -102,14 +108,21 @@ object Charts {
                 i(`class`:="fas fa-question-circle")
               )
             ),
-            h6(`class`:="card-subtitle mb-2 instructions"),
-            div(`class`:="row mt-3",
-              div(id:="timeline-plot", `class`:="btn-group btn-group-toggle mx-auto", data("toggle"):="buttons",
-                label(`class`:="btn btn-light active",
-                  input(`type`:="radio", name:="plot", value:="scatter", "Scatter Plot")
+            h6(`class`:="card-subtitle mb-2",
+              p(`class` := "instructions mb-1"),
+              p(`class` := "text-muted mb-0"),
+              div(`class` := "input-group input-group-sm zoom-buttons",
+                span(`class` := "mr-2 my-auto", "zoom:"),
+                div(`class` := "input-group-prepend",
+                  div(`class` := "input-group",
+                    input(`class` := "btn btn-secondary btn-sm", `type` := "button", value := "-", id := "zoom-minus")
+                  )
                 ),
-                label(`class`:="btn btn-light",
-                  input(`type`:="radio", name:="plot", value:="density", "Density Plot")
+                input(`type` := "text", value := "100%", `class` := "form-control text-center", id := "zoom-number", disabled := "True"),
+                div(`class` := "input-group-append",
+                  div(`class` := "input-group",
+                    input(`class` := "btn btn-secondary btn-sm", `type` := "button", value := "+", id := "zoom-plus")
+                  )
                 )
               )
             ),
@@ -126,7 +139,28 @@ object Charts {
                 i(`class`:="fas fa-question-circle")
               )
             ),
-            h6(`class`:="card-subtitle mb-2 instructions")
+            h6(`class`:="card-subtitle d-flex mb-2",
+              div(`class` := "col-md-6 pl-0 text-muted"),
+              div(`class` := "col-md-6 d-flex",
+                div(id := "sort-users", `class` := "ml-auto",
+                  span("Sort users by:"),
+                  div(`class` := "btn-group btn-group-toggle", data("toggle") := "buttons",
+                    label(`class` := "btn btn-light active",
+                      input(`type` := "radio", name := "sort", value := "name", "Name",
+                        i(`class` := "fa fa-chevron-down")
+                      )
+                    ),
+                    label(`class` := "btn btn-light",
+                      input(`type` := "radio", name := "sort", value := "point", "Reflection state point",
+                        i(`class` := "fa fa-chevron-down d-none")
+                      )
+                    )
+                  )
+                )
+              )
+            ),
+            ul(`class` := "nav nav-tabs"),
+            div(`class` := "tab-content users-tab-pane")
           )
         )
       )

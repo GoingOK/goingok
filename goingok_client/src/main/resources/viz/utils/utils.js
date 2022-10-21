@@ -18,3 +18,17 @@ export function caculateSum(arr) {
 export function calculateMean(arr) {
     return caculateSum(arr) / arr.length;
 }
+export function getDOMRect(id) {
+    return document.querySelector(id).getBoundingClientRect();
+}
+export function addDays(date, days) {
+    let result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+}
+export function minDate(arr) {
+    return new Date(Math.min.apply(null, arr));
+}
+export function maxDate(arr) {
+    return new Date(Math.max.apply(null, arr));
+}

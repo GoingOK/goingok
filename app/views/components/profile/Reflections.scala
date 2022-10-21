@@ -8,7 +8,7 @@ object Reflections {
     div(`class` := "card",
       div(`class` := "card-body",
         h5(`class` := "card-title",
-          span("Your reflections"),
+          span("Reflections"),
           button(`type` := "button", `class` := "btn btn-light btn-sm float-right",
             i(`class` := "fas fa-question-circle")
           )

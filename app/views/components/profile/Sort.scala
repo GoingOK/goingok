@@ -7,14 +7,18 @@ object Sort {
   def display(): TypedTag[String] = {
     div(`class` := "card",
       div(`class` := "card-body",
-        h6(`class` := "card-subtitle d-flex",
-          span(`class` := "my-auto", "Sort reflections by"),
+        h6(`class` := "card-subtitle",
+          span(`class` := "my-auto", "Sort reflections by:"),
           div(`class` := "btn-group btn-group-toggle", data("toggle") := "buttons",
             label(`class` := "btn btn-light active",
-              input(`type` := "radio", name := "sort", value := "date", checked, "Date")
+              input(`type` := "radio", name := "sort", value := "date", checked, "Date",
+                i(`class`:= "fa fa-chevron-down")
+              )
             ),
             label(`class` := "btn btn-light",
-              input(`type` := "radio", name := "sort", value := "point", checked, "Point")
+              input(`type` := "radio", name := "sort", value := "point", checked, "Point",
+                i(`class`:= "fa fa-chevron-down d-none")
+              )
             )
           )
         )

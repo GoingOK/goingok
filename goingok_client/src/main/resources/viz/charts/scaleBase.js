@@ -1,6 +1,7 @@
 var d3 = require("d3");
 export class ChartSeriesAxis {
-    constructor(label, domain, range, position) {
+    constructor(id, label, domain, range, position) {
+        this.id = id;
         this.label = label;
         this.scale = d3.scaleBand()
             .domain(domain)
@@ -16,10 +17,17 @@ export class ChartSeriesAxis {
             this.axis = d3.axisBottom(this.scale);
         }
     }
+    transition(data) {
+        this.scale.domain(data);
+        d3.select(`#${this.id} .x-axis`).transition()
+            .duration(750)
+            .call(this.axis);
+    }
     ;
 }
 export class ChartLinearAxis {
-    constructor(label, domain, range, position, isGoingOk = true) {
+    constructor(id, label, domain, range, position, isGoingOk = true) {
+        this.id = id;
         this.label = label;
         this.scale = d3.scaleLinear()
             .domain([d3.min(domain) < 0 ? d3.min(domain) : 0, d3.max(domain)])
@@ -42,6 +50,12 @@ export class ChartLinearAxis {
                 .tickFormat(d => labels.get(d));
         }
     }
+    transition(data) {
+        this.scale.domain(data);
+        d3.select(`#${this.id} .y-axis`).transition()
+            .duration(750)
+            .call(this.axis);
+    }
     ;
     setThresholdAxis(tDistressed, tSoaring) {
         return d3.axisRight(this.scale)
@@ -50,12 +64,19 @@ export class ChartLinearAxis {
     }
 }
 export class ChartTimeAxis {
-    constructor(label, domain, range) {
+    constructor(id, label, domain, range) {
+        this.id = id;
         this.label = label;
         this.scale = d3.scaleTime()
             .domain(d3.extent(domain))
             .range(range);
         this.axis = d3.axisBottom(this.scale);
+    }
+    transition(data) {
+        this.scale.domain(data);
+        d3.select(`#${this.id} .x-axis`).transition()
+            .duration(750)
+            .call(this.axis);
     }
     ;
 }
