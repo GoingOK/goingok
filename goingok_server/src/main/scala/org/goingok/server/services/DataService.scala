@@ -203,7 +203,7 @@ class DataService {
   }
 
   def getAuthorReflectionsAndGroup(goingok_id:UUID): Either[Throwable,DbResults.Result] = {
-    val query = sql"""select u.group_code, gc.created_timestamp, r.ref_Id, r.timestamp, r.point, r.text, u.pseudonym
+    val query = sql"""select u.group_code, gc.created_timestamp, u.pseudonym, r.ref_Id, r.timestamp, r.point, r.text
                   from users u,reflections r, group_codes gc
                   where u.goingok_id = r.goingok_id
                     and u.group_code = gc.group_code
