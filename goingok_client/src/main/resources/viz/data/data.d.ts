@@ -14,8 +14,10 @@ export interface IAdminAnalyticsData {
     createDate: Date;
     colour: string;
     selected: boolean;
-    stats: IDataStats[];
-    getStat(stat: string): IDataStats;
+    usersTotal: number;
+    refTotal: number;
+    ruRate: number;
+    mean: number;
 }
 export declare class AdminAnalyticsData implements IAdminAnalyticsData {
     group: string;
@@ -23,9 +25,11 @@ export declare class AdminAnalyticsData implements IAdminAnalyticsData {
     createDate: Date;
     colour: string;
     selected: boolean;
-    stats: IDataStats[];
+    usersTotal: number;
+    refTotal: number;
+    ruRate: number;
+    mean: number;
     constructor(group: string, value: IReflectionAuthor[], createDate?: Date, colour?: string, selected?: boolean);
-    getStat(stat: string): IDataStats;
 }
 export interface IDataStats {
     stat: string;

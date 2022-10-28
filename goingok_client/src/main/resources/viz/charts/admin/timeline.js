@@ -33,10 +33,12 @@ export class Timeline extends ChartTime {
         if (_this.data.length == 0) {
             d3.selectAll(`#${_this.id} .card-subtitle span`)
                 .html("");
+            d3.selectAll(`#${_this.id} .card-subtitle .text-muted`)
+                .html("Add group codes from the left sidebar");
         }
         else {
             d3.select(`#${_this.id} .card-subtitle .instructions`)
-                .html(_this.data.length == 1 ? `Filtering by <span class="badge badge-pill badge-info pointer">${_this.data[0].group} <i class="fas fa-window-close"></i></span>` : null);
+                .html(_this.data.length === 1 ? `Filtering by <span class="badge badge-pill badge-info pointer">${_this.data[0].group} <i class="fas fa-window-close"></i></span>` : null);
             d3.select(`#${_this.id} .card-subtitle .text-muted`)
                 .html(`The oldest reflection was on ${_this.minTimelineDate().toDateString()}${_this.data.length != 1 ? ` in the group code ${_this.data[d3.minIndex(_this.data.map(d => d3.min(d.value.map(d => d.timestamp))))].group}` : ""}, while
                     the newest reflection was on ${_this.maxTimelineDate().toDateString()}${_this.data.length != 1 ? ` in the group code ${_this.data[d3.maxIndex(_this.data.map(d => d3.max(d.value.map(d => d.timestamp))))].group}` : ""}`);
@@ -72,8 +74,8 @@ export class Timeline extends ChartTime {
                 return yTooltip;
             }
             ;
-            _this.tooltip.appendLine(0, _this.y.scale(d.point), _this.x.scale(d.timestamp), _this.y.scale(d.point), d.colour);
-            _this.tooltip.appendLine(_this.x.scale(d.timestamp), _this.y.scale(0), _this.x.scale(d.timestamp), _this.y.scale(d.point), d.colour);
+            _this.tooltip.appendLine(0, _this.y.scale(d.point), _this.x.scale(d.timestamp) - 10, _this.y.scale(d.point), d.colour);
+            _this.tooltip.appendLine(_this.x.scale(d.timestamp), _this.y.scale(0), _this.x.scale(d.timestamp), _this.y.scale(d.point) + 10, d.colour);
         };
         const onMouseout = function () {
             _this.elements.svg.select(".tooltip-container").transition()
@@ -102,8 +104,12 @@ export class Timeline extends ChartTime {
         //Enable zoom
         const zoomed = function (e) {
             if (e.sourceEvent !== null) {
-                if (e.sourceEvent.type === "dblclick" || e.sourceEvent.type === "wheel")
+                if (e.sourceEvent.type === "dblclick")
                     return;
+                if (e.sourceEvent.type === "wheel") {
+                    window.scrollBy({ top: e.sourceEvent.deltaY, behavior: 'smooth' });
+                    return;
+                }
             }
             let newChartRange = [0, _this.width - _this.padding.yAxis].map(d => e.transform.applyX(d));
             _this.x.scale.rangeRound(newChartRange);

@@ -14,12 +14,12 @@ export class Totals {
         let _this = this;
         let users = d3.select("#users-total .card-title span").datum();
         d3.select("#users-total .card-title span")
-            .datum(d3.sum(_this.data.map(d => d.getStat("usersTotal").value)))
+            .datum(d3.sum(_this.data.map(d => d.usersTotal)))
             .transition()
             .duration(1000)
             .tween("html", function () {
             let oldUsers = users == undefined ? 0 : users;
-            let newUsers = d3.sum(_this.data.map(d => d.getStat("usersTotal").value));
+            let newUsers = d3.sum(_this.data.map(d => d.usersTotal));
             return function (t) {
                 if (oldUsers < newUsers) {
                     this.innerHTML = (oldUsers + Math.round(t * (newUsers - oldUsers))).toString();
@@ -31,12 +31,12 @@ export class Totals {
         });
         let refs = d3.select("#ref-total .card-title span").datum();
         d3.select("#ref-total .card-title span")
-            .datum(d3.sum(_this.data.map(d => d.getStat("refTotal").value)))
+            .datum(d3.sum(_this.data.map(d => d.refTotal)))
             .transition()
             .duration(1000)
             .tween("html", function () {
             let oldRefs = refs == undefined ? 0 : refs;
-            let newRefs = d3.sum(_this.data.map(d => d.getStat("refTotal").value));
+            let newRefs = d3.sum(_this.data.map(d => d.refTotal));
             return function (t) {
                 if (oldRefs < newRefs) {
                     this.innerHTML = (oldRefs + Math.round(t * (newRefs - oldRefs))).toString();
@@ -48,12 +48,12 @@ export class Totals {
         });
         let ruRate = d3.select("#ru-rate .card-title span").datum();
         d3.select("#ru-rate .card-title span")
-            .datum(_this.data.length != 0 ? Math.round(d3.mean(_this.data.map(d => d.getStat("ruRate").value * 100))) / 100 : 0)
+            .datum(_this.data.length != 0 ? Math.round(d3.mean(_this.data.map(d => (d.ruRate) * 100))) / 100 : 0)
             .transition()
             .duration(1000)
             .tween("html", function () {
             let oldRURate = ruRate == undefined ? 0 : ruRate;
-            let newRURate = _this.data.length != 0 ? Math.round(d3.mean(_this.data.map(d => d.getStat("ruRate").value * 100))) / 100 : 0;
+            let newRURate = _this.data.length != 0 ? Math.round(d3.mean(_this.data.map(d => (d.ruRate) * 100))) / 100 : 0;
             return function (t) {
                 if (oldRURate < newRURate) {
                     this.innerHTML = (oldRURate + (t * (newRURate - oldRURate))).toFixed(2);

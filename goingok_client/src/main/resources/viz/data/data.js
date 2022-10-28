@@ -1,28 +1,16 @@
 import { calculateMean, groupBy } from "../utils/utils.js";
 export class AdminAnalyticsData {
     constructor(group, value, createDate = undefined, colour = undefined, selected = true) {
-        this.stats = [];
         this.group = group;
         this.value = value;
         this.createDate = createDate;
         this.colour = colour;
         this.selected = selected;
         let uniqueUsers = groupBy(value, "pseudonym");
-        this.stats.push(new DataStats("usersTotal", "Users", uniqueUsers.length));
-        this.stats.push(new DataStats("refTotal", "Reflections", value.length));
-        this.stats.push(new DataStats("mean", "Mean", Math.round(calculateMean(value.map(r => r.point)))));
-        this.stats.push(new DataStats("oldRef", "Oldest reflection", new Date(Math.min.apply(null, value.map(r => new Date(r.timestamp))))));
-        this.stats.push(new DataStats("newRef", "Newest reflection", new Date(Math.max.apply(null, value.map(r => new Date(r.timestamp))))));
-        this.stats.push(new DataStats("ruRate", "Reflections per user", Math.round(value.length / uniqueUsers.length * 100) / 100));
-    }
-    getStat(stat) {
-        var exists = this.stats.find(d => d.stat == stat);
-        if (exists != undefined) {
-            return exists;
-        }
-        else {
-            return new DataStats("na", "Not found", 0);
-        }
+        this.usersTotal = uniqueUsers.length;
+        this.refTotal = value.length;
+        this.mean = Math.round(calculateMean(value.map(r => r.point)));
+        this.ruRate = Math.round(value.length / uniqueUsers.length * 100) / 100;
     }
 }
 export class DataStats {

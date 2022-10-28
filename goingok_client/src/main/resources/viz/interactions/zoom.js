@@ -32,6 +32,10 @@ export class Zoom {
             .attr("transform", `translate(${this.chart.padding.yAxis}, ${this.chart.height - 30})`);
     }
     ;
+    resetZoom() {
+        this.k = 1;
+        this.updateZoomNumber();
+    }
     handleZoom() {
         d3.select(`#${this.chart.id} #zoom-minus`).on("click", () => {
             this.k = this.k - 1;

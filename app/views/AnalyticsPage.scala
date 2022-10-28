@@ -70,7 +70,7 @@ class AnalyticsPage(user:Option[User]=None, analytics: Analytics, tester: Boolea
   private def createChart(data:Seq[models.AnalyticsChartsData]) = {
     val chartData:List[ujson.Obj] = data.toList.map(r => ujson.Obj("group" -> r.group,
       "value" -> r.value.map(c =>
-        ujson.Obj("timestamp" -> c.timestamp, "pseudonym" -> c.pseudonym, "point" -> c.reflection.point, "text" -> c.reflection.text)),
+        ujson.Obj("timestamp" -> c.reflectionEntry.timestamp, "pseudonym" -> c.pseudonym, "point" -> c.reflectionEntry.reflection.point, "text" -> c.reflectionEntry.reflection.text)),
       "createDate" -> r.timestamp))
     val entries:String = ujson.write(chartData)
     if (exp){

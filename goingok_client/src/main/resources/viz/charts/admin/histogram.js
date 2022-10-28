@@ -40,8 +40,8 @@ export class Histogram extends ChartSeries {
     }
     render() {
         d3.select(`#${this.id} .card-subtitle`)
-            .html(this.data.length == 1 ? `Filtering by <span class="badge badge-pill badge-info pointer">${this.data[0].group} <i class="fas fa-window-close"></i></span>` :
-            "");
+            .html(this.data.length === 1 ? `Filtering by <span class="badge badge-pill badge-info pointer">${this.data[0].group} <i class="fas fa-window-close"></i></span>` :
+            this.data.length === 0 ? "Add group codes form the left sidebar" : "");
         //Process histogram
         this.elements.contentContainer.selectAll(`.${this.id}-histogram-container`)
             .data(this.data)
@@ -91,7 +91,7 @@ export class Histogram extends ChartSeries {
         const onMouseover = (e, d) => {
             this.tooltip.appendTooltipContainer();
             let tooltipBox = this.tooltip.appendTooltipText(d.bin.x0 == 0 ? "Distressed" : d.bin.x1 == 100 ? "Soaring" : "GoingOK", [new TooltipValues("Total", `${d.bin.length} (${d.percentage}%)`)]);
-            this.tooltip.positionTooltipContainer(this.x.scale(d.group) + this.bandwidth(d.bin.length), d.bin.x1 > 25 ? this.y.scale(d.bin.x1) : this.y.scale(d.bin.x0) - tooltipBox.node().getBBox().height);
+            this.tooltip.positionTooltipContainer(this.x.scale(d.group) + this.bandwidth(d.percentage), d.bin.x1 > 25 ? this.y.scale(d.bin.x1) : this.y.scale(d.bin.x0) - tooltipBox.node().getBBox().height);
         };
         const onMouseout = () => {
             this.elements.svg.select(".tooltip-container").transition()

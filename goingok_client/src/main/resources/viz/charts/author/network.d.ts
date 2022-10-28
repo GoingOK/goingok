@@ -9,7 +9,7 @@ export declare class Network extends ChartNetwork {
     tooltip: Tooltip<this>;
     zoom: Zoom<this>;
     help: Help;
-    clicking: Click<this>;
+    clicking: ClickNetwork<this>;
     simulation: d3.Simulation<INodes, undefined>;
     extend?: Function;
     private _data;
@@ -17,8 +17,13 @@ export declare class Network extends ChartNetwork {
     set data(entries: IAnalytics);
     constructor(data: IAnalytics, domain: Date[]);
     render(): void;
-    resetZoomRange(): void;
     getTooltipNodes(data: IAnalytics, nodeData: INodes): INodes[];
+    openNodes(data: INodes[]): void;
+    closeNodes(): void;
     private processSimulation;
     private filterData;
 }
+declare class ClickNetwork<T extends Network> extends Click<T> {
+    removeClick(): void;
+}
+export {};

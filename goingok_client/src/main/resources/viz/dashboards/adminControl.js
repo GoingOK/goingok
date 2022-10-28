@@ -78,7 +78,7 @@ export function buildControlAdminAnalyticsCharts(entriesRaw) {
             new TutorialData(".card-title button", "Click the help symbol in any chart to get additional information"),
             new TutorialData("#users .bar", "Hover for information on demand"),
             new TutorialData("#histogram .histogram-rect", "Hover for information on demand"),
-            new TutorialData("#timeline-plot", "Swap chart types. Both charts have zoom available")]);
+            new TutorialData("#timeline .zoom-buttons", "Click to zoom in and out. To pan the chart click, hold and move left or right in any blank area")]);
         loading.isLoading = false;
         loading.removeDiv();
         function drawCharts(allEntries) {

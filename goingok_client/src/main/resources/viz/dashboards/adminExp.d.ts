@@ -5,8 +5,7 @@ import { Sort } from "../interactions/sort.js";
 import { Help } from "../utils/help.js";
 export declare class ExperimentalDashboard extends Dashboard {
     entries: IAdminAnalyticsData[];
-    sorted: string;
-    sort: Sort;
+    sort: Sort<IAdminAnalyticsData>;
     help: Help;
     constructor(data: IAdminAnalyticsData[]);
     preloadGroups(entries: IAdminAnalyticsData[]): IAdminAnalyticsData[];

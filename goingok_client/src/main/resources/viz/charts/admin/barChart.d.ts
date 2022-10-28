@@ -4,7 +4,7 @@ import { Tooltip } from "../../interactions/tooltip.js";
 import { ChartSeries } from "../chartBase.js";
 export declare class BarChart extends ChartSeries {
     tooltip: Tooltip<this>;
-    clicking: ClickBarChart<this>;
+    clicking: Click<this>;
     extend?: Function;
     private _data;
     get data(): IAdminAnalyticsData[];
@@ -12,8 +12,3 @@ export declare class BarChart extends ChartSeries {
     constructor(data: IAdminAnalyticsData[]);
     render(): void;
 }
-declare class ClickBarChart<T extends BarChart> extends Click<T> {
-    constructor(chart: T);
-    appendGroupsText(data: IAdminAnalyticsData[], clickData: IAdminAnalyticsData): void;
-}
-export {};

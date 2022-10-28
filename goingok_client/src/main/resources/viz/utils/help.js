@@ -2,7 +2,7 @@ export class Help {
     helpPopover(id, content) {
         const helpId = `${id}-help`;
         const button = document.querySelector(`#${id} .card-title button`);
-        button.addEventListener("click", (e) => {
+        button.addEventListener("click", () => {
             if (document.querySelector(`#${helpId}`) === null) {
                 let popover = document.createElement("div");
                 popover.setAttribute("id", helpId);

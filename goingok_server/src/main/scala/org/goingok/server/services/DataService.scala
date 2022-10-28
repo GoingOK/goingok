@@ -117,7 +117,7 @@ class DataService {
     * @return Vector of reflections
     */
   def getReflectionsForUser(goingokId:UUID): Either[Throwable,Vector[ReflectionEntry]] = {
-    val query = sql"""select refId, timestamp, point, text
+    val query = sql"""select ref_Id, timestamp, point, text
                   from reflections
                   where goingok_id=$goingokId
                   order by timestamp desc""".query[ReflectionEntry]
@@ -203,7 +203,7 @@ class DataService {
   }
 
   def getAuthorReflectionsAndGroup(goingok_id:UUID): Either[Throwable,DbResults.Result] = {
-    val query = sql"""select u.group_code, gc.created_timestamp, r.timestamp, r.point, r.text, u.pseudonym
+    val query = sql"""select u.group_code, gc.created_timestamp, r.ref_Id, r.timestamp, r.point, r.text, u.pseudonym
                   from users u,reflections r, group_codes gc
                   where u.goingok_id = r.goingok_id
                     and u.group_code = gc.group_code

@@ -18,9 +18,8 @@ import { Help } from "../utils/help.js";
 export class ExperimentalDashboard extends Dashboard {
     constructor(data) {
         super(data);
-        this.sorted = "";
-        this.sort = new Sort();
         this.help = new Help();
+        this.sort = new Sort("sort-groups", "createDate");
         this.barChart.extend = this.extendBarChart.bind(this);
         this.extendBarChart();
         this.histogram.extend = this.extendHistogram.bind(this);
@@ -79,15 +78,14 @@ export class ExperimentalDashboard extends Dashboard {
                     _this.totals.data = data;
                     _this.timeline.data = data;
                     _this.histogram.data = data;
-                }
-                else {
-                    _this.barChart.clicking.appendGroupsText(data, clickData);
+                    _this.users.data = data;
                 }
             }
             else {
                 _this.totals.data = data;
                 _this.timeline.data = data;
                 _this.histogram.data = data;
+                _this.users.data = data;
             }
             _this.removeAllHelp(_this.barChart);
         });
@@ -118,28 +116,13 @@ export class ExperimentalDashboard extends Dashboard {
         const id = "sort-groups";
         d3.selectAll(`#${id} .btn-group-toggle label`).on("click", function () {
             const selectedOption = this.control.value;
-            const chevron = _this.sorted === selectedOption ? "fa-chevron-down" : "fa-chevron-up";
-            _this.sort.setChevronVisibility(id, selectedOption);
-            _this.entries = _this.entries.sort(function (a, b) {
-                if (selectedOption == "date") {
-                    _this.sort.handleChevronChange(id, selectedOption, chevron);
-                    return _this.sort.sortData(a.createDate, b.createDate, _this.sorted == "date" ? true : false);
-                }
-                else if (selectedOption == "name") {
-                    _this.sort.handleChevronChange(id, selectedOption, chevron);
-                    return _this.sort.sortData(a.group, b.group, _this.sorted == "name" ? true : false);
-                }
-                else if (selectedOption == "mean") {
-                    _this.sort.handleChevronChange(id, selectedOption, chevron);
-                    return _this.sort.sortData(d3.mean(a.value.map(d => d.point)), d3.mean(b.value.map(d => d.point)), _this.sorted == "mean" ? true : false);
-                }
-            });
-            _this.sorted = _this.sort.setSorted(_this.sorted, selectedOption);
+            _this.sort.sortBy = selectedOption;
+            _this.entries = _this.sort.sortData(_this.entries);
             let data = _this.entries.filter(d => d.selected);
-            _this.barChart.data = data;
             let groupClickData = _this.getClickData(_this.barChart.elements.contentContainer);
+            _this.barChart.data = data;
             if (_this.barChart.clicking.clicked) {
-                _this.barChart.clicking.appendGroupsText(data, groupClickData);
+                _this.barChart.elements.content.classed("clicked", (d) => d.group === groupClickData.group);
             }
             else {
                 _this.histogram.data = data;
@@ -178,8 +161,9 @@ export class ExperimentalDashboard extends Dashboard {
                 return;
             }
             chart.clicking.removeClick();
+            d3.select(this)
+                .classed("clicked", true);
             chart.clicking.clicked = true;
-            chart.clicking.appendGroupsText(chart.data, d);
             _this.totals.data = [d];
             _this.histogram.data = chart.data.filter(c => c.group == d.group);
             _this.timeline.data = [d];
@@ -315,6 +299,7 @@ export class ExperimentalDashboard extends Dashboard {
             _this.users.data = chart.data;
             chart.clicking.clicked = true;
             chart.elements.content.classed("clicked", (data) => data.pseudonym == d.pseudonym);
+            chart.elements.content.classed("not-clicked", (data) => data.pseudonym != d.pseudonym);
             d3.select(this)
                 .classed("main", true);
             let groupData = chart.data.find(c => c.group == d.group);
@@ -342,7 +327,7 @@ export class ExperimentalDashboard extends Dashboard {
             _this.users.data = [new AdminAnalyticsData(groupData.group, usersData, groupData.createDate, groupData.colour, groupData.selected)];
             _this.help.removeHelp(chart);
             //Scroll
-            document.querySelector("#timeline").scrollIntoView({ behavior: 'smooth', block: 'start' });
+            document.querySelector(".reflection-selected").scrollIntoView({ behavior: 'smooth', block: 'start' });
         };
         chart.clicking.enableClick(onClick);
     }
@@ -368,12 +353,14 @@ export function buildExperimentAdminAnalyticsCharts(entriesRaw) {
         entries = entries.map(d => new AdminAnalyticsData(d.group, d.value, d.createDate, colourScale(d.group), true));
         yield drawCharts(entries);
         new Tutorial([new TutorialData("#groups", "Add groups to the charts and change their colours"),
+            new TutorialData("#sort-groups .sort-by", "Sort groups by creation date, name or users' reflection point average"),
             new TutorialData(".card-title button", "Click the help symbol in any chart to get additional information"),
             new TutorialData("#users .bar", "Hover for information on demand or click to compare and drill-down. Other charts will show only the selected group"),
             new TutorialData("#histogram .threshold-line", "Drag to change the threshold (soaring or distressed) and recalculate the bins"),
-            new TutorialData("#histogram .histogram-rect", "Click to compare the bin with other's group bins"),
-            new TutorialData("#timeline-plot", "Swap chart types. Both charts have zoom available"),
-            new TutorialData("#timeline .circle", "Hover for information on demand or click to connect the user's reflections")]);
+            new TutorialData("#histogram .histogram-rect", "Click to compare the bin with other's group bins and drill-down"),
+            new TutorialData("#timeline .zoom-buttons", "Click to zoom in and out. To pan the chart click, hold and move left or right in any blank area"),
+            new TutorialData("#timeline .circle", "Hover for information on demand or click to connect the user's reflections"),
+            new TutorialData("#reflections .sort-by", "Sort users alphabetically or by their average reflection state point")]);
         loading.isLoading = false;
         loading.removeDiv();
         function drawCharts(allEntries) {
@@ -390,21 +377,19 @@ export function buildExperimentAdminAnalyticsCharts(entriesRaw) {
             <u><i>Click</i></u> a bar to compare and drill-down`);
                 //Handle users histogram chart help
                 dashboard.help.helpPopover(dashboard.histogram.id, `<b>Histogram</b><br>
-            A histogram group data points into user-specific ranges. The data points in this histogram are <i>users average reflection point</i>
+            A histogram group data points into user-specific ranges. The data points in this histogram are <i>users average reflection point</i><br>
             <u><i>Hover</i></u> over the boxes for information on demand<br>
-            <u><i>Click</i></u> a box to compare<br>
+            <u><i>Click</i></u> a box to compare and drill-down<br>
             <u><i>Drag</i></u> the lines to change the thresholds`);
                 //Handle timeline chart help
-                d3.select("#timeline .card-title button")
-                    .on("click", function (e) {
-                    dashboard.help.helpPopover(`${dashboard.timeline.id}-help`, `<b>Scatter plot</b><br>
-                    The data is showed as a collection of points<br>The data represented are <i>reflections over time</i><br>
-                    <u><i>Hover</i></u> over the circles for information on demand<br>
-                    <u><i>Click</i></u> a circle to connect the user's reflections`);
-                });
+                dashboard.help.helpPopover(dashboard.timeline.id, `<b>Scatter plot</b><br>
+            The data is showed as a collection of points<br>The data represented are <i>reflections over time</i><br>
+            <u><i>Hover</i></u> over the circles for information on demand<br>
+            <u><i>Click</i></u> a circle to connect the user's reflections and drill-down`);
                 //Handle users histogram chart help
                 dashboard.help.helpPopover("reflections", `<b>Reflections</b><br>
-            Each user's reflections are shown sorted by time. The chart depicts the percentage of reflections in each reflection point group`);
+            Each user's reflections are shown by group. The chart depicts the user's average reflection point<br>
+            <u><i>Sort</i></u> by user's name or average reflection state point`);
                 //Update charts depending on group
                 dashboard.handleGroups();
                 dashboard.handleGroupsColours();

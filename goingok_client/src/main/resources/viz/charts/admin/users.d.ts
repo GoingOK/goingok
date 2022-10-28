@@ -1,9 +1,17 @@
-import { IAdminAnalyticsData } from "../../data/data.js";
+import { IAdminAnalyticsData, IReflectionAuthor } from "../../data/data.js";
 import { Sort } from "../../interactions/sort.js";
+declare type UserData = {
+    pseudonym: string;
+    mean: number;
+    total: number;
+    minDate: Date;
+    maxDate: Date;
+    reflections: IReflectionAuthor[];
+};
 export declare class Users {
     id: string;
-    sorted: string;
-    sort: Sort;
+    sort: Sort<UserData>;
+    group: string;
     private _data;
     get data(): IAdminAnalyticsData[];
     set data(entries: IAdminAnalyticsData[]);
@@ -16,4 +24,7 @@ export declare class Users {
     private renderReflections;
     private handleSort;
     private renderUserMeter;
+    private renderNoData;
+    private getUserData;
 }
+export {};

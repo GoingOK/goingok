@@ -104,7 +104,6 @@ Admin CSS
 
 .statistics-text {
     font-size: 0.875rem;
-    overflow: auto;
     margin-top: 1rem;
 }
 
@@ -162,19 +161,26 @@ Admin CSS
 }
 
 .dragging {
-    fill-opacity: 0.8 !important;
+    fill-opacity: 0.8;
 }
 
 .clicked {
-    stroke-width: 2 !important;
-    fill-opacity: 0.6 !important;
+    stroke-width: 2;
+    fill-opacity: 0.6;
     r: 10;
 }
 
 .clicked.main {
-    r: 15;
+    r: 20;
     stroke: #ffff80;
+    fill-opacity: 0.80;
+    stroke-width: 5px;
+}
 
+.not-clicked {
+    stroke-width: 0.1;
+    stroke-opacity: 0.1;
+    fill-opacity: 0.1;
 }
 
 .author-line, .line {
@@ -252,7 +258,12 @@ Admin CSS
 }
 
 .threshold-line.grab {
-    cursor: grab;
+    cursor: row-resize;
+}
+
+.threshold-line.grab:hover {
+    stroke-width: 10;
+    stroke :hsl(60, 80%, 60%);
 }
 
 .threshold-line.grabbing {
@@ -328,7 +339,7 @@ Admin CSS
 }
 
 .reflection-selected {
-    background-color:#ffff80;
+    border: solid 5px#ffff80;
 }
 
 .xx-small {
@@ -415,33 +426,15 @@ Author CSS
     r: 10;
 }
 
+
+.network-node-group.clicked {
+    fill-opacity: 1;
+}
+
 .network-node {
     stroke-width: 1;
     ry: 10;
     rx: 10;
-}
-
-.ar {
-    background-color: #0f856b;
-    fill: #0f856b;
-    stroke: #0f856b;
-}
-
-.af {
-    background-color: #3399CC;
-    fill: #3399CC;
-    stroke: #3399CC;
-}
-
-.ep {
-    background-color: #ff9900;
-    fill: #ff9900;
-    stroke: #ff9900;
-}
-
-.ref {
-    background-color: #f2f2f2;
-    fill: #f2f2f2;
 }
 
 .hover {

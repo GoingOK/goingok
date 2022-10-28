@@ -11,7 +11,7 @@ object Sort {
           span(`class` := "my-auto", "Sort reflections by:"),
           div(`class` := "btn-group btn-group-toggle", data("toggle") := "buttons",
             label(`class` := "btn btn-light active",
-              input(`type` := "radio", name := "sort", value := "date", checked, "Date",
+              input(`type` := "radio", name := "sort", value := "timestamp", checked, "Date",
                 i(`class`:= "fa fa-chevron-down")
               )
             ),

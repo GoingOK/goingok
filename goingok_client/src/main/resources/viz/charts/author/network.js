@@ -12,16 +12,16 @@ export class Network extends ChartNetwork {
         this.tooltip = new Tooltip(this);
         this.zoom = new Zoom(this);
         this.help = new Help();
-        this.clicking = new Click(this);
         this.simulation = this.processSimulation(data);
         this.data = data;
+        this.clicking = new ClickNetwork(this);
     }
     get data() {
         return this._data;
     }
     set data(entries) {
         this._data = this.filterData(entries);
-        this.resetZoomRange();
+        this.zoom.resetZoom();
         this.render();
         this.extend !== undefined ? this.extend() : null;
     }
@@ -50,7 +50,7 @@ export class Network extends ChartNetwork {
         let nodes = _this.elements.content = _this.elements.contentContainer.selectAll(".network-node-group")
             .data(_this.data.nodes)
             .join(enter => enter.append("g")
-            .attr("class", "network-node-group")
+            .attr("class", "network-node-group pointer")
             .attr("transform", `translate(${_this.width / 2}, ${_this.height / 2})`)
             .call(enter => enter.append("rect")
             .attr("class", "network-node")
@@ -87,47 +87,26 @@ export class Network extends ChartNetwork {
             if (d3.select(this).attr("class").includes("clicked")) {
                 return;
             }
-            d3.selectAll(".network-node-group")
-                .filter(c => _this.getTooltipNodes(_this.data, d).includes(c))
-                .call(enter => enter.select("text")
-                .text(d => d.expression)
-                .style("opacity", 0)
-                .transition()
-                .duration(500)
-                .style("opacity", "1"))
-                .call(enter => enter.select(".network-node")
-                .transition()
-                .duration(500)
-                .attr("x", d => -(enter.select(`#text-${d.idx}`).node().getBoundingClientRect().width + 10) / 2)
-                .attr("y", d => -(enter.select(`#text-${d.idx}`).node().getBoundingClientRect().height + 5) / 2)
-                .attr("width", d => enter.select(`#text-${d.idx}`).node().getBoundingClientRect().width + 10)
-                .attr("height", d => enter.select(`#text-${d.idx}`).node().getBoundingClientRect().height + 5));
+            const nodes = _this.getTooltipNodes(_this.data, d);
+            _this.openNodes(nodes);
         };
         const onMouseout = function () {
-            d3.selectAll(".network-node-group")
-                .call(enter => enter.select("text")
-                .text(null)
-                .style("opacity", 0)
-                .transition()
-                .duration(500)
-                .style("opacity", "1"))
-                .call(enter => enter.select(".network-node")
-                .transition()
-                .duration(500)
-                .attr("x", -5)
-                .attr("y", -5)
-                .attr("width", 10)
-                .attr("height", 10));
-            d3.selectAll("#reflections .reflections-tab span")
-                .style("background-color", null);
+            if (d3.select(this).attr("class").includes("clicked")) {
+                return;
+            }
+            _this.closeNodes();
             _this.tooltip.removeTooltip();
         };
         //Enable tooltip       
         _this.tooltip.enableTooltip(onMouseover, onMouseout);
         const zoomed = function (e) {
             if (e.sourceEvent !== null) {
-                if (e.sourceEvent.type === "dblclick" || e.sourceEvent.type === "wheel")
+                if (e.sourceEvent.type === "dblclick")
                     return;
+                if (e.sourceEvent.type === "wheel") {
+                    window.scrollBy({ top: e.sourceEvent.deltaY, behavior: 'smooth' });
+                    return;
+                }
             }
             let newChartRange = [0, _this.width - _this.padding.yAxis - _this.padding.right].map(d => e.transform.applyX(d));
             _this.x.scale.rangeRound(newChartRange);
@@ -143,17 +122,44 @@ export class Network extends ChartNetwork {
         //Enable zoom
         _this.zoom.enableZoom(zoomed);
     }
-    resetZoomRange() {
-        this.x.scale.range([0, this.width - this.padding.yAxis - this.padding.right]);
-        d3.zoom().transform(this.elements.contentContainer.select(".zoom-rect"), d3.zoomIdentity);
-        this.x.axis.ticks((this.width - this.padding.yAxis - this.padding.right) / 75);
-        this.elements.xAxis.transition().duration(750).call(this.x.axis);
-    }
     getTooltipNodes(data, nodeData) {
         let edges = data.edges.filter(d => d.source === nodeData).map(d => d.target);
         edges = edges.concat(data.edges.filter(d => d.target === nodeData).map(d => d.source));
         edges.push(nodeData);
         return edges;
+    }
+    openNodes(data) {
+        d3.selectAll(".network-node-group")
+            .filter(c => data.includes(c))
+            .call(enter => enter.select("text")
+            .text(d => d.expression)
+            .style("opacity", 0)
+            .transition()
+            .duration(500)
+            .style("opacity", "1"))
+            .call(enter => enter.select(".network-node")
+            .transition()
+            .duration(500)
+            .attr("x", d => -(enter.select(`#text-${d.idx}`).node().getBoundingClientRect().width + 10) / 2)
+            .attr("y", d => -(enter.select(`#text-${d.idx}`).node().getBoundingClientRect().height + 5) / 2)
+            .attr("width", d => enter.select(`#text-${d.idx}`).node().getBoundingClientRect().width + 10)
+            .attr("height", d => enter.select(`#text-${d.idx}`).node().getBoundingClientRect().height + 5));
+    }
+    closeNodes() {
+        d3.selectAll(".network-node-group:not(.clicked)")
+            .call(enter => enter.select("text")
+            .text(null)
+            .style("opacity", 0)
+            .transition()
+            .duration(500)
+            .style("opacity", "1"))
+            .call(enter => enter.select(".network-node")
+            .transition()
+            .duration(500)
+            .attr("x", -5)
+            .attr("y", -5)
+            .attr("width", 10)
+            .attr("height", 10));
     }
     processSimulation(data) {
         return d3.forceSimulation(data.nodes)
@@ -169,5 +175,13 @@ export class Network extends ChartNetwork {
         let nodes = data.nodes.filter(d => d.selected);
         let edges = data.edges.filter(d => d.source.selected && d.target.selected);
         return { "name": data.name, "description": data.description, "nodes": nodes, "edges": edges };
+    }
+}
+class ClickNetwork extends Click {
+    removeClick() {
+        super.removeClick();
+        this.chart.closeNodes();
+        d3.selectAll("#reflections .reflections-tab span")
+            .style("background-color", null);
     }
 }

@@ -2,25 +2,34 @@ var d3 = require("d3");
 import { Sort } from "../../interactions/sort.js";
 export class Reflections {
     constructor(data) {
-        this.sorted = "";
-        this.sort = new Sort();
         this.id = "reflections";
+        this.sort = new Sort("sort", "timestamp");
         this.data = data;
+    }
+    get nodes() {
+        return this._nodes;
+    }
+    set nodes(nodes) {
+        this._nodes = nodes;
+        this.fillNodesText();
     }
     get data() {
         return this._data;
     }
     set data(entries) {
-        this._data = entries;
+        this._data = entries.map(c => {
+            c.nodes = c.nodes.filter(d => d.selected);
+            return c;
+        });
         this.render();
         this.extend !== undefined ? this.extend() : null;
     }
     render() {
         const _this = this;
-        d3.select("#reflections .card-subtitle")
+        d3.select(`#${_this.id} .card-subtitle`)
             .html(_this.data.length == 1 ? `Filtering by <span class="badge badge-pill badge-info">${_this.data[0].timestamp.toDateString()} <i class="fas fa-window-close"></i></span>` :
             "");
-        d3.select("#reflections .reflections-tab")
+        d3.select(`#${_this.id} .reflections-tab`)
             .selectAll(".reflection")
             .data(_this.data)
             .join(enter => enter.append("div")
@@ -50,25 +59,27 @@ export class Reflections {
         }
         return html;
     }
+    fillNodesText() {
+        d3.selectAll(`#${this.id} .reflections-tab div`)
+            .filter(c => this.nodes.map(d => d.refId).includes(c.refId))
+            .selectAll("span")
+            .each((c, i, g) => {
+            let node = this.nodes.find(r => r.idx === parseInt(d3.select(g[i]).attr("id").replace("node-", "")));
+            if (node !== undefined) {
+                d3.select(g[i]).style("background-color", node.properties["color"]);
+            }
+        });
+    }
     handleSort() {
         const _this = this;
         const id = "sort";
         d3.selectAll(`#${id} .btn-group-toggle label`).on("click", function () {
             const selectedOption = this.control.value;
-            const chevron = _this.sorted === selectedOption ? "fa-chevron-down" : "fa-chevron-up";
-            _this.sort.setChevronVisibility(id, selectedOption);
-            _this._data = _this.data.sort(function (a, b) {
-                if (selectedOption == "date") {
-                    _this.sort.handleChevronChange(id, selectedOption, chevron);
-                    return _this.sort.sortData(a.timestamp, b.timestamp, _this.sorted == "date" ? true : false);
-                }
-                else if (selectedOption == "point") {
-                    _this.sort.handleChevronChange(id, selectedOption, chevron);
-                    return _this.sort.sortData(a.point, b.point, _this.sorted == "point" ? true : false);
-                }
-            });
-            _this.sorted = _this.sort.setSorted(_this.sorted, selectedOption);
+            _this.sort.sortBy = selectedOption;
+            _this._data = _this.sort.sortData(_this.data);
             _this.render();
+            if (_this.nodes !== undefined)
+                _this.fillNodesText();
         });
     }
     ;

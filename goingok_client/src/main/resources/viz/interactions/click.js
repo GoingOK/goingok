@@ -12,6 +12,7 @@ export class Click {
         this.chart.elements.contentContainer.selectAll(".click-line").remove();
         this.chart.elements.contentContainer.selectAll(".click-container").remove();
         this.chart.elements.content.classed("clicked", false);
+        this.chart.elements.content.classed("not-clicked", false);
         this.chart.elements.content.classed("main", false);
     }
     ;

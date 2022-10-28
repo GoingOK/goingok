@@ -18,6 +18,7 @@ export declare class Zoom<T extends IChart> implements IZoom {
     constructor(chart: T);
     enableZoom(zoomed: ZoomFunction): void;
     appendZoomBar(): d3.Selection<SVGGElement, unknown, HTMLElement, any>;
+    resetZoom(): void;
     protected handleZoom(): void;
     private updateZoomNumber;
 }
