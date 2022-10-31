@@ -5,7 +5,7 @@ package org.goingok.server.data.models
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDateTime, ZoneId, ZonedDateTime}
 
-case class ReflectionEntry(timestamp:String,reflection:ReflectionData) extends TimestampedData
+case class ReflectionEntry(refId: Int, timestamp:String,reflection:ReflectionData) extends TimestampedData
 //  def bneZonedDateTime: ZonedDateTime =  {
 //    LocalDateTime.parse(timestamp).atZone(ZoneId.of("GMT")).withZoneSameInstant(ZoneId.of("Australia/Brisbane"))
 //  }

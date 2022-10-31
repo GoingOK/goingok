@@ -13,7 +13,21 @@ object SidePanel {
             i(`class`:="fa fa-align-justify")
           )
         ),
-        div(`class`:= "col-md-12",
+        div(`class`:= "col-md-12", id := "all-groups",
+          if(exp){
+            ul(id := "all", `class` := "list-unstyled components mb-0",
+              li(
+                div(`class` := "input-group mb-0",
+                  div(`class` := "input-group-prepend",
+                    div(`class` := "input-group-text group-row",
+                      input(`type` := "checkbox", value := "all", checked)
+                    )
+                  ),
+                  input(`type` := "text", value := "select all", `class` := "form-control group-row", disabled)
+                )
+              )
+            )
+          } else {},
           ul(id:="groups", `class`:="list-unstyled components")
         ),
         div(id:="switch-dashboard", `class`:="col-md-12 d-flex",

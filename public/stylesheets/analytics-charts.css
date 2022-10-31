@@ -4,6 +4,27 @@
     align-items: stretch
 }
 
+.content {
+    width: 100%;
+    padding: 20px;
+    min-height: 100vh;
+    transition: all 0.3s
+}
+
+.content-wrapper {
+    padding: 15px
+}
+
+/**************************************************
+Admin CSS
+***************************************************/
+
+:root {
+    --optimum: #006622;
+    --sub-optimum: #002db3;
+    --sub-sub-optimum: #ff9900;
+}
+
 #sidebar {
     width: 300px;
     background: #000000;
@@ -40,6 +61,7 @@
     opacity: 0;
 }
 
+
 .group-row {
     background-color: #000000 !important;
     color: #fff !important;
@@ -47,17 +69,6 @@
     border-top: none !important;
     border-left: none !important;
     border-right: none !important;
-}
-
-.content {
-    width: 100%;
-    padding: 20px;
-    min-height: 100vh;
-    transition: all 0.3s
-}
-
-.content-wrapper {
-    padding: 15px
 }
 
 @media(max-width:768px) {
@@ -87,17 +98,12 @@
     min-height: 30vh;
 }
 
-.chart-svg {
-    margin-top: 10px;
-}
-
 .instructions {
     color: #ff6600;
 }
 
 .statistics-text {
     font-size: 0.875rem;
-    overflow: auto;
     margin-top: 1rem;
 }
 
@@ -128,7 +134,7 @@
     fill-opacity: 0.75;
 }
 
-.bar, .circle {
+.bar, .circle, .pointer {
     cursor: pointer;
 }
 
@@ -141,17 +147,7 @@
     stroke-width: 1;
 }
 
-.box-line {
-    stroke-width: 1;
-    stroke:#3399CC;
-}
-
-.arc {
-    fill-opacity: 0.2;
-    stroke-width: 1;
-}
-
-.bar:hover, .arc:hover, .histogram-rect:hover, .circle:hover {
+.bar:hover, .histogram-rect:hover, .circle:hover {
     fill-opacity: 0.4;
     r: 10;
 }
@@ -165,22 +161,29 @@
 }
 
 .dragging {
-    fill-opacity: 0.8 !important;
+    fill-opacity: 0.8;
 }
 
 .clicked {
-    stroke-width: 2 !important;
-    fill-opacity: 0.6 !important;
+    stroke-width: 2;
+    fill-opacity: 0.6;
     r: 10;
 }
 
 .clicked.main {
-    r: 15;
+    r: 20;
     stroke: #ffff80;
-
+    fill-opacity: 0.80;
+    stroke-width: 5px;
 }
 
-.line {
+.not-clicked {
+    stroke-width: 0.1;
+    stroke-opacity: 0.1;
+    fill-opacity: 0.1;
+}
+
+.author-line, .line {
     fill: none;
     stroke: #3399CC;
 }
@@ -255,7 +258,12 @@
 }
 
 .threshold-line.grab {
-    cursor: grab;
+    cursor: row-resize;
+}
+
+.threshold-line.grab:hover {
+    stroke-width: 10;
+    stroke :hsl(60, 80%, 60%);
 }
 
 .threshold-line.grabbing {
@@ -263,12 +271,12 @@
 }
 
 .threshold-line.distressed {
-    stroke: #377eb8;
+    stroke: var(--sub-sub-optimum);
 }
 
 
 .threshold-line.soaring {
-    stroke: #ff7f00;
+    stroke: var(--optimum);
 }
 
 
@@ -280,30 +288,23 @@
 }
 
 .threshold-indicator-box.soaring {
-    stroke: #ff7f00;
-    fill: #ff7f00;
+    stroke: var(--optimum);
+    fill: var(--optimum);
 }
 
 .threshold-indicator-box.distressed {
-    stroke: #377eb8;
-    fill: #377eb8;
+    stroke: var(--sub-sub-optimum);
+    fill: var(--sub-sub-optimum);
 }
 
 .threshold-indicator-text {
     font-size: 0.75rem;
 }
 
-.y-label-container.sort:hover {
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.sort-arrow {
-    fill: #f2f2f2;
-}
-
-.sort-arrow.active {
-    fill: #333;
+.zoom-buttons {
+    margin-left: auto;
+    margin-bottom: 0;
+    width: 160px !important;
 }
 
 .zoom-bar-content {
@@ -316,7 +317,7 @@
 }
 
 .zoom-rect.active {
-    cursor: zoom-in;
+    cursor: move;
 }
 
 .zoom-bar-content.zoom-line {
@@ -338,19 +339,129 @@
 }
 
 .reflection-selected {
-    background-color:#ffff80;
+    border: solid 5px#ffff80;
 }
 
-.bin-name.distressed {
-    color: #006fe6;
+.xx-small {
+    font-size: xx-small;
 }
 
-.bin-name.soaring {
-    color: #ff9900;
+meter.user-meter:-moz-meter-optimum::-moz-meter-bar {
+    background: var(--optimum);
 }
 
-.bin-name.goingok {
-    color: #2eb82e;
+meter.user-meter::-webkit-meter-optimum-value {
+    background: var(--optimum);
+}
+
+meter.user-meter:-moz-meter-sub-optimum::-moz-meter-bar {
+    background: var(--sub-optimum);
+}
+
+meter.user-meter::-webkit-meter-suboptimum-value {
+    background: var(--sub-optimum);
+}
+
+meter.user-meter:-moz-meter-sub-sub-optimum::-moz-meter-bar {
+    background: var(--sub-sub-optimum);
+}
+
+meter.user-meter::-webkit-meter-even-less-good-value {
+    background: var(--sub-sub-optimum);
+}
+
+/**************************************************
+Author CSS
+***************************************************/
+
+.chart-container.timeline {
+    min-height: 57vh;
+}
+
+.chart-container.network {
+    min-height: 70vh;
+}
+
+.reflections-tab {
+    height: 70vh;
+    overflow-y: auto;
+}
+
+.tag-row {
+    background-color: #fff !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    text-align: center;
+}
+
+.hardline {
+    fill: none;
+    stroke: #bbeeff;
+    stroke-width: 2px;
+    stroke-opacity: 0.6;
+}
+
+.softline {
+    fill: none;
+    stroke: #cc0000;
+    stroke-width: 2px;
+}
+
+.meanline {
+    fill: none;
+    stroke: #ffff00;
+    stroke-width: 10px;
+    stroke-opacity: 0.3;
+}
+
+.point {
+    fill: #0000FF;
+    stroke: none;
+    stroke-width: 0px;
+    opacity: 0.5;
+}
+
+.point:hover {
+    r: 10;
+}
+
+
+.network-node-group.clicked {
+    fill-opacity: 1;
+}
+
+.network-node {
+    stroke-width: 1;
+    ry: 10;
+    rx: 10;
+}
+
+.hover {
+    opacity: 0;
+}
+
+.network-text {
+    text-anchor: middle;
+    dominant-baseline: central;
+    font-size: 75%;
+    font-weight: 500;
+}
+
+.network-link, .reflection-link {
+    fill: none;
+    stroke: #6c757d;
+    stroke-width: 1;
+}
+
+.network-link {
+    stroke-linecap: round ;
+    stroke-opacity: 0.5;
+}
+
+.reflection-link {
+    stroke-opacity: 0.25;
+    stroke-dasharray: 5,5;
 }
 
 /**************************************************
@@ -483,6 +594,8 @@ Tutorial CSS
     font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-size: 22px;
     max-width: 500px;
+    padding: 0.75rem;
+    border: #ffffff solid;
 }
 
 .tutorial .tutorial-arrow {

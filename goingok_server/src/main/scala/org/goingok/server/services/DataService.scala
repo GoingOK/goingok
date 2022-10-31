@@ -117,7 +117,7 @@ class DataService {
     * @return Vector of reflections
     */
   def getReflectionsForUser(goingokId:UUID): Either[Throwable,Vector[ReflectionEntry]] = {
-    val query = sql"""select timestamp, point, text
+    val query = sql"""select ref_Id, timestamp, point, text
                   from reflections
                   where goingok_id=$goingokId
                   order by timestamp desc""".query[ReflectionEntry]
@@ -203,7 +203,7 @@ class DataService {
   }
 
   def getAuthorReflectionsAndGroup(goingok_id:UUID): Either[Throwable,DbResults.Result] = {
-    val query = sql"""select u.group_code, gc.created_timestamp, r.timestamp, r.point, r.text, u.pseudonym
+    val query = sql"""select u.group_code, gc.created_timestamp, u.pseudonym, r.ref_Id, r.timestamp, r.point, r.text
                   from users u,reflections r, group_codes gc
                   where u.goingok_id = r.goingok_id
                     and u.group_code = gc.group_code
@@ -454,8 +454,9 @@ class DataService {
             from anltx_graphs g, anltx_author_graphs a
             where a.goingok_id = $goingok_id
             and a.graph_id = g.graph_id;
-           """.query[AnltxGraph]
-    runQuery(query.to[Vector])
+           """.query[AnltxDBGraph]
+    val result = runQuery(query.to[Vector])
+    result.map(c => c.map( d => new AnltxGraph(d)))
   }
   def getNodesForGraph(graph_id:Int): DBResult[Vector[Int]] = {
     val query =

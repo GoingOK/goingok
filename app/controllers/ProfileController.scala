@@ -1,11 +1,10 @@
 package controllers
 
 import java.util.UUID
-
 import javax.inject.Inject
 import org.goingok.server.data.{Profile, Reflection, UiMessage, models}
-import org.goingok.server.data.models.{ReflectionData, ReflectionEntry, User}
-import org.goingok.server.services.{ProfileService, UserService}
+import org.goingok.server.data.models.{AnalyticsAuthorChartsData, ReflectionData, ReflectionEntry, User}
+import org.goingok.server.services.{AnalyticsService, ProfileService, UserService}
 import play.api.Logger
 import play.api.mvc._
 import views.{ProfilePage, RegisterPage}
@@ -22,7 +21,7 @@ import scala.util.Try
   * @param ec
   * @param assets
   */
-class ProfileController @Inject()(components: ControllerComponents,profileService:ProfileService)
+class ProfileController @Inject()(components: ControllerComponents,profileService:ProfileService, analyticsService:AnalyticsService)
                                  (implicit ec: ExecutionContext, assets: AssetsFinder)
   extends AbstractController(components) with GoingOkController {
 
@@ -75,23 +74,23 @@ class ProfileController @Inject()(components: ControllerComponents,profileServic
         logger.warn(s"NODELABELS: ${analytics.map(_.nodeLabels)}")
         logger.warn(s"EDGELABELS: ${analytics.map(_.edgeLabels)}")
         logger.warn(s"LABELS: ${analytics.map(_.labels)}")
+        val chartAnalytics = profileService.getAuthorChartsAnalytics(analytics.toOption.get)
+        logger.warn(s"ChartData: ${chartAnalytics}")
         // for compatibility with prior reflections
         val reflections: Option[Vector[ReflectionEntry]] = analytics match {
-          case Right(analytics) => Some(analytics.refs.map(r => ReflectionEntry(r.timestamp, ReflectionData(r.point, r.text))).reverse)
+          case Right(analytics) => Some(analytics.refs.map(r => ReflectionEntry(r.ref_id, r.timestamp, ReflectionData(r.point, r.text))).reverse)
           case Left(error) => {
             logger.error(error.getMessage)
             None
           }
         }
 
-
-
-
-
         if(user.getOrElse(User(UUID.randomUUID())).group_code!="none") {
 //          val page = ProfilePage.page("GoingOK :: profile", message, Profile(user, reflections))
 //          Ok(ProfilePage.getHtml(page))
-          Ok(new ProfilePage(Profile(user,reflections)).buildPage(message = message))
+          val exp = isExp(request)
+          val tester = isTester(user)
+          Ok(new ProfilePage(Profile(user,reflections), chartAnalytics, tester, exp).buildPage(message = message))
         } else {
           Redirect("/register")
         }
@@ -116,6 +115,16 @@ class ProfileController @Inject()(components: ControllerComponents,profileServic
     ReflectionData(point,text)
   }.toEither
 
+  private def isTester(user: Option[User]): Boolean = {
+    user match {
+      case Some(usr) => usr.supervisor & (analyticsService.getTesters().contains(usr.pseudonym.get))
+      case None => false
+    }
+  }
+
+  private def isExp(request: Request[AnyContent]): Boolean = {
+    request.getQueryString("exp").contains("true");
+  }
 
 //  def reflectionsCsv :Action[AnyContent] = silhouette.SecuredAction(errorHandler).async { implicit request: SecuredRequest[DefaultEnv, AnyContent] =>
 //

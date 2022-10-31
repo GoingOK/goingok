@@ -6,7 +6,7 @@ import java.util.{Date, UUID}
 import com.typesafe.scalalogging.Logger
 import org.goingok.server.data.DbResults
 import org.goingok.server.data.Permissions.Permission
-import org.goingok.server.data.models.{Activity, AnalyticsChartsData, ReflectionAuthorEntry, ReflectionData}
+import org.goingok.server.data.models.{Activity, AnalyticsChartsData, ReflectionAuthorEntry, ReflectionData, ReflectionEntry}
 
 import scala.collection.mutable.ListBuffer
 
@@ -107,8 +107,8 @@ class AnalyticsService {
         logger.info(s"reflections found: ${result.value.size}")
         val header = "TIMESTAMP,AUTHOR,REF_POINT,REF_TEXT\n"
         val lines = result.value.map{re =>
-          val text = re.reflection.text.replaceAll("\"","'").replaceAll("[\\n\\r]+"," ")
-          s""""${re.timestamp}",${re.pseudonym},${re.reflection.point},"${text}""""
+          val text = re.reflectionEntry.reflection.text.replaceAll("\"","'").replaceAll("[\\n\\r]+"," ")
+          s""""${re.reflectionEntry.timestamp}",${re.pseudonym},${re.reflectionEntry.reflection.point},"${text}""""
         }.mkString("\n")
         Some(header+lines)
       }
@@ -145,11 +145,14 @@ class AnalyticsService {
       case Right(result:DbResults.GroupedAuthorReflectionsByUser) => {
         logger.info(s"chart reflections found: ${result.value.size}")
         val analyticsChartsData = result.value.groupBy(c => c.group).map(c =>
-          AnalyticsChartsData(c._1, c._2.head.timestamp, c._2.map(r => ReflectionAuthorEntry(r.timestamp, r.pseudonym, ReflectionData(r.point, r.text)))))
+          AnalyticsChartsData(c._1, c._2.head.gc_timestamp, c._2.map(r =>
+            ReflectionAuthorEntry(r.reflectionAuthorEntry.pseudonym,
+              ReflectionEntry(r.reflectionAuthorEntry.reflectionEntry.refId, r.reflectionAuthorEntry.reflectionEntry.timestamp,
+                ReflectionData(r.reflectionAuthorEntry.reflectionEntry.reflection.point, r.reflectionAuthorEntry.reflectionEntry.reflection.text))))))
         Some(analyticsChartsData.toList.sortBy(r => r.timestamp).reverse)
         }
       case Left(err) => {
-        logger.error(err.getMessage)
+        logger.error(s"Analytics Chart Data ${err.getMessage}")
         None
       }
     }
