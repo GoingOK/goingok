@@ -11,6 +11,7 @@ export declare class TimelineNetwork extends ChartTime {
     set data(entries: IReflectionAnalytics[]);
     constructor(data: IReflectionAnalytics[]);
     render(): void;
+    private getLines;
     private renderReflectionNetwork;
     private simulation;
 }

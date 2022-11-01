@@ -1,7 +1,7 @@
 var d3 = require("d3");
 import { Click } from "../../interactions/click.js";
 import { Tooltip, TooltipValues } from "../../interactions/tooltip.js";
-import { addDays, groupBy, maxDate, minDate } from "../../utils/utils.js";
+import { addDays, calculateMean, groupBy, maxDate, minDate } from "../../utils/utils.js";
 import { ChartPadding, ChartTime } from "../chartBase.js";
 export class TimelineNetwork extends ChartTime {
     constructor(data) {
@@ -26,16 +26,14 @@ export class TimelineNetwork extends ChartTime {
     }
     render() {
         const _this = this;
-        const hardLine = d3.line()
-            .x(d => _this.x.scale(d.timestamp))
-            .y(d => _this.y.scale(d.point))
-            .curve(d3.curveMonotoneX);
-        if (_this.elements.contentContainer.select(".hardline").empty()) {
-            _this.elements.contentContainer.append("path")
-                .datum(d3.sort(_this.data, d => d.timestamp))
-                .attr("class", "hardline")
-                .attr("d", d => hardLine(d));
-        }
+        _this.elements.contentContainer.selectAll(".timeline-line-container")
+            .data(_this.getLines())
+            .join(enter => enter.append("g")
+            .attr("class", "timeline-line-container")
+            .call(enter => enter.append("path")
+            .datum(d => d)
+            .attr("class", d => d.name)
+            .attr("d", d => d.line(d.datum))), update => update, exit => exit.remove());
         _this.elements.contentContainer.selectAll(".circle-tag-container")
             .data(_this.data)
             .join(enter => enter.append("g")
@@ -96,6 +94,25 @@ export class TimelineNetwork extends ChartTime {
         };
         //Enable tooltip       
         _this.tooltip.enableTooltip(onMouseover, onMouseout);
+    }
+    getLines() {
+        const hardLine = d3.line()
+            .x(d => this.x.scale(d.timestamp))
+            .y(d => this.y.scale(d.point))
+            .curve(d3.curveMonotoneX);
+        const softLine = d3.line()
+            .x(d => this.x.scale(d.timestamp))
+            .y(d => this.y.scale(d.point))
+            .curve(d3.curveBasis);
+        const mean = calculateMean(this.data.map(d => d.point));
+        const meanLine = d3.line()
+            .x(d => this.x.scale(d.timestamp))
+            .y(this.y.scale(mean));
+        return [
+            { "name": "hardline", "line": hardLine, "datum": d3.sort(this.data, d => d.timestamp) },
+            { "name": "softline", "line": softLine, "datum": d3.sort(this.data, d => d.timestamp) },
+            { "name": "meanline", "line": meanLine, "datum": d3.sort(this.data, d => d.timestamp) }
+        ];
     }
     renderReflectionNetwork(enter) {
         enter.selectAll(".circle-tag")
