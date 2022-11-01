@@ -7,7 +7,7 @@ export class TimelineNetwork extends ChartTime {
     constructor(data) {
         super("timeline", [addDays(minDate(data.map(d => d.timestamp)), -30), addDays(maxDate(data.map(d => d.timestamp)), 30)], new ChartPadding(40, 75, 10, 10));
         this.tooltip = new Tooltip(this);
-        this.clicking = new Click(this);
+        this.clicking = new ClickTimelineNetwork(this);
         this.data = data.map(c => {
             this.simulation(c);
             return c;
@@ -57,9 +57,8 @@ export class TimelineNetwork extends ChartTime {
             .call(update => _this.renderReflectionNetwork(update)), exit => exit.remove());
         _this.elements.content = _this.elements.contentContainer.selectAll(".circle");
         const onMouseover = function (e, d) {
-            if (d3.select(this).attr("class").includes("clicked")) {
+            if (d3.select(this).attr("class").includes("clicked"))
                 return;
-            }
             _this.tooltip.appendTooltipContainer();
             let tooltipValues = [new TooltipValues("Point", d.point)];
             let tags = groupBy(_this.data.find(c => c.refId === d.refId).nodes, "name").map(c => { return { "name": c.key, "total": c.value.length }; });
@@ -83,7 +82,7 @@ export class TimelineNetwork extends ChartTime {
                 }
                 return yTooltip;
             }
-            ;
+            d3.select(this).attr("r", 10);
             _this.tooltip.appendLine(0, _this.y.scale(d.point), _this.x.scale(d.timestamp) - 10, _this.y.scale(d.point), "#999999");
             _this.tooltip.appendLine(_this.x.scale(d.timestamp), _this.y.scale(0), _this.x.scale(d.timestamp), _this.y.scale(d.point) + 10, "#999999");
         };
@@ -91,6 +90,9 @@ export class TimelineNetwork extends ChartTime {
             _this.elements.svg.select(".tooltip-container").transition()
                 .style("opacity", 0);
             _this.tooltip.removeTooltip();
+            if (d3.select(this).attr("class").includes("clicked"))
+                return;
+            d3.select(this).attr("r", 5);
         };
         //Enable tooltip       
         _this.tooltip.enableTooltip(onMouseover, onMouseout);
@@ -130,5 +132,12 @@ export class TimelineNetwork extends ChartTime {
             simulation.force("forceX", d3.forceX(-20).strength(0.25));
         }
         simulation.tick(300);
+    }
+}
+class ClickTimelineNetwork extends Click {
+    removeClick() {
+        super.removeClick();
+        this.chart.elements.content
+            .attr("r", 5);
     }
 }

@@ -4,7 +4,7 @@ import { Tooltip } from "../../interactions/tooltip.js";
 import { ChartTime } from "../chartBase.js";
 export declare class TimelineNetwork extends ChartTime {
     tooltip: Tooltip<this>;
-    clicking: Click<this>;
+    clicking: ClickTimelineNetwork<this>;
     extend?: Function;
     private _data;
     get data(): IReflectionAnalytics[];
@@ -14,3 +14,7 @@ export declare class TimelineNetwork extends ChartTime {
     private renderReflectionNetwork;
     private simulation;
 }
+declare class ClickTimelineNetwork<T extends TimelineNetwork> extends Click<T> {
+    removeClick(): void;
+}
+export {};

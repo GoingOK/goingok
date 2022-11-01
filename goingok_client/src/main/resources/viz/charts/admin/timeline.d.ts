@@ -26,6 +26,7 @@ declare class ChartTimeZoom implements IChartScales {
     constructor(chart: IChart, domain: Date[]);
 }
 declare class ClickTimeline<T extends Timeline> extends Click<T> {
+    removeClick(): void;
     appendScatterText(d: IReflectionAuthor, title: string, values?: ITooltipValues[]): void;
     private positionClickContainer;
 }

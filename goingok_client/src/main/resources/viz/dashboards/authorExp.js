@@ -102,7 +102,8 @@ export class ExperimentalDashboard extends Dashboard {
             }
             chart.clicking.removeClick();
             chart.clicking.clicked = true;
-            d3.select(this).classed("clicked", true);
+            d3.select(this).classed("clicked", true)
+                .attr("r", 10);
             _this.network.data = _this.getClickTimelineNetworkNodes(d);
             _this.reflections.data = [d];
         };

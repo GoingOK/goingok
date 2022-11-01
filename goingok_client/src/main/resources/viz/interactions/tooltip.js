@@ -25,7 +25,9 @@ export class Tooltip {
     ;
     appendTooltipText(title, values = null) {
         let result = this.chart.elements.contentContainer.select(".tooltip-container").append("rect")
-            .attr("class", "tooltip-box");
+            .attr("class", "tooltip-box")
+            .attr("rx", 5)
+            .attr("ry", 5);
         let text = this.chart.elements.contentContainer.select(".tooltip-container").append("text")
             .attr("class", "tooltip-text title")
             .attr("x", 10)

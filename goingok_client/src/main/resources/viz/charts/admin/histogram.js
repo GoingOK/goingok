@@ -144,6 +144,8 @@ class HistogramChartElements extends ChartElements {
             .attr("transform", d => `translate(${this.chart.width - this.chart.padding.yAxis - this.chart.padding.right + 5}, ${d < 50 ? this.chart.y.scale(d) + 25 : this.chart.y.scale(d) - 15})`)
             .call(g => g.append("rect")
             .attr("class", "threshold-indicator-box")
+            .attr("rx", 5)
+            .attr("ry", 5)
             .classed("distressed", d => d < 50 ? true : false)
             .classed("soaring", d => d > 50 ? true : false))
             .call(g => g.append("text")
