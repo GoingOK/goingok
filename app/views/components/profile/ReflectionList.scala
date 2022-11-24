@@ -9,8 +9,8 @@ import scalatags.Text.all._
 object ReflectionList {
 
   /** List of reflections HTML display */
-  def display(data:Option[Vector[models.ReflectionEntry]]=None) :TypedTag[String] = {
-    val refs = data.getOrElse(List())
+  def display(data:Option[Map[String,Vector[models.ReflectionEntry]]]=None) :TypedTag[String] = {
+    val refs = data.getOrElse(List()).head._2
     div(id:="reflection-box",
         for(ref <- refs) yield {
           div(`class` := "reflist-item",

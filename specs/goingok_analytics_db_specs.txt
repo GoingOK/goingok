@@ -11,9 +11,16 @@ Charts - anltx_charts, anltx_node_labels, anltx_labels, anltx_edge_labels
 anltx_nodes(				# A node is a unique location range in a unique reflective text
 	node_id		Int, 
 	node_type	String, # SYS/USR
+	node_code	String (FK), 
 	start_idx	Int,
 	end_idx		Int,
 	ref_id		Int (FK) 
+)
+
+anltx_codes(				# Codes represent theoretically informed categories for nodes or edges
+	code		String,
+	description String,
+	reference	String
 )
 
 anltx_author_graphs(       # An author_graph relates a graph to an author
@@ -41,6 +48,7 @@ anltx_graph_nodes(			# A graph_node relates nodes to graphs (Many - many)
 anltx_edges(			# A graph_edge relates nodes to nodes within a graph
 	edge_id		Int
 	edge_type	String, # SYS/USR
+	edge_code	String (FK),
 	directional	Boolean,
 	weight		Numeric,
 	graph_id	Int,	(FK)

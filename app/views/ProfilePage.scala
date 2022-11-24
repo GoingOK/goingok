@@ -83,7 +83,7 @@ class ProfilePage(profile:Profile = Profile(), analytics: Vector[AnalyticsAuthor
                   "Use the slider to indicate how you are going from 'distressed' to 'soaring', "+
                     "and in the text box below write anything you like to describe how you how you are going. "+
                     "When finished, click the 'save' button to record your reflection."),
-                  Includes.panel("reflection-list", "fas fa-list-alt", "Past reflections", ReflectionList.display(profile.reflections.map(_.reverse)),
+                  Includes.panel("reflection-list", "fas fa-list-alt", "Past reflections", ReflectionList.display(profile.reflections),
                   "A reverse ordered list of reflections that you have written to date. The number represents your reflection point from 0 to 100 "+
                     "where 0 is 'distressed' and 100 is 'soaring'."
                   )
@@ -98,7 +98,7 @@ class ProfilePage(profile:Profile = Profile(), analytics: Vector[AnalyticsAuthor
         ),
         //Includes.d3Js,
         script(src:=bundleUrl),
-        createChart(profile.reflections, analytics)
+        createChart(profile.reflections.map(_.head._2), analytics)
       )
     )
   }

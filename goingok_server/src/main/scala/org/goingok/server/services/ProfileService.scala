@@ -27,9 +27,9 @@ class ProfileService {
 //    }
 //  }
 
-  def getAuthorReflections(goingok_id:UUID): Either[Throwable,Vector[Reflection]] = {
-    ds.getReflectionsforAuthor(goingok_id)
-  }
+//  def getAuthorReflections(goingok_ids:List[UUID]): Either[Throwable,Vector[Reflection]] = {
+//    ds.getReflectionsforAuthor(goingok_ids.head)
+//  }
 
   /**
     * Get GoingOK user from DB by GoingOK user ID
@@ -55,7 +55,28 @@ class ProfileService {
     rows <- ds.insertReflection(reflection:ReflectionData,goingok_id:UUID)
   } yield rows
 
-  def getAuthorAnalytics(goingok_id:UUID): Either[Throwable, AuthorAnalytics] = {
+  def getAuthorAnalytics(goingok_ids:Vector[UUID]): Either[Throwable, Map[UUID,AuthorAnalytics]] = {
+    //val goingok_id = goingok_ids.head
+    //val idMap:Map[UUID,AuthorAnalytics] = goingok_ids.map(g => g->AuthorAnalytics(Vector(),Vector(),Vector(),Vector(),Vector(),Vector(),Vector(),Vector())).toMap
+    val (lerrors, ranalytics) = goingok_ids.map{g =>
+      getSingleAuthorAnalytics(g)}.partitionMap(identity)
+    lerrors.headOption.toLeft(ranalytics.flatten.toMap)
+//    for {
+//      rs <- ds.getReflectionsforAuthor(goingok_id)
+//      gs <- ds.getGraphsforAuthor(goingok_id)
+//      ns <- getAllRefNodes(rs)
+//      gsn <- addNodesToGraphs(gs)
+//      es <- getEdgesForGraphs(gsn)
+//      gse <- addEdgeIdsToGraphs(gsn,es)
+//      cs <- getChartsForGraphs(gs)
+//      nls <- getNodeLabelsForCharts(cs)
+//      els <- getEdgeLabelsForCharts(cs)
+//      ls <- getLabels(nls,els)
+//    } yield AuthorAnalytics(rs,gse,ns,es,cs,nls,els,ls)
+
+  }
+
+  def getSingleAuthorAnalytics(goingok_id:UUID): Either[Throwable, Map[UUID,AuthorAnalytics]] = {
 
     for {
       rs <- ds.getReflectionsforAuthor(goingok_id)
@@ -63,12 +84,12 @@ class ProfileService {
       ns <- getAllRefNodes(rs)
       gsn <- addNodesToGraphs(gs)
       es <- getEdgesForGraphs(gsn)
-      gse <- addEdgeIdsToGraphs(gsn,es)
+      gse <- addEdgeIdsToGraphs(gsn, es)
       cs <- getChartsForGraphs(gs)
       nls <- getNodeLabelsForCharts(cs)
       els <- getEdgeLabelsForCharts(cs)
-      ls <- getLabels(nls,els)
-    } yield AuthorAnalytics(rs,gse,ns,es,cs,nls,els,ls)
+      ls <- getLabels(nls, els)
+    } yield Map(goingok_id -> AuthorAnalytics(rs, gse, ns, es, cs, nls, els, ls))
 
   }
 
