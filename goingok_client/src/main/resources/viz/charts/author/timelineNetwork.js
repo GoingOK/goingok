@@ -1,13 +1,13 @@
 var d3 = require("d3");
 import { Click } from "../../interactions/click.js";
 import { Tooltip, TooltipValues } from "../../interactions/tooltip.js";
-import { addDays, groupBy, maxDate, minDate } from "../../utils/utils.js";
+import { addDays, calculateMean, groupBy, maxDate, minDate } from "../../utils/utils.js";
 import { ChartPadding, ChartTime } from "../chartBase.js";
 export class TimelineNetwork extends ChartTime {
     constructor(data) {
         super("timeline", [addDays(minDate(data.map(d => d.timestamp)), -30), addDays(maxDate(data.map(d => d.timestamp)), 30)], new ChartPadding(40, 75, 10, 10));
         this.tooltip = new Tooltip(this);
-        this.clicking = new Click(this);
+        this.clicking = new ClickTimelineNetwork(this);
         this.data = data.map(c => {
             this.simulation(c);
             return c;
@@ -26,16 +26,14 @@ export class TimelineNetwork extends ChartTime {
     }
     render() {
         const _this = this;
-        const hardLine = d3.line()
-            .x(d => _this.x.scale(d.timestamp))
-            .y(d => _this.y.scale(d.point))
-            .curve(d3.curveMonotoneX);
-        if (_this.elements.contentContainer.select(".hardline").empty()) {
-            _this.elements.contentContainer.append("path")
-                .datum(d3.sort(_this.data, d => d.timestamp))
-                .attr("class", "hardline")
-                .attr("d", d => hardLine(d));
-        }
+        _this.elements.contentContainer.selectAll(".timeline-line-container")
+            .data(_this.getLines())
+            .join(enter => enter.append("g")
+            .attr("class", "timeline-line-container")
+            .call(enter => enter.append("path")
+            .datum(d => d)
+            .attr("class", d => d.name)
+            .attr("d", d => d.line(d.datum))), update => update, exit => exit.remove());
         _this.elements.contentContainer.selectAll(".circle-tag-container")
             .data(_this.data)
             .join(enter => enter.append("g")
@@ -57,9 +55,8 @@ export class TimelineNetwork extends ChartTime {
             .call(update => _this.renderReflectionNetwork(update)), exit => exit.remove());
         _this.elements.content = _this.elements.contentContainer.selectAll(".circle");
         const onMouseover = function (e, d) {
-            if (d3.select(this).attr("class").includes("clicked")) {
+            if (d3.select(this).attr("class").includes("clicked"))
                 return;
-            }
             _this.tooltip.appendTooltipContainer();
             let tooltipValues = [new TooltipValues("Point", d.point)];
             let tags = groupBy(_this.data.find(c => c.refId === d.refId).nodes, "name").map(c => { return { "name": c.key, "total": c.value.length }; });
@@ -83,7 +80,7 @@ export class TimelineNetwork extends ChartTime {
                 }
                 return yTooltip;
             }
-            ;
+            d3.select(this).attr("r", 10);
             _this.tooltip.appendLine(0, _this.y.scale(d.point), _this.x.scale(d.timestamp) - 10, _this.y.scale(d.point), "#999999");
             _this.tooltip.appendLine(_this.x.scale(d.timestamp), _this.y.scale(0), _this.x.scale(d.timestamp), _this.y.scale(d.point) + 10, "#999999");
         };
@@ -91,9 +88,31 @@ export class TimelineNetwork extends ChartTime {
             _this.elements.svg.select(".tooltip-container").transition()
                 .style("opacity", 0);
             _this.tooltip.removeTooltip();
+            if (d3.select(this).attr("class").includes("clicked"))
+                return;
+            d3.select(this).attr("r", 5);
         };
         //Enable tooltip       
         _this.tooltip.enableTooltip(onMouseover, onMouseout);
+    }
+    getLines() {
+        const hardLine = d3.line()
+            .x(d => this.x.scale(d.timestamp))
+            .y(d => this.y.scale(d.point))
+            .curve(d3.curveMonotoneX);
+        const softLine = d3.line()
+            .x(d => this.x.scale(d.timestamp))
+            .y(d => this.y.scale(d.point))
+            .curve(d3.curveBasis);
+        const mean = calculateMean(this.data.map(d => d.point));
+        const meanLine = d3.line()
+            .x(d => this.x.scale(d.timestamp))
+            .y(this.y.scale(mean));
+        return [
+            { "name": "hardline", "line": hardLine, "datum": d3.sort(this.data, d => d.timestamp) },
+            { "name": "softline", "line": softLine, "datum": d3.sort(this.data, d => d.timestamp) },
+            { "name": "meanline", "line": meanLine, "datum": d3.sort(this.data, d => d.timestamp) }
+        ];
     }
     renderReflectionNetwork(enter) {
         enter.selectAll(".circle-tag")
@@ -130,5 +149,12 @@ export class TimelineNetwork extends ChartTime {
             simulation.force("forceX", d3.forceX(-20).strength(0.25));
         }
         simulation.tick(300);
+    }
+}
+class ClickTimelineNetwork extends Click {
+    removeClick() {
+        super.removeClick();
+        this.chart.elements.content
+            .attr("r", 5);
     }
 }

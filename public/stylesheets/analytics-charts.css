@@ -149,15 +149,10 @@ Admin CSS
 
 .bar:hover, .histogram-rect:hover, .circle:hover {
     fill-opacity: 0.4;
-    r: 10;
 }
 
 .circle.no-hover {
     cursor: auto;
-}
-
-.circle.no-hover:hover {
-    r: 2
 }
 
 .dragging {
@@ -167,11 +162,9 @@ Admin CSS
 .clicked {
     stroke-width: 2;
     fill-opacity: 0.6;
-    r: 10;
 }
 
 .clicked.main {
-    r: 20;
     stroke: #ffff80;
     fill-opacity: 0.80;
     stroke-width: 5px;
@@ -197,8 +190,6 @@ Admin CSS
     stroke: #333;
     fill: #333;
     fill-opacity: 0.75;
-    ry: 5;
-    rx: 5;
 }
 
 .tooltip-text, .click-text, .histogram-text {
@@ -283,8 +274,6 @@ Admin CSS
 .threshold-indicator-box {
     stroke-width: 1;
     fill-opacity: 0.75;
-    ry: 5;
-    rx: 5;
 }
 
 .threshold-indicator-box.soaring {
@@ -331,11 +320,6 @@ Admin CSS
 .zoom-content {
     fill-opacity: 0;
     stroke-opacity: 0;
-}
-
-.user-legend-text {
-    dominant-baseline: central;
-    font-size: 10px;
 }
 
 .reflection-selected {
@@ -422,19 +406,12 @@ Author CSS
     opacity: 0.5;
 }
 
-.point:hover {
-    r: 10;
-}
-
-
 .network-node-group.clicked {
     fill-opacity: 1;
 }
 
 .network-node {
     stroke-width: 1;
-    ry: 10;
-    rx: 10;
 }
 
 .hover {
@@ -443,7 +420,6 @@ Author CSS
 
 .network-text {
     text-anchor: middle;
-    dominant-baseline: central;
     font-size: 75%;
     font-weight: 500;
 }
