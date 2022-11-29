@@ -65,12 +65,12 @@ class ProfileController @Inject()(components: ControllerComponents,profileServic
         }
 
         //val associated_ids:Vector[UUID] = Vector(goingok_id,UUID.fromString(""))
-        val associated_ids:Either[Throwable,Vector[UserPseudonym]] = profileService.getAssociatedIds(goingok_id)
-        val analytics:Either[Throwable,Map[UserPseudonym,AuthorAnalytics]] = {
+        //val associated_ids:Either[Throwable,Vector[UserPseudonym]] = profileService.getAssociatedIds(goingok_id)
+        val analytics:Either[Throwable,Map[String,AuthorAnalytics]] = {
           for {
             ais <- profileService.getAssociatedIds(goingok_id)
             ans <- profileService.getAuthorAnalytics(Vector(UserPseudonym(goingok_id, user.get.pseudonym.get)) ++ ais)
-          } yield ans
+          } yield ans.map(r => (r._1.pseudonym,r._2))
           //profileService.getAuthorAnalytics(associated_ids)
         } //goingok_id)
 
@@ -83,14 +83,14 @@ class ProfileController @Inject()(components: ControllerComponents,profileServic
         //logger.warn(s"NODELABELS: ${analytics.map(_.nodeLabels)}")
         //logger.warn(s"EDGELABELS: ${analytics.map(_.edgeLabels)}")
         //logger.warn(s"LABELS: ${analytics.map(_.labels)}")
-        val chartAnalytics = profileService.getAuthorChartsAnalytics(analytics.toOption.get)
+        //val chartAnalytics = profileService.getAuthorChartsAnalytics(analytics.toOption.getOrElse(Map()))
         //logger.warn(s"ChartData: ${chartAnalytics}")
 
         // for compatibility with prior reflections
         val reflections: Option[Map[String,Vector[ReflectionEntry]]] = analytics match {
           case Right(an) => {
             val refmap = an.map{r =>
-              val u = r._1.pseudonym //This needs to be pseudonym
+              val u = r._1
               val refs = r._2.refs.map(r => ReflectionEntry(r.ref_id, r.timestamp, ReflectionData(r.point, r.text)))
               u -> refs
             }
@@ -103,12 +103,22 @@ class ProfileController @Inject()(components: ControllerComponents,profileServic
           }
         }
 
+        // transition - handle analytics separately - to be integrated with reflections above in unified profile
+
+        val analyticsFinal: Option[Map[String,AuthorAnalytics]] = analytics match {
+          case Right(an) =>
+              Some(an)
+          case Left(error) =>
+            logger.error(error.getMessage)
+            None
+        }
+
         if(user.getOrElse(User(UUID.randomUUID())).group_code!="none") {
 //          val page = ProfilePage.page("GoingOK :: profile", message, Profile(user, reflections))
 //          Ok(ProfilePage.getHtml(page))
           val exp = isExp(request)
           val tester = isTester(user)
-          Ok(new ProfilePage(Profile(user,reflections), chartAnalytics, tester, exp).buildPage(message = message))
+          Ok(new ProfilePage(Profile(user,reflections), analyticsFinal, tester, exp).buildPage(message = message))
         } else {
           Redirect("/register")
         }

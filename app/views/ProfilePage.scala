@@ -2,7 +2,7 @@ package views
 
 
 import org.goingok.server.Config
-import org.goingok.server.data.models.{AnalyticsAuthorChartsData, AnalyticsChartEdge, AnalyticsChartNode, ReflectionData, ReflectionEntry}
+import org.goingok.server.data.models.{AnalyticsAuthorChartsData, AnalyticsChartEdge, AnalyticsChartNode, AuthorAnalytics, ReflectionData, ReflectionEntry}
 import org.goingok.server.data.{Profile, UiMessage, models}
 import scalatags.Text.all._
 import scalatags.Text.{TypedTag, tags}
@@ -12,7 +12,7 @@ import views.components.profile.{MessagesList, Network, ReflectionEntryForm, Ref
 
 
 
-class ProfilePage(profile:Profile = Profile(), analytics: Map[String, Vector[AnalyticsAuthorChartsData]], tester: Boolean, exp: Boolean) extends GenericPage {
+class ProfilePage(profile:Profile = Profile(), analytics: Option[Map[String, AuthorAnalytics]], tester: Boolean, exp: Boolean) extends GenericPage {
 
   private val sliderStartPoint:Double = 50.0
 
@@ -105,19 +105,23 @@ class ProfilePage(profile:Profile = Profile(), analytics: Map[String, Vector[Ana
   }
 
   /** Creates user chart */
-  private def createChart(data:Option[Map[String,Vector[ReflectionEntry]]], analytics: Map[String, Vector[models.AnalyticsAuthorChartsData]]) = {
+  //private def createChart(data:Option[Map[String,Vector[ReflectionEntry]]], analytics: Map[String, Vector[models.AnalyticsAuthorChartsData]]) = {
+  private def createChart(data:Option[Map[String,Vector[ReflectionEntry]]], analytics: Option[Map[String, AuthorAnalytics]]) = {
+
     val uuidRefsRaw = data.getOrElse(Vector()).toList
     val uuidRefs = uuidRefsRaw.map(d =>
       ujson.Obj("pseudonym" -> d._1,
         "reflections" -> parseReflections(d._2)))
     val reflections = ujson.write(uuidRefs)
     if (tester) {
-      val analyticsData = analytics.map { d =>
+      val analyticsData = analytics.getOrElse(Map()).map { d =>
         ujson.Obj("pseudonym" -> d._1,
-          "analytics" -> ujson.Obj("name" -> d._2.headOption.getOrElse(AnalyticsAuthorChartsData("", "", Vector(), Vector())).name,
-            "description" -> d._2.headOption.getOrElse(AnalyticsAuthorChartsData("", "", Vector(), Vector())).description,
-            "nodes" -> parseNodes(d._2.headOption.getOrElse(AnalyticsAuthorChartsData("", "", Vector(), Vector())).nodes),
-            "edges" -> parseEdges(d._2.headOption.getOrElse(AnalyticsAuthorChartsData("", "", Vector(), Vector())).edges)))
+          "analytics" -> ujson.Obj("name" -> "to fix", //d._2.headOption.getOrElse(AnalyticsAuthorChartsData("", "", Vector(), Vector())).name,
+            "description" -> "to fix", //d._2.headOption.getOrElse(AnalyticsAuthorChartsData("", "", Vector(), Vector())).description,
+            "nodes" -> Vector(), //TO FIX //parseNodes(d._2.headOption.getOrElse(AnalyticsAuthorChartsData("", "", Vector(), Vector())).nodes),
+            "edges" -> Vector() //TO FIX //parseEdges(d._2.headOption.getOrElse(AnalyticsAuthorChartsData("", "", Vector(), Vector())).edges)
+          )
+        )
       }
       //      val analyticsDataMultipleCharts: List[ujson.Obj] = analytics.map(r => ujson.Obj("name" -> r.name,
 //        "description" -> r.description,
