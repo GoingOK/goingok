@@ -241,7 +241,6 @@ export function buildExperimentAuthorAnalyticsCharts(entriesRaw, analyticsRaw) {
             new TutorialData("#network .network-node-group", "Hover for information on demand. Click to fill the background colour of the nodes in the reflection text"),
             new TutorialData("#network .zoom-buttons", "Click to zoom in and out. To pan the chart click, hold and move left or right in any blank area")]);
         loading.isLoading = false;
-        loading.removeDiv();
         function drawCharts(data) {
             return __awaiter(this, void 0, void 0, function* () {
                 const dashboard = new ExperimentalDashboard(data);

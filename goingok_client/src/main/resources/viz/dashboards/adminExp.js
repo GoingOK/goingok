@@ -365,7 +365,6 @@ export function buildExperimentAdminAnalyticsCharts(entriesRaw) {
             new TutorialData("#timeline .circle", "Hover for information on demand or click to connect the user's reflections"),
             new TutorialData("#reflections .sort-by", "Sort users alphabetically or by their average reflection state point")]);
         loading.isLoading = false;
-        loading.removeDiv();
         function drawCharts(allEntries) {
             return __awaiter(this, void 0, void 0, function* () {
                 const dashboard = new ExperimentalDashboard(allEntries);

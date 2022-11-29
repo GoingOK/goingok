@@ -80,7 +80,6 @@ export function buildControlAdminAnalyticsCharts(entriesRaw) {
             new TutorialData("#histogram .histogram-rect", "Hover for information on demand"),
             new TutorialData("#timeline .zoom-buttons", "Click to zoom in and out. To pan the chart click, hold and move left or right in any blank area")]);
         loading.isLoading = false;
-        loading.removeDiv();
         function drawCharts(allEntries) {
             return __awaiter(this, void 0, void 0, function* () {
                 const help = new Help();

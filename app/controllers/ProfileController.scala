@@ -2,12 +2,12 @@ package controllers
 
 import java.util.UUID
 import javax.inject.Inject
-import org.goingok.server.data.{Profile, Reflection, UiMessage, models}
-import org.goingok.server.data.models.{AnalyticsAuthorChartsData, AuthorAnalytics, ReflectionData, ReflectionEntry, User, UserPseudonym}
-import org.goingok.server.services.{AnalyticsService, ProfileService, UserService}
+import org.goingok.server.data.{Profile, Reflection, UiMessage}
+import org.goingok.server.data.models.{AuthorAnalytics, ReflectionData, ReflectionEntry, User, UserPseudonym}
+import org.goingok.server.services.{AnalyticsService, ProfileService}
 import play.api.Logger
 import play.api.mvc._
-import views.{ProfilePage, RegisterPage}
+import views.{ProfilePage}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try

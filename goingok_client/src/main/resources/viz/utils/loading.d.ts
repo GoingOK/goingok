@@ -5,7 +5,9 @@ export interface ILoading {
     removeDiv(): void;
 }
 export declare class Loading implements ILoading {
-    isLoading: boolean;
+    private _isLoading;
+    get isLoading(): boolean;
+    set isLoading(loading: boolean);
     spinner: HTMLElement;
     constructor();
     appendDiv(): HTMLElement;

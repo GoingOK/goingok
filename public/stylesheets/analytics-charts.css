@@ -528,6 +528,11 @@ Spinner CSS
     width: 34px;
     top: 35px;
 }
+.cancel-loading {
+    position: absolute;
+    top: 60%;
+    left: 47%;
+}
 
 @keyframes spin {
     0%, 15% {

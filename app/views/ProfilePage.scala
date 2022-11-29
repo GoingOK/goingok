@@ -2,7 +2,7 @@ package views
 
 
 import org.goingok.server.Config
-import org.goingok.server.data.models.{AnalyticsAuthorChartsData, AnalyticsChartEdge, AnalyticsChartNode, AuthorAnalytics, ReflectionData, ReflectionEntry}
+import org.goingok.server.data.models.{AnltxChart, AnltxEdge, AnltxEdgeLabel, AnltxLabel, AnltxNode, AnltxNodeLabel, AuthorAnalytics, ReflectionData, ReflectionEntry}
 import org.goingok.server.data.{Profile, UiMessage, models}
 import scalatags.Text.all._
 import scalatags.Text.{TypedTag, tags}
@@ -116,12 +116,7 @@ class ProfilePage(profile:Profile = Profile(), analytics: Option[Map[String, Aut
     if (tester) {
       val analyticsData = analytics.getOrElse(Map()).map { d =>
         ujson.Obj("pseudonym" -> d._1,
-          "analytics" -> ujson.Obj("name" -> "to fix", //d._2.headOption.getOrElse(AnalyticsAuthorChartsData("", "", Vector(), Vector())).name,
-            "description" -> "to fix", //d._2.headOption.getOrElse(AnalyticsAuthorChartsData("", "", Vector(), Vector())).description,
-            "nodes" -> Vector(), //TO FIX //parseNodes(d._2.headOption.getOrElse(AnalyticsAuthorChartsData("", "", Vector(), Vector())).nodes),
-            "edges" -> Vector() //TO FIX //parseEdges(d._2.headOption.getOrElse(AnalyticsAuthorChartsData("", "", Vector(), Vector())).edges)
-          )
-        )
+          "analytics" -> parseAnalytics(d._2))
       }
       //      val analyticsDataMultipleCharts: List[ujson.Obj] = analytics.map(r => ujson.Obj("name" -> r.name,
 //        "description" -> r.description,
@@ -141,34 +136,54 @@ class ProfilePage(profile:Profile = Profile(), analytics: Option[Map[String, Aut
     }
   }
 
-  private def parseNodes(nodes: Vector[AnalyticsChartNode]): List[ujson.Obj] = {
-    nodes.map(c => ujson.Obj("idx" -> c.id,
-      "nodeType" -> c.nodeType,
-      "refId" -> c.refId,
-      "startIdx" -> c.startIdx,
-      "endIdx" -> c.endIdx,
-      "expression" -> c.expression,
-      "labelType" -> c.labelType,
-      "name" -> c.name,
-      "description" -> c.description,
-      "selected" -> c.selected,
-      "properties" -> c.properties
-    )).toList
+  private def parseAnalytics(authorAnalytics: AuthorAnalytics): ujson.Obj = {
+    authorAnalytics.charts.map(ch => {
+      ujson.Obj("name" -> ch.name,
+        "description" -> ch.description,
+        "nodes" -> parseNodes(authorAnalytics.nodeLabels, authorAnalytics.nodes, authorAnalytics.labels),
+        "edges" -> parseEdges(authorAnalytics.edgeLabels, authorAnalytics.edges, authorAnalytics.labels)
+      )
+    }).toList.headOption.getOrElse(ujson.Obj("name" -> "not found",
+      "description" -> "not found",
+      "nodes" -> parseNodes(Vector(), Vector(), Vector()),
+      "edges" -> parseEdges(Vector(), Vector(), Vector())
+    ))
   }
 
-  private def parseEdges(edges: Vector[AnalyticsChartEdge]): List[ujson.Obj] = {
-    edges.map(c => ujson.Obj("idx" -> c.id,
-      "edgeType" -> c.edgeType,
-      "source" -> c.source,
-      "target" -> c.target,
-      "directional" -> c.directional,
-      "weight" -> c.weight,
-      "labelType" -> c.labelType,
-      "name" -> c.name,
-      "description" -> c.description,
-      "selected" -> c.selected,
-      "properties" -> c.properties
-    )).toList
+  private def parseNodes(nodeLabels: Vector[AnltxNodeLabel], nodes: Vector[AnltxNode], labels: Vector[AnltxLabel]): List[ujson.Obj] = {
+    nodeLabels.map(nl => {
+      val node = nodes.find(n => n.node_id == nl.node_id).getOrElse(AnltxNode(0, "", 0, 0, 0))
+      val label = labels.find(l => l.label_id == nl.label_id).getOrElse(AnltxLabel(0,"","","",true,ujson.Obj()))
+      ujson.Obj("idx" -> node.node_id,
+      "nodeType" -> node.node_type,
+      "refId" -> node.ref_id,
+      "startIdx" -> node.start_idx,
+      "endIdx" -> node.end_idx,
+      "expression" -> nl.expression,
+      "labelType" -> label.label_type,
+      "name" -> label.ui_name,
+      "description" -> label.description,
+      "selected" -> label.selected,
+      "properties" -> label.properties
+    )}).toList
+  }
+
+  private def parseEdges(edgeLabels: Vector[AnltxEdgeLabel], edges: Vector[AnltxEdge], labels: Vector[AnltxLabel]): List[ujson.Obj] = {
+    edgeLabels.map(el => {
+      val edge = edges.find(e => e.edge_id == el.edge_id).getOrElse(AnltxEdge(0,0,"",0,0,false,0))
+      val label = labels.find(l => l.label_id == el.label_id).getOrElse(AnltxLabel(0,"","","",true,ujson.Obj()))
+      ujson.Obj("idx" -> edge.edge_id,
+      "edgeType" -> edge.edge_type,
+      "source" -> edge.source,
+      "target" -> edge.target,
+      "directional" -> edge.directional,
+      "weight" -> edge.weight,
+      "labelType" -> label.label_type,
+      "name" -> label.ui_name,
+      "description" -> label.description,
+      "selected" -> label.selected,
+      "properties" -> label.properties
+    )}).toList
   }
 
   private def parseReflections(refs: Vector[ReflectionEntry]): List[ujson.Obj] = {

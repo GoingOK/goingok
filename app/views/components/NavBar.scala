@@ -97,7 +97,7 @@ object NavBar {
           if(isSignedIn){
             li(`class` := "nav-item dropdown multi-user")(
                 button(`class` := "btn btn-sm btn-outline-light", data("toggle") := "dropdown", disabled, displayName)
-                , div(`class` := "dropdown-menu")
+                , div(`class` := "dropdown-menu pointer")
                //(s"$displayName") }
             )
           } else {},

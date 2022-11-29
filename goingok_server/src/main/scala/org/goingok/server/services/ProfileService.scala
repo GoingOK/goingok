@@ -2,7 +2,7 @@ package org.goingok.server.services
 
 import java.util.UUID
 import com.typesafe.scalalogging.Logger
-import org.goingok.server.data.models.{Activity, AnalyticsAuthorChartsData, AnalyticsChartEdge, AnalyticsChartNode, AnltxChart, AnltxEdge, AnltxEdgeLabel, AnltxGraph, AnltxLabel, AnltxNode, AnltxNodeLabel, AuthorAnalytics, AuthorReflection, Reflection, ReflectionData, ReflectionEntry, User, UserPseudonym}
+import org.goingok.server.data.models.{Activity, AnltxChart, AnltxEdge, AnltxEdgeLabel, AnltxGraph, AnltxLabel, AnltxNode, AnltxNodeLabel, AuthorAnalytics, AuthorReflection, Reflection, ReflectionData, ReflectionEntry, User, UserPseudonym}
 
 import java.time.LocalDateTime
 
@@ -128,52 +128,4 @@ class ProfileService {
     val labelIds = nodeLabels.map(_.label_id) ++ edgeLabels.map(_.label_id)
     ds.getLabelsForLabelIds(labelIds)
   }
-
-  def getAuthorChartsAnalytics(aaMap: Map[UserPseudonym,AuthorAnalytics]): Map[String,Vector[AnalyticsAuthorChartsData]] = {
-    aaMap.map { g =>
-      Tuple2(g._1.pseudonym, getSingleAuthorChartsAnalytics(g._2))
-    }
-  }
-
-  def getSingleAuthorChartsAnalytics(authorAnalytics: AuthorAnalytics): Vector[AnalyticsAuthorChartsData] = {
-    authorAnalytics.charts.map(aa => AnalyticsAuthorChartsData(
-      aa.name,
-      aa.description,
-      authorAnalytics.nodeLabels.map(nl => {
-        val node = authorAnalytics.nodes.find(n => n.node_id == nl.node_id)
-        val label = authorAnalytics.labels.find(l => l.label_id == nl.label_id)
-        AnalyticsChartNode(
-          nl.node_id,
-          node.get.node_type,
-          node.get.ref_id,
-          node.get.start_idx,
-          node.get.end_idx,
-          nl.expression,
-          label.get.label_type,
-          label.get.ui_name,
-          label.get.description,
-          label.get.selected,
-          label.get.properties
-        )
-      }),
-      authorAnalytics.edgeLabels.map(el => {
-        val edge = authorAnalytics.edges.find(e => e.edge_id == el.edge_id)
-        val label = authorAnalytics.labels.find(l => l.label_id == el.label_id)
-        AnalyticsChartEdge(
-          edge.get.edge_id,
-          edge.get.edge_type,
-          edge.get.source,
-          edge.get.target,
-          edge.get.directional,
-          edge.get.weight,
-          label.get.label_type,
-          label.get.ui_name,
-          label.get.description,
-          label.get.selected,
-          label.get.properties
-        )
-      })
-    ))
-  }
-
 }
