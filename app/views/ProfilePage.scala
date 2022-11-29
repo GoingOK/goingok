@@ -2,7 +2,7 @@ package views
 
 
 import org.goingok.server.Config
-import org.goingok.server.data.models.{AnalyticsAuthorChartsData, AnalyticsChartEdge, AnalyticsChartNode, ReflectionEntry}
+import org.goingok.server.data.models.{AnalyticsAuthorChartsData, AnalyticsChartEdge, AnalyticsChartNode, ReflectionData, ReflectionEntry}
 import org.goingok.server.data.{Profile, UiMessage, models}
 import scalatags.Text.all._
 import scalatags.Text.{TypedTag, tags}
@@ -110,8 +110,6 @@ class ProfilePage(profile:Profile = Profile(), analytics: Map[String, Vector[Ana
     val uuidRefs = uuidRefsRaw.map(d =>
       ujson.Obj("pseudonym" -> d._1,
         "reflections" -> parseReflections(d._2)))
-    val chartData:List[ujson.Obj] = parseReflections(uuidRefsRaw.head._2)
-    val entries:String = ujson.write(chartData)
     val reflections = ujson.write(uuidRefs)
     if (tester) {
       val analyticsData = analytics.map { d =>
@@ -133,6 +131,8 @@ class ProfilePage(profile:Profile = Profile(), analytics: Map[String, Vector[Ana
         script(raw(s"Visualisation.authorControlAnalyticsCharts($reflections, $analyticsEntries)"))
       }
     } else {
+      val chartData: List[ujson.Obj] = parseReflections(uuidRefsRaw.headOption.getOrElse("noPseudonym" -> Vector(ReflectionEntry(0, "1900-01-01", ReflectionData(0, ""))))._2)
+      val entries: String = ujson.write(chartData)
       script(raw(s"Visualisation.rpChart($entries)"))
     }
   }
