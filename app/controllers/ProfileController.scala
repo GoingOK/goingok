@@ -3,7 +3,7 @@ package controllers
 import java.util.UUID
 import javax.inject.Inject
 import org.goingok.server.data.{Profile, Reflection, UiMessage, models}
-import org.goingok.server.data.models.{AnalyticsAuthorChartsData, AuthorAnalytics, ReflectionData, ReflectionEntry, User}
+import org.goingok.server.data.models.{AnalyticsAuthorChartsData, AuthorAnalytics, ReflectionData, ReflectionEntry, User, UserPseudonym}
 import org.goingok.server.services.{AnalyticsService, ProfileService, UserService}
 import play.api.Logger
 import play.api.mvc._
@@ -64,10 +64,18 @@ class ProfileController @Inject()(components: ControllerComponents,profileServic
           None
         }
 
-        val associated_ids:Vector[UUID] = Vector(goingok_id, UUID.fromString("7a05c50b-3a1f-45d4-85dc-9a5ba91184f5"))
+        //val associated_ids:Vector[UUID] = Vector(goingok_id,UUID.fromString(""))
+        val associated_ids:Either[Throwable,Vector[UserPseudonym]] = profileService.getAssociatedIds(goingok_id)
+        val analytics:Either[Throwable,Map[UserPseudonym,AuthorAnalytics]] = {
+          for {
+            ais <- profileService.getAssociatedIds(goingok_id)
+            ans <- profileService.getAuthorAnalytics(ais)
+          } yield ans
+          //profileService.getAuthorAnalytics(associated_ids)
+        } //goingok_id)
+
         //val reflections:String = profileService.getReflections(goingok_id).map(_.reverse)
         //val reflections = profileService.getAuthorReflections(goingok_id) // new reflections format for analytics
-        val analytics:Either[Throwable,Map[UUID,AuthorAnalytics]] = profileService.getAuthorAnalytics(associated_ids) //goingok_id)
         //logger.warn(s"GRAPHS: ${analytics.map(_.graphs)}")
         //logger.warn(s"NODES: ${analytics.map(_.nodes)}")
         //logger.warn(s"EDGES: ${analytics.map(_.edges)}")
@@ -76,7 +84,7 @@ class ProfileController @Inject()(components: ControllerComponents,profileServic
         //logger.warn(s"EDGELABELS: ${analytics.map(_.edgeLabels)}")
         //logger.warn(s"LABELS: ${analytics.map(_.labels)}")
         val chartAnalytics = profileService.getAuthorChartsAnalytics(analytics.toOption.get)
-        logger.warn(s"ChartData: ${chartAnalytics} for: ${associated_ids.head}")
+        //logger.warn(s"ChartData: ${chartAnalytics} for: ${associated_ids.head}")
 
         // for compatibility with prior reflections
         val reflections: Option[Map[String,Vector[ReflectionEntry]]] = analytics match {

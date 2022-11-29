@@ -2,7 +2,7 @@ package org.goingok.server.services
 
 import java.util.UUID
 import com.typesafe.scalalogging.Logger
-import org.goingok.server.data.models.{Activity, AnalyticsAuthorChartsData, AnalyticsChartEdge, AnalyticsChartNode, AnltxChart, AnltxEdge, AnltxEdgeLabel, AnltxGraph, AnltxLabel, AnltxNode, AnltxNodeLabel, AuthorAnalytics, AuthorReflection, Reflection, ReflectionData, ReflectionEntry, User}
+import org.goingok.server.data.models.{Activity, AnalyticsAuthorChartsData, AnalyticsChartEdge, AnalyticsChartNode, AnltxChart, AnltxEdge, AnltxEdgeLabel, AnltxGraph, AnltxLabel, AnltxNode, AnltxNodeLabel, AuthorAnalytics, AuthorReflection, Reflection, ReflectionData, ReflectionEntry, User, UserPseudonym}
 
 import java.time.LocalDateTime
 
@@ -55,32 +55,16 @@ class ProfileService {
     rows <- ds.insertReflection(reflection:ReflectionData,goingok_id:UUID)
   } yield rows
 
-  def getAuthorAnalytics(goingok_ids:Vector[UUID]): Either[Throwable, Map[UUID,AuthorAnalytics]] = {
-    //val goingok_id = goingok_ids.head
-    //val idMap:Map[UUID,AuthorAnalytics] = goingok_ids.map(g => g->AuthorAnalytics(Vector(),Vector(),Vector(),Vector(),Vector(),Vector(),Vector(),Vector())).toMap
-    val (lerrors, ranalytics) = goingok_ids.map{g =>
-      getSingleAuthorAnalytics(g)}.partitionMap(identity)
+  def getAuthorAnalytics(goingok_ids:Vector[UserPseudonym]): Either[Throwable, Map[UserPseudonym,AuthorAnalytics]] = {
+    val (lerrors, ranalytics) = goingok_ids.map{up =>
+      getSingleAuthorAnalytics(up)}.partitionMap(identity)
     lerrors.headOption.toLeft(ranalytics.flatten.toMap)
-//    for {
-//      rs <- ds.getReflectionsforAuthor(goingok_id)
-//      gs <- ds.getGraphsforAuthor(goingok_id)
-//      ns <- getAllRefNodes(rs)
-//      gsn <- addNodesToGraphs(gs)
-//      es <- getEdgesForGraphs(gsn)
-//      gse <- addEdgeIdsToGraphs(gsn,es)
-//      cs <- getChartsForGraphs(gs)
-//      nls <- getNodeLabelsForCharts(cs)
-//      els <- getEdgeLabelsForCharts(cs)
-//      ls <- getLabels(nls,els)
-//    } yield AuthorAnalytics(rs,gse,ns,es,cs,nls,els,ls)
-
   }
 
-  def getSingleAuthorAnalytics(goingok_id:UUID): Either[Throwable, Map[UUID,AuthorAnalytics]] = {
-
+  private def getSingleAuthorAnalytics(userp:UserPseudonym): Either[Throwable, Map[UserPseudonym,AuthorAnalytics]] = {
     for {
-      rs <- ds.getReflectionsforAuthor(goingok_id)
-      gs <- ds.getGraphsforAuthor(goingok_id)
+      rs <- ds.getReflectionsforAuthor(userp.goingok_id)
+      gs <- ds.getGraphsforAuthor(userp.goingok_id)
       ns <- getAllRefNodes(rs)
       gsn <- addNodesToGraphs(gs)
       es <- getEdgesForGraphs(gsn)
@@ -89,9 +73,19 @@ class ProfileService {
       nls <- getNodeLabelsForCharts(cs)
       els <- getEdgeLabelsForCharts(cs)
       ls <- getLabels(nls, els)
-    } yield Map(goingok_id -> AuthorAnalytics(rs, gse, ns, es, cs, nls, els, ls))
-
+    } yield Map(userp -> AuthorAnalytics(rs, gse, ns, es, cs, nls, els, ls))
   }
+
+  def getAssociatedIds(goingok_id:UUID): Either[Throwable, Vector[UserPseudonym]] = {
+    for {
+      us <- ds.getAssociatedIdsWithPseudonyms(goingok_id)
+      //ps <- getAllPseudonyms(us)
+    } yield us  //ps
+  }
+
+//  private def getAllPseudonyms(uuids:Vector[UUID]): Either[Throwable, Vector[(UUID,String)]] = {
+//
+//  }
 
   private def getAllRefNodes(reflections:Vector[Reflection]) = {
     val (lnodes, rnodes) = reflections.map(r => ds.getNodesForReflection(r.ref_id)).partitionMap(identity)
@@ -135,9 +129,9 @@ class ProfileService {
     ds.getLabelsForLabelIds(labelIds)
   }
 
-  def getAuthorChartsAnalytics(aaMap: Map[UUID,AuthorAnalytics]): Map[String,Vector[AnalyticsAuthorChartsData]] = {
+  def getAuthorChartsAnalytics(aaMap: Map[UserPseudonym,AuthorAnalytics]): Map[String,Vector[AnalyticsAuthorChartsData]] = {
     aaMap.map { g =>
-      Tuple2(g._1.toString, getSingleAuthorChartsAnalytics(g._2))
+      Tuple2(g._1.goingok_id.toString, getSingleAuthorChartsAnalytics(g._2))
     }
   }
 

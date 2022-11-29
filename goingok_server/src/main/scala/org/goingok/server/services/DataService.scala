@@ -440,6 +440,19 @@ class DataService {
   //---------------------------------------------------------------------------------------------------------
   // Analytics functions
 
+//  def getAssociatedIds(goingok_id:UUID): DBResult[Vector[UUID]] = {
+//
+//  }
+
+  def getAssociatedIdsWithPseudonyms(goingok_id:UUID): DBResult[Vector[UserPseudonym]] = {
+    val query =
+      sql"""select a.associate_id, u.pseudonym
+            from users u, user_associates a
+            where u.goingok_id = a.associate_id
+            and a.goingok_id = $goingok_id
+           """.query[UserPseudonym]
+    runQuery(query.to[Vector])
+  }
   def getReflectionsforAuthor(goingok_id:UUID): DBResult[Vector[Reflection]] = {
     val query =
       sql"""select r.ref_id, r.timestamp, r.text, r.point
