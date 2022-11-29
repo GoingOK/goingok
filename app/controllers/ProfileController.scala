@@ -64,7 +64,7 @@ class ProfileController @Inject()(components: ControllerComponents,profileServic
           None
         }
 
-        val associated_ids:Vector[UUID] = Vector(goingok_id)
+        val associated_ids:Vector[UUID] = Vector(goingok_id, UUID.fromString("7a05c50b-3a1f-45d4-85dc-9a5ba91184f5"))
         //val reflections:String = profileService.getReflections(goingok_id).map(_.reverse)
         //val reflections = profileService.getAuthorReflections(goingok_id) // new reflections format for analytics
         val analytics:Either[Throwable,Map[UUID,AuthorAnalytics]] = profileService.getAuthorAnalytics(associated_ids) //goingok_id)
@@ -75,7 +75,7 @@ class ProfileController @Inject()(components: ControllerComponents,profileServic
         //logger.warn(s"NODELABELS: ${analytics.map(_.nodeLabels)}")
         //logger.warn(s"EDGELABELS: ${analytics.map(_.edgeLabels)}")
         //logger.warn(s"LABELS: ${analytics.map(_.labels)}")
-        val chartAnalytics = profileService.getAuthorChartsAnalytics(analytics.toOption.get.head._2)
+        val chartAnalytics = profileService.getAuthorChartsAnalytics(analytics.toOption.get)
         logger.warn(s"ChartData: ${chartAnalytics} for: ${associated_ids.head}")
 
         // for compatibility with prior reflections

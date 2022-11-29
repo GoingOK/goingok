@@ -2,16 +2,17 @@ package views
 
 
 import org.goingok.server.Config
-import org.goingok.server.data.models.{AnalyticsAuthorChartsData, AnalyticsChartEdge, AnalyticsChartNode}
+import org.goingok.server.data.models.{AnalyticsAuthorChartsData, AnalyticsChartEdge, AnalyticsChartNode, ReflectionEntry}
 import org.goingok.server.data.{Profile, UiMessage, models}
 import scalatags.Text.all._
 import scalatags.Text.{TypedTag, tags}
 import views.components.NavBar.NavParams
 import views.components._
-import views.components.profile.{MessagesList, Network, ReflectionEntry, ReflectionList, ReflectionPointChart, Reflections, Sort, Tags, Timeline}
+import views.components.profile.{MessagesList, Network, ReflectionEntryForm, ReflectionList, ReflectionPointChart, Reflections, Sort, Tags, Timeline}
 
 
-class ProfilePage(profile:Profile = Profile(), analytics: Vector[AnalyticsAuthorChartsData], tester: Boolean, exp: Boolean) extends GenericPage {
+
+class ProfilePage(profile:Profile = Profile(), analytics: Map[String, Vector[AnalyticsAuthorChartsData]], tester: Boolean, exp: Boolean) extends GenericPage {
 
   private val sliderStartPoint:Double = 50.0
 
@@ -34,7 +35,7 @@ class ProfilePage(profile:Profile = Profile(), analytics: Vector[AnalyticsAuthor
                     div(`class` := "col-md-4 mt-3",
                       div(`class` := "row",
                         div(`class` := "col-md-12",
-                          Includes.panel("reflection-entry", "fas fa-edit", "Enter a reflection", ReflectionEntry.display(sliderStartPoint),
+                          Includes.panel("reflection-entry", "fas fa-edit", "Enter a reflection", ReflectionEntryForm.display(sliderStartPoint),
                             "Use the slider to indicate how you are going from 'distressed' to 'soaring', " +
                               "and in the text box below write anything you like to describe how you how you are going. " +
                               "When finished, click the 'save' button to record your reflection.")
@@ -79,7 +80,7 @@ class ProfilePage(profile:Profile = Profile(), analytics: Vector[AnalyticsAuthor
               ),
               div( id := "main-content", `class` := "row",
                 div( id := "main-left-column", `class` := "col-sm-8",
-                  Includes.panel("reflection-entry","fas fa-edit","Enter a reflection",ReflectionEntry.display(sliderStartPoint),
+                  Includes.panel("reflection-entry","fas fa-edit","Enter a reflection",ReflectionEntryForm.display(sliderStartPoint),
                   "Use the slider to indicate how you are going from 'distressed' to 'soaring', "+
                     "and in the text box below write anything you like to describe how you how you are going. "+
                     "When finished, click the 'save' button to record your reflection."),
@@ -98,33 +99,38 @@ class ProfilePage(profile:Profile = Profile(), analytics: Vector[AnalyticsAuthor
         ),
         //Includes.d3Js,
         script(src:=bundleUrl),
-        createChart(profile.reflections.map(_.head._2), analytics)
+        createChart(profile.reflections, analytics)
       )
     )
   }
 
   /** Creates user chart */
-  private def createChart(data:Option[Vector[models.ReflectionEntry]], analytics: Vector[models.AnalyticsAuthorChartsData]) = {
-    val refs = data.getOrElse(Vector()).toList
-    val chartData:List[ujson.Obj] = refs.map(r => ujson.Obj("refId" -> r.refId, "timestamp" -> r.bneDateTimeString, "point" -> r.reflection.point, "text" -> r.reflection.text))
+  private def createChart(data:Option[Map[String,Vector[ReflectionEntry]]], analytics: Map[String, Vector[models.AnalyticsAuthorChartsData]]) = {
+    val uuidRefsRaw = data.getOrElse(Vector()).toList
+    val uuidRefs = uuidRefsRaw.map(d =>
+      ujson.Obj("pseudonym" -> d._1,
+        "reflections" -> parseReflections(d._2)))
+    val chartData:List[ujson.Obj] = parseReflections(uuidRefsRaw.head._2)
     val entries:String = ujson.write(chartData)
+    val reflections = ujson.write(uuidRefs)
     if (tester) {
-      val analyticsHead = analytics.headOption.getOrElse(AnalyticsAuthorChartsData("", "", Vector(), Vector()))
-      val analyticsData: ujson.Obj = ujson.Obj("name" -> analyticsHead.name,
-        "description" -> analyticsHead.description,
-        "nodes" -> parseNodes(analyticsHead.nodes),
-        "edges" -> parseEdges(analyticsHead.edges)
-      )
-//      val analyticsDataMultipleCharts: List[ujson.Obj] = analytics.map(r => ujson.Obj("name" -> r.name,
+      val analyticsData = analytics.map { d =>
+        ujson.Obj("pseudonym" -> d._1,
+          "analytics" -> ujson.Obj("name" -> d._2.headOption.getOrElse(AnalyticsAuthorChartsData("", "", Vector(), Vector())).name,
+            "description" -> d._2.headOption.getOrElse(AnalyticsAuthorChartsData("", "", Vector(), Vector())).description,
+            "nodes" -> parseNodes(d._2.headOption.getOrElse(AnalyticsAuthorChartsData("", "", Vector(), Vector())).nodes),
+            "edges" -> parseEdges(d._2.headOption.getOrElse(AnalyticsAuthorChartsData("", "", Vector(), Vector())).edges)))
+      }
+      //      val analyticsDataMultipleCharts: List[ujson.Obj] = analytics.map(r => ujson.Obj("name" -> r.name,
 //        "description" -> r.description,
 //        "nodes" -> parseNodes(r.nodes),
 //        "edges" -> parseEdges(r.edges)
 //      )).toList
       val analyticsEntries: String = ujson.write(analyticsData)
       if (exp){
-        script(raw(s"Visualisation.authorExpAnalyticsCharts($entries, $analyticsEntries)"))
+        script(raw(s"Visualisation.authorExpAnalyticsCharts($reflections, $analyticsEntries)"))
       } else {
-        script(raw(s"Visualisation.authorControlAnalyticsCharts($entries, $analyticsEntries)"))
+        script(raw(s"Visualisation.authorControlAnalyticsCharts($reflections, $analyticsEntries)"))
       }
     } else {
       script(raw(s"Visualisation.rpChart($entries)"))
@@ -159,6 +165,15 @@ class ProfilePage(profile:Profile = Profile(), analytics: Vector[AnalyticsAuthor
       "selected" -> c.selected,
       "properties" -> c.properties
     )).toList
+  }
+
+  private def parseReflections(refs: Vector[ReflectionEntry]): List[ujson.Obj] = {
+    refs.map(r =>
+      ujson.Obj("refId" -> r.refId,
+        "timestamp" -> r.bneDateTimeString,
+        "point" -> r.reflection.point,
+        "text" -> r.reflection.text
+      )).toList
   }
 }
 

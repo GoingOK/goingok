@@ -15,12 +15,13 @@ export class AdminAnalyticsDataRaw {
 }
 export class AuthorAnalyticsDataRaw {
     constructor(entries, analytics) {
+        this.pseudonym = analytics.pseudonym;
         this.reflections = entries;
-        this.analytics = analytics;
+        this.analytics = analytics.analytics;
     }
     transformData(colourScale) {
         return new AuthorAnalyticsData(this.reflections.map(d => {
             return { "refId": parseInt(d.refId), "timestamp": new Date(d.timestamp), "point": parseInt(d.point), "text": d.text };
-        }), this.analytics, colourScale);
+        }), this.analytics, this.pseudonym, colourScale);
     }
 }

@@ -20,7 +20,7 @@ export declare class Network extends ChartNetwork {
     getTooltipNodes(data: IAnalytics, nodeData: INodes): INodes[];
     openNodes(data: INodes[]): void;
     closeNodes(): void;
-    private processSimulation;
+    processSimulation(data: IAnalytics): void;
     private filterData;
 }
 declare class ClickNetwork<T extends Network> extends Click<T> {

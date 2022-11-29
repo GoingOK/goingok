@@ -7,7 +7,7 @@ import scalatags.Text.all._
 import scalatags.Text.{TypedTag, tags}
 //import views.ProfilePage.{showMessage, sliderStartPoint}
 import views.components.DemoNavBar.NavParams
-import views.components.profile.{MessagesList, ReflectionEntry, ReflectionList, ReflectionPointChart}
+import views.components.profile.{MessagesList, ReflectionEntryForm, ReflectionList, ReflectionPointChart}
 import views.components.{DemoNavBar, HelpContent}
 //import controllers.ProfileController.{dummyData}
 
@@ -34,7 +34,7 @@ class DemoPage(user: Option[User]=None) extends GenericPage {
           ),
           div( id := "main-content", `class` := "row",
             div( id := "main-left-column", `class` := "col-sm-8",
-              Includes.panel("reflection-entry","fas fa-edit","Enter a reflection",ReflectionEntry.demoDisplay(sliderStartPoint)),
+              Includes.panel("reflection-entry","fas fa-edit","Enter a reflection",ReflectionEntryForm.demoDisplay(sliderStartPoint)),
               Includes.panel("reflection-list", "fas fa-list-alt", "Past reflections", ReflectionList.display())
             ),
             div( id := "main-right-column", `class` := "col-sm-4",

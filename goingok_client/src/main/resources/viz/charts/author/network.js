@@ -12,7 +12,7 @@ export class Network extends ChartNetwork {
         this.tooltip = new Tooltip(this);
         this.zoom = new Zoom(this);
         this.help = new Help();
-        this.simulation = this.processSimulation(data);
+        this.processSimulation(data);
         this.data = data;
         this.clicking = new ClickNetwork(this);
     }
@@ -165,7 +165,7 @@ export class Network extends ChartNetwork {
             .attr("height", 10));
     }
     processSimulation(data) {
-        return d3.forceSimulation(data.nodes)
+        this.simulation = d3.forceSimulation(data.nodes)
             .force("link", d3.forceLink()
             .id(d => d.idx)
             .distance(100)

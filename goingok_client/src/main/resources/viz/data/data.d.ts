@@ -140,12 +140,14 @@ export interface ITags {
     selected?: boolean;
 }
 export interface IAuthorAnalyticsData {
+    pseudonym: string;
     reflections: IReflectionAnalytics[];
     analytics: IAnalytics;
 }
 export declare class AuthorAnalyticsData implements IAuthorAnalyticsData {
+    pseudonym: string;
     reflections: IReflectionAnalytics[];
     analytics: IAnalytics;
-    constructor(reflections: IReflection[], analytics: IAnalytics, colourScale: Function);
+    constructor(reflections: IReflection[], analytics: IAnalytics, pseudonym: string, colourScale: Function);
     private processColour;
 }

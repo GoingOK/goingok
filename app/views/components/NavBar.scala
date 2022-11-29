@@ -94,10 +94,13 @@ object NavBar {
         ),
         // Centre items
         ul(`class`:="nav navbar-nav mx-auto")(
-          li(`class`:="nav-item")(
-            if(isSignedIn) { button(`class`:="btn btn-sm btn-outline-light", disabled)(displayName) } //(s"$displayName") }
-            else { "" }
-          )
+          if(isSignedIn){
+            li(`class` := "nav-item dropdown multi-user")(
+                button(`class` := "btn btn-sm btn-outline-light", data("toggle") := "dropdown", disabled, displayName)
+                , div(`class` := "dropdown-menu")
+               //(s"$displayName") }
+            )
+          } else {},
         ),
         // Right items
         ul(`class`:="nav navbar-nav ml-auto")(

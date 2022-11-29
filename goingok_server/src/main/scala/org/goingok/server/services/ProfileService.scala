@@ -135,7 +135,13 @@ class ProfileService {
     ds.getLabelsForLabelIds(labelIds)
   }
 
-  def getAuthorChartsAnalytics(authorAnalytics: AuthorAnalytics): Vector[AnalyticsAuthorChartsData] = {
+  def getAuthorChartsAnalytics(aaMap: Map[UUID,AuthorAnalytics]): Map[String,Vector[AnalyticsAuthorChartsData]] = {
+    aaMap.map { g =>
+      Tuple2(g._1.toString, getSingleAuthorChartsAnalytics(g._2))
+    }
+  }
+
+  def getSingleAuthorChartsAnalytics(authorAnalytics: AuthorAnalytics): Vector[AnalyticsAuthorChartsData] = {
     authorAnalytics.charts.map(aa => AnalyticsAuthorChartsData(
       aa.name,
       aa.description,

@@ -60,7 +60,7 @@ export class ClickTextData {
     }
 }
 export class AuthorAnalyticsData {
-    constructor(reflections, analytics, colourScale) {
+    constructor(reflections, analytics, pseudonym, colourScale) {
         this.reflections = reflections.map(c => {
             let nodes = JSON.parse(JSON.stringify(analytics.nodes.filter(r => r.refId === c.refId)));
             nodes.forEach(r => this.processColour(r, colourScale));
@@ -68,6 +68,7 @@ export class AuthorAnalyticsData {
         });
         analytics.nodes.forEach(r => this.processColour(r, colourScale));
         this.analytics = analytics;
+        this.pseudonym = pseudonym;
     }
     processColour(node, colourScale) {
         if (node.properties["color"] === undefined) {

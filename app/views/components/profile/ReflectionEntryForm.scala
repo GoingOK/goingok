@@ -2,7 +2,7 @@ package views.components.profile
 
 import scalatags.Text.all._
 
-object ReflectionEntry {
+object ReflectionEntryForm {
 
   /** HTML form-group display */
   def display(sliderPoint:Double=0.0) = form( `class` := "needs-validation", action:="/profile", method:="POST", attr("novalidate"):="",
