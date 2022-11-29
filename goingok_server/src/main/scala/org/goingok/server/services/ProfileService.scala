@@ -131,7 +131,7 @@ class ProfileService {
 
   def getAuthorChartsAnalytics(aaMap: Map[UserPseudonym,AuthorAnalytics]): Map[String,Vector[AnalyticsAuthorChartsData]] = {
     aaMap.map { g =>
-      Tuple2(g._1.goingok_id.toString, getSingleAuthorChartsAnalytics(g._2))
+      Tuple2(g._1.pseudonym, getSingleAuthorChartsAnalytics(g._2))
     }
   }
 

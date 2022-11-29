@@ -69,7 +69,7 @@ class ProfileController @Inject()(components: ControllerComponents,profileServic
         val analytics:Either[Throwable,Map[UserPseudonym,AuthorAnalytics]] = {
           for {
             ais <- profileService.getAssociatedIds(goingok_id)
-            ans <- profileService.getAuthorAnalytics(ais)
+            ans <- profileService.getAuthorAnalytics(Vector(UserPseudonym(goingok_id, user.get.pseudonym.get)) ++ ais)
           } yield ans
           //profileService.getAuthorAnalytics(associated_ids)
         } //goingok_id)
@@ -84,13 +84,13 @@ class ProfileController @Inject()(components: ControllerComponents,profileServic
         //logger.warn(s"EDGELABELS: ${analytics.map(_.edgeLabels)}")
         //logger.warn(s"LABELS: ${analytics.map(_.labels)}")
         val chartAnalytics = profileService.getAuthorChartsAnalytics(analytics.toOption.get)
-        //logger.warn(s"ChartData: ${chartAnalytics} for: ${associated_ids.head}")
+        //logger.warn(s"ChartData: ${chartAnalytics}")
 
         // for compatibility with prior reflections
         val reflections: Option[Map[String,Vector[ReflectionEntry]]] = analytics match {
           case Right(an) => {
             val refmap = an.map{r =>
-              val u = r._1.toString //This needs to be pseudonym
+              val u = r._1.pseudonym //This needs to be pseudonym
               val refs = r._2.refs.map(r => ReflectionEntry(r.ref_id, r.timestamp, ReflectionData(r.point, r.text)))
               u -> refs
             }
