@@ -56,14 +56,14 @@ class ProfileService {
   } yield rows
 
   def getAuthorAnalytics(goingok_ids:Vector[UserPseudonym]): Either[Throwable, Map[UserPseudonym,AuthorAnalytics]] = {
-    logger.warn(s"getAuthorAnalytics input: $goingok_ids")
+    logger.debug(s"getAuthorAnalytics input: $goingok_ids")
     val (lerrors, ranalytics) = goingok_ids.map{up =>
       getSingleAuthorAnalytics(up)}.partitionMap(identity)
     lerrors.headOption.toLeft(ranalytics.flatten.toMap)
   }
 
   private def getSingleAuthorAnalytics(userp:UserPseudonym): Either[Throwable, Map[UserPseudonym,AuthorAnalytics]] = {
-    logger.warn(s"getSingleAuthorAnalytics input: $userp")
+    logger.debug(s"getSingleAuthorAnalytics input: $userp")
     val result = for {
       rs <- ds.getReflectionsforAuthor(userp.goingok_id)
       gs <- ds.getGraphsforAuthor(userp.goingok_id)
@@ -76,7 +76,7 @@ class ProfileService {
       els <- getEdgeLabelsForCharts(cs)
       ls <- getLabels(nls, els)
     } yield Map(userp -> AuthorAnalytics(rs, gse, ns, es, cs, nls, els, ls))
-    logger.warn(s"getSingleAuthorAnalytics result: $result")
+    logger.debug(s"getSingleAuthorAnalytics result: $result")
     result
   }
 
@@ -86,7 +86,7 @@ class ProfileService {
       //ps <- getAllPseudonyms(us)
     } yield us  //ps
     result match {
-      case Right(r) => logger.warn(s"getAssociatedIds result:${r.toString}")
+      case Right(r) => logger.debug(s"getAssociatedIds result:${r.toString}")
       case Left(e) => logger.error(s"getAssociatedIds error:${e.getMessage}")
     }
     result

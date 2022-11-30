@@ -46,7 +46,7 @@ class AnalyticsService {
     ds.getTesters() match {
       case Right(testers:DbResults.Testers) => {
         val tstrs = testers.value.toVector
-        logger.warn(s"Checking against testers: $tstrs")
+        logger.debug(s"Checking against testers: $tstrs")
         tstrs
       }
       case Left(error) => {
