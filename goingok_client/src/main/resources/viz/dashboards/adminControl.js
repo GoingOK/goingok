@@ -11,7 +11,6 @@ var d3 = require("d3");
 import { Help } from "../utils/help.js";
 import { AdminAnalyticsData } from "../data/data.js";
 import { AdminAnalyticsDataRaw } from "../data/db.js";
-import { Loading } from "../utils/loading.js";
 import { Tutorial, TutorialData } from "../utils/tutorial.js";
 import { Histogram } from "../charts/admin/histogram.js";
 import { BarChart } from "../charts/admin/barChart.js";
@@ -68,7 +67,6 @@ export class Dashboard {
 }
 export function buildControlAdminAnalyticsCharts(entriesRaw) {
     return __awaiter(this, void 0, void 0, function* () {
-        const loading = new Loading();
         const rawData = entriesRaw.map(d => new AdminAnalyticsDataRaw(d.group, d.value, d.createDate));
         let entries = rawData.map(d => d.transformData());
         const colourScale = d3.scaleOrdinal(d3.schemeCategory10);
@@ -79,7 +77,6 @@ export function buildControlAdminAnalyticsCharts(entriesRaw) {
             new TutorialData("#users .bar", "Hover for information on demand"),
             new TutorialData("#histogram .histogram-rect", "Hover for information on demand"),
             new TutorialData("#timeline .zoom-buttons", "Click to zoom in and out. To pan the chart click, hold and move left or right in any blank area")]);
-        loading.isLoading = false;
         function drawCharts(allEntries) {
             return __awaiter(this, void 0, void 0, function* () {
                 const help = new Help();

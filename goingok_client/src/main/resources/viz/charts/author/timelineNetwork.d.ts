@@ -10,7 +10,7 @@ export declare class TimelineNetwork extends ChartTime {
     get data(): IReflectionAnalytics[];
     set data(entries: IReflectionAnalytics[]);
     constructor(data: IReflectionAnalytics[]);
-    render(): void;
+    render(): Promise<void>;
     private getLines;
     private renderReflectionNetwork;
     private simulation;

@@ -19,4 +19,4 @@ export declare class ExperimentalDashboard extends Dashboard {
     private getClickTimelineNetworkData;
     private getClickTimelineNetworkNodes;
 }
-export declare function buildExperimentAuthorAnalyticsCharts(entriesRaw: IAuthorEntriesRaw[], analyticsRaw: IAuthorAnalyticsEntriesRaw[]): Promise<void>;
+export declare function buildExperimentAuthorAnalyticsCharts(entriesRaw: IAuthorEntriesRaw[], analyticsRaw: IAuthorAnalyticsEntriesRaw[]): void;

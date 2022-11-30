@@ -1,6 +1,7 @@
 import { ChartSeriesAxis, ChartTimeAxis, ChartLinearAxis } from "./scaleBase.js";
 import { IHelp } from "../utils/help.js";
 import { IChartElements } from "./render.js";
+import { ILoading } from "../utils/loading.js";
 export interface IChartScales {
     x: ChartSeriesAxis | ChartTimeAxis | ChartLinearAxis;
     y: ChartLinearAxis | ChartSeriesAxis;
@@ -13,6 +14,8 @@ export interface IChartBasic {
 }
 export interface IChart extends IChartScales, IChartBasic {
     elements: IChartElements;
+    loading: ILoading;
+    renderError(e: any): void;
 }
 export interface IChartPadding {
     xAxis: number;
@@ -35,7 +38,9 @@ export declare class ChartSeries implements IChart {
     y: ChartLinearAxis;
     elements: IChartElements;
     padding: IChartPadding;
+    loading: ILoading;
     constructor(id: string, domain: string[], isGoingOk?: boolean, yDomain?: number[]);
+    renderError(e: any): void;
 }
 export declare class ChartTime implements IChart {
     id: string;
@@ -46,7 +51,9 @@ export declare class ChartTime implements IChart {
     elements: IChartElements;
     help: IHelp;
     padding: IChartPadding;
+    loading: ILoading;
     constructor(id: string, domain: Date[], chartPadding?: ChartPadding);
+    renderError(e: any): void;
 }
 export declare class ChartNetwork implements IChart {
     id: string;
@@ -56,5 +63,7 @@ export declare class ChartNetwork implements IChart {
     y: ChartLinearAxis;
     padding: IChartPadding;
     elements: IChartElements;
+    loading: ILoading;
     constructor(id: string, containerClass: string, domain: Date[]);
+    renderError(e: any): void;
 }

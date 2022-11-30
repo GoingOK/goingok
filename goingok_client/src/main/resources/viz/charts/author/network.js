@@ -1,3 +1,12 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var d3 = require("d3");
 import { Click } from "../../interactions/click.js";
 import { Tooltip } from "../../interactions/tooltip.js";
@@ -20,110 +29,121 @@ export class Network extends ChartNetwork {
         return this._data;
     }
     set data(entries) {
-        this._data = this.filterData(entries);
-        this.zoom.resetZoom();
-        this.render();
-        this.extend !== undefined ? this.extend() : null;
+        (() => __awaiter(this, void 0, void 0, function* () {
+            this.loading.isLoading = true;
+            this._data = this.filterData(entries);
+            this.zoom.resetZoom();
+            try {
+                yield this.render();
+            }
+            catch (e) {
+                this.renderError(e);
+            }
+            this.extend !== undefined ? this.extend() : null;
+            this.loading.isLoading = false;
+        }))();
     }
     render() {
-        const _this = this;
-        let edges = _this.elements.contentContainer.selectAll(".network-link")
-            .data(_this.data.edges)
-            .join(enter => enter.append("line")
-            .attr("class", "network-link")
-            .classed("reflection-link", d => d.isReflection)
-            .attr("x1", _this.width / 2)
-            .attr("y1", _this.height / 2)
-            .attr("x2", _this.width / 2)
-            .attr("y2", _this.height / 2)
-            .call(enter => enter.transition()
-            .duration(750)
-            .attr("x1", d => d.source.x)
-            .attr("y1", d => d.source.y)
-            .attr("x2", d => d.target.x)
-            .attr("y2", d => d.target.y)), update => update.call(update => update.transition()
-            .duration(750)
-            .attr("x1", d => d.source.x)
-            .attr("y1", d => d.source.y)
-            .attr("x2", d => d.target.x)
-            .attr("y2", d => d.target.y)), exit => exit.remove());
-        let nodes = _this.elements.content = _this.elements.contentContainer.selectAll(".network-node-group")
-            .data(_this.data.nodes)
-            .join(enter => enter.append("g")
-            .attr("class", "network-node-group pointer")
-            .attr("transform", `translate(${_this.width / 2}, ${_this.height / 2})`)
-            .call(enter => enter.append("rect")
-            .attr("class", "network-node")
-            .attr("rx", 10)
-            .attr("ry", 10)
-            .style("fill", d => d.properties["color"])
-            .style("stroke", d => d.properties["color"]))
-            .call(enter => enter.append("text")
-            .attr("id", d => `text-${d.idx}`)
-            .attr("class", "network-text")
-            .style("dominant-baseline", "central"))
-            .call(enter => enter.select("rect")
-            .attr("x", -5)
-            .attr("y", -5)
-            .attr("width", 10)
-            .attr("height", 10))
-            .call(enter => enter.transition()
-            .duration(750)
-            .attr("transform", d => `translate(${d.x}, ${d.y})`)), update => update.call(update => update.transition()
-            .duration(750)
-            .attr("transform", d => `translate(${d.x}, ${d.y})`))
-            .call(update => update.select("rect")
-            .style("fill", d => d.properties["color"])
-            .style("stroke", d => d.properties["color"]))
-            .call(update => update.select("text")
-            .attr("id", d => `text-${d.idx}`)), exit => exit.remove());
-        _this.elements.content = _this.elements.contentContainer.selectAll(".network-node-group");
-        const ticked = function () {
-            edges.attr("x1", d => d.source.x)
+        return __awaiter(this, void 0, void 0, function* () {
+            const _this = this;
+            let edges = _this.elements.contentContainer.selectAll(".network-link")
+                .data(_this.data.edges)
+                .join(enter => enter.append("line")
+                .attr("class", "network-link")
+                .classed("reflection-link", d => d.isReflection)
+                .attr("x1", _this.width / 2)
+                .attr("y1", _this.height / 2)
+                .attr("x2", _this.width / 2)
+                .attr("y2", _this.height / 2)
+                .call(enter => enter.transition()
+                .duration(750)
+                .attr("x1", d => d.source.x)
                 .attr("y1", d => d.source.y)
                 .attr("x2", d => d.target.x)
-                .attr("y2", d => d.target.y);
-            nodes.attr("transform", (d) => `translate(${d.x}, ${d.y})`);
-        };
-        _this.simulation.on("tick", ticked);
-        const onMouseover = function (e, d) {
-            if (d3.select(this).attr("class").includes("clicked")) {
-                return;
-            }
-            const nodes = _this.getTooltipNodes(_this.data, d);
-            _this.openNodes(nodes);
-        };
-        const onMouseout = function () {
-            if (d3.select(this).attr("class").includes("clicked")) {
-                return;
-            }
-            _this.closeNodes();
-            _this.tooltip.removeTooltip();
-        };
-        //Enable tooltip       
-        _this.tooltip.enableTooltip(onMouseover, onMouseout);
-        const zoomed = function (e) {
-            if (e.sourceEvent !== null) {
-                if (e.sourceEvent.type === "dblclick")
-                    return;
-                if (e.sourceEvent.type === "wheel") {
-                    window.scrollBy({ top: e.sourceEvent.deltaY, behavior: 'smooth' });
+                .attr("y2", d => d.target.y)), update => update.call(update => update.transition()
+                .duration(750)
+                .attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y)), exit => exit.remove());
+            let nodes = _this.elements.content = _this.elements.contentContainer.selectAll(".network-node-group")
+                .data(_this.data.nodes)
+                .join(enter => enter.append("g")
+                .attr("class", "network-node-group pointer")
+                .attr("transform", `translate(${_this.width / 2}, ${_this.height / 2})`)
+                .call(enter => enter.append("rect")
+                .attr("class", "network-node")
+                .attr("rx", 10)
+                .attr("ry", 10)
+                .style("fill", d => d.properties["color"])
+                .style("stroke", d => d.properties["color"]))
+                .call(enter => enter.append("text")
+                .attr("id", d => `text-${d.idx}`)
+                .attr("class", "network-text")
+                .style("dominant-baseline", "central"))
+                .call(enter => enter.select("rect")
+                .attr("x", -5)
+                .attr("y", -5)
+                .attr("width", 10)
+                .attr("height", 10))
+                .call(enter => enter.transition()
+                .duration(750)
+                .attr("transform", d => `translate(${d.x}, ${d.y})`)), update => update.call(update => update.transition()
+                .duration(750)
+                .attr("transform", d => `translate(${d.x}, ${d.y})`))
+                .call(update => update.select("rect")
+                .style("fill", d => d.properties["color"])
+                .style("stroke", d => d.properties["color"]))
+                .call(update => update.select("text")
+                .attr("id", d => `text-${d.idx}`)), exit => exit.remove());
+            _this.elements.content = _this.elements.contentContainer.selectAll(".network-node-group");
+            const ticked = function () {
+                edges.attr("x1", d => d.source.x)
+                    .attr("y1", d => d.source.y)
+                    .attr("x2", d => d.target.x)
+                    .attr("y2", d => d.target.y);
+                nodes.attr("transform", (d) => `translate(${d.x}, ${d.y})`);
+            };
+            _this.simulation.on("tick", ticked);
+            const onMouseover = function (e, d) {
+                if (d3.select(this).attr("class").includes("clicked")) {
                     return;
                 }
-            }
-            let newChartRange = [0, _this.width - _this.padding.yAxis - _this.padding.right].map(d => e.transform.applyX(d));
-            _this.x.scale.rangeRound(newChartRange);
-            _this.elements.contentContainer.selectAll(".network-link")
-                .attr("x1", d => e.transform.applyX(d.source.x))
-                .attr("x2", d => e.transform.applyX(d.target.x));
-            _this.elements.contentContainer.selectAll(".network-node-group")
-                .attr("transform", (d, i, g) => `translate(${e.transform.applyX(d.x)}, ${d.y})`);
-            _this.x.axis.ticks(newChartRange[1] / 75);
-            _this.elements.xAxis.call(_this.x.axis);
-            _this.help.removeHelp(_this);
-        };
-        //Enable zoom
-        _this.zoom.enableZoom(zoomed);
+                const nodes = _this.getTooltipNodes(_this.data, d);
+                _this.openNodes(nodes);
+            };
+            const onMouseout = function () {
+                if (d3.select(this).attr("class").includes("clicked")) {
+                    return;
+                }
+                _this.closeNodes();
+                _this.tooltip.removeTooltip();
+            };
+            //Enable tooltip       
+            _this.tooltip.enableTooltip(onMouseover, onMouseout);
+            const zoomed = function (e) {
+                if (e.sourceEvent !== null) {
+                    if (e.sourceEvent.type === "dblclick")
+                        return;
+                    if (e.sourceEvent.type === "wheel") {
+                        window.scrollBy({ top: e.sourceEvent.deltaY, behavior: 'smooth' });
+                        return;
+                    }
+                }
+                let newChartRange = [0, _this.width - _this.padding.yAxis - _this.padding.right].map(d => e.transform.applyX(d));
+                _this.x.scale.rangeRound(newChartRange);
+                _this.elements.contentContainer.selectAll(".network-link")
+                    .attr("x1", d => e.transform.applyX(d.source.x))
+                    .attr("x2", d => e.transform.applyX(d.target.x));
+                _this.elements.contentContainer.selectAll(".network-node-group")
+                    .attr("transform", (d, i, g) => `translate(${e.transform.applyX(d.x)}, ${d.y})`);
+                _this.x.axis.ticks(newChartRange[1] / 75);
+                _this.elements.xAxis.call(_this.x.axis);
+                _this.help.removeHelp(_this);
+            };
+            //Enable zoom
+            _this.zoom.enableZoom(zoomed);
+        });
     }
     getTooltipNodes(data, nodeData) {
         let edges = data.edges.filter(d => d.source === nodeData).map(d => d.target);

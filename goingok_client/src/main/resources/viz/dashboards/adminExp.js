@@ -11,7 +11,6 @@ var d3 = require("d3");
 import { AdminAnalyticsData } from "../data/data.js";
 import { Dashboard } from "./adminControl.js";
 import { AdminAnalyticsDataRaw } from "../data/db.js";
-import { Loading } from "../utils/loading.js";
 import { Tutorial, TutorialData } from "../utils/tutorial.js";
 import { Sort } from "../interactions/sort.js";
 import { Help } from "../utils/help.js";
@@ -349,7 +348,6 @@ export class ExperimentalDashboard extends Dashboard {
 }
 export function buildExperimentAdminAnalyticsCharts(entriesRaw) {
     return __awaiter(this, void 0, void 0, function* () {
-        const loading = new Loading();
         const rawData = entriesRaw.map(d => new AdminAnalyticsDataRaw(d.group, d.value, d.createDate));
         let entries = rawData.map(d => d.transformData());
         const colourScale = d3.scaleOrdinal(d3.schemeCategory10);
@@ -364,7 +362,6 @@ export function buildExperimentAdminAnalyticsCharts(entriesRaw) {
             new TutorialData("#timeline .zoom-buttons", "Click to zoom in and out. To pan the chart click, hold and move left or right in any blank area"),
             new TutorialData("#timeline .circle", "Hover for information on demand or click to connect the user's reflections"),
             new TutorialData("#reflections .sort-by", "Sort users alphabetically or by their average reflection state point")]);
-        loading.isLoading = false;
         function drawCharts(allEntries) {
             return __awaiter(this, void 0, void 0, function* () {
                 const dashboard = new ExperimentalDashboard(allEntries);

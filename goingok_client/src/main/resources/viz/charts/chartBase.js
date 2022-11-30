@@ -2,6 +2,7 @@ import { ChartSeriesAxis, ChartTimeAxis, ChartLinearAxis } from "./scaleBase.js"
 import { Help } from "../utils/help.js";
 import { ChartElements } from "./render.js";
 import { getDOMRect } from "../utils/utils.js";
+import { Loading } from "../utils/loading.js";
 export class ChartPadding {
     constructor(xAxis, yAxis, top, right) {
         this.xAxis = xAxis == undefined ? 40 : xAxis;
@@ -23,6 +24,10 @@ export class ChartSeries {
         this.y = new ChartLinearAxis(this.id, isGoingOk ? "Reflection Point" : "", isGoingOk ? [0, 100] : yDomain, [this.height - this.padding.xAxis - this.padding.top, 0], "left", isGoingOk);
         this.x = new ChartSeriesAxis(this.id, "Group Code", domain, [0, this.width - this.padding.yAxis - this.padding.right]);
         this.elements = new ChartElements(this);
+        this.loading = new Loading(this);
+    }
+    renderError(e) {
+        this.elements.contentContainer.text(`There was an error rendering the chart. ${e}`);
     }
 }
 export class ChartTime {
@@ -36,6 +41,10 @@ export class ChartTime {
         this.y = new ChartLinearAxis(this.id, "Reflection Point", [0, 100], [this.height - this.padding.xAxis - this.padding.top, 0], "left");
         this.x = new ChartTimeAxis(this.id, "Time", domain, [0, this.width - this.padding.yAxis]);
         this.elements = new ChartElements(this);
+        this.loading = new Loading(this);
+    }
+    renderError(e) {
+        this.elements.contentContainer.text(`There was an error rendering the chart. ${e}`);
     }
 }
 export class ChartNetwork {
@@ -50,5 +59,9 @@ export class ChartNetwork {
         this.elements = new ChartElements(this, containerClass);
         this.elements.yAxis.remove();
         this.elements.xAxis.remove();
+        this.loading = new Loading(this);
+    }
+    renderError(e) {
+        this.elements.contentContainer.text(`There was an error rendering the chart. ${e}`);
     }
 }

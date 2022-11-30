@@ -8,8 +8,9 @@ export declare class Dashboard {
     network: Network;
     reflections: Reflections;
     constructor(data: IAuthorAnalyticsData[]);
+    renderError(e: any, chartId: string): void;
     resizeTimeline(): void;
     handleMultiUser(entries: IAuthorAnalyticsData[], extend?: Function): void;
     preloadTags(entries: IAuthorAnalyticsData, enable?: boolean): ITags[];
 }
-export declare function buildControlAuthorAnalyticsCharts(entriesRaw: IAuthorEntriesRaw[], analyticsRaw: IAuthorAnalyticsEntriesRaw[]): Promise<void>;
+export declare function buildControlAuthorAnalyticsCharts(entriesRaw: IAuthorEntriesRaw[], analyticsRaw: IAuthorAnalyticsEntriesRaw[]): void;

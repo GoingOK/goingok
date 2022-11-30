@@ -1,6 +1,6 @@
 export class Loading {
-    constructor() {
-        this.isLoading = true;
+    constructor(chart) {
+        this.chart = chart;
     }
     get isLoading() {
         return this._isLoading;
@@ -15,9 +15,15 @@ export class Loading {
         }
     }
     appendDiv() {
-        let wrapper = document.querySelector(".wrapper");
+        if (document.querySelector(`#${this.chart.id} .loader`) !== null)
+            return;
+        let wrapper = document.querySelector(`#${this.chart.id} .chart-container`);
         let loader = document.createElement("div");
         loader.setAttribute("class", "loader");
+        loader.style.height = `${this.chart.elements.contentContainer.node().getBoundingClientRect().height}px`;
+        loader.style.width = `${this.chart.elements.contentContainer.node().getBoundingClientRect().width}px`;
+        loader.style.top = `${this.chart.padding.top}px`;
+        loader.style.left = `${this.chart.padding.yAxis}px`;
         let inner = document.createElement("div");
         inner.setAttribute("class", "loader-inner");
         for (var i = 0; i < 5; i++) {
@@ -30,8 +36,8 @@ export class Loading {
         }
         loader.appendChild(inner);
         let cancel = document.createElement("button");
-        cancel.setAttribute("class", "btn btn-danger cancel-loading");
-        cancel.innerText = "Cancel";
+        cancel.setAttribute("class", "btn btn-sm btn-danger cancel-loading");
+        cancel.innerHTML = `<i class="fas fa-window-close"></i>`;
         cancel.addEventListener("click", () => this.isLoading = false);
         loader.appendChild(cancel);
         wrapper.appendChild(loader);
