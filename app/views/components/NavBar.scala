@@ -1,7 +1,7 @@
 package views.components
 
 import controllers.routes
-import org.goingok.server.data.models.User
+import org.goingok.server.data.models.{Author}
 import scalatags.Text.TypedTag
 import scalatags.Text.all._ // scalastyle:ignore
 
@@ -9,7 +9,7 @@ object NavBar {
 
   //case class NavParams(signedIn:Boolean=false,displayName:Option[String]=None,baseUrl:String="http://localhost:9000",page:String="home")
 
-  case class NavParams(user:Option[User]=None,baseUrl:Option[String]=None,page:Option[String]=None)
+  case class NavParams(user:Option[Author]=None, baseUrl:Option[String]=None, page:Option[String]=None)
 
   /** Renders navigation bar */
   def main(navParams: NavParams = NavParams()) :TypedTag[String] = {

@@ -2,7 +2,7 @@ package org.goingok.server.services
 
 import java.util.UUID
 import com.typesafe.scalalogging.Logger
-import org.goingok.server.data.models.{Activity, AnltxChart, AnltxEdge, AnltxEdgeLabel, AnltxGraph, AnltxLabel, AnltxNode, AnltxNodeLabel, AuthorAnalytics, AuthorReflection, Reflection, ReflectionData, ReflectionEntry, User, UserPseudonym}
+import org.goingok.server.data.models.{Activity, AnltxChart, AnltxEdge, AnltxEdgeLabel, AnltxGraph, AnltxLabel, AnltxNode, AnltxNodeLabel, AuthorAnalytics, ReflectionDB, ReflectionData, ReflectionEntry, User, UserPseudonym}
 
 import java.time.LocalDateTime
 
@@ -11,25 +11,6 @@ class ProfileService {
   val logger = Logger(this.getClass)
 
   val ds = new DataService
-
-  /**
-    * Gets all reflections for a given user
-    * @param goingok_id GoingOK user ID
-    * @return Vector of reflections
-    */
-//  def getReflections(goingok_id:UUID): Option[Vector[ReflectionEntry]] = {
-//    ds.getReflectionsForUser(goingok_id) match {
-//      case Right(refs) => Some(refs)
-//      case Left(error) => {
-//        logger.error(s"There was a problem getting reflections for $goingok_id: ${error.getMessage}")
-//        None
-//      }
-//    }
-//  }
-
-//  def getAuthorReflections(goingok_ids:List[UUID]): Either[Throwable,Vector[Reflection]] = {
-//    ds.getReflectionsforAuthor(goingok_ids.head)
-//  }
 
   /**
     * Get GoingOK user from DB by GoingOK user ID
@@ -75,7 +56,7 @@ class ProfileService {
       nls <- getNodeLabelsForCharts(cs)
       els <- getEdgeLabelsForCharts(cs)
       ls <- getLabels(nls, els)
-    } yield Map(userp -> AuthorAnalytics(rs, gse, ns, es, cs, nls, els, ls))
+    } yield Map(userp -> AuthorAnalytics(rs.map(new ReflectionEntry(_)), gse, ns, es, cs, nls, els, ls))
     logger.debug(s"getSingleAuthorAnalytics result: $result")
     result
   }
@@ -92,11 +73,7 @@ class ProfileService {
     result
   }
 
-//  private def getAllPseudonyms(uuids:Vector[UUID]): Either[Throwable, Vector[(UUID,String)]] = {
-//
-//  }
-
-  private def getAllRefNodes(reflections:Vector[Reflection]) = {
+  private def getAllRefNodes(reflections:Vector[ReflectionDB]) = {
     val (lnodes, rnodes) = reflections.map(r => ds.getNodesForReflection(r.ref_id)).partitionMap(identity)
     lnodes.headOption.toLeft(rnodes.flatten[AnltxNode])
   }

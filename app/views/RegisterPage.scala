@@ -2,7 +2,7 @@ package views
 
 import org.goingok.server.Config
 import org.goingok.server.data.UiMessage
-import org.goingok.server.data.models.User
+import org.goingok.server.data.models.{Author, User}
 import scalatags.Text.all._
 import scalatags.Text.{TypedTag, tags}
 import views.components.NavBar
@@ -12,13 +12,17 @@ import views.components.register.GroupPopup
 class RegisterPage(user: Option[User]=None) extends GenericPage {
 
   val title = "GoingOK :: Register"
+
+  // transition from user to author
+  val author = user.map(new Author(_))
+
   /** Displays register page */
   def pageContent(titleStr: String = this.title, message:Option[UiMessage]=None): PageContent = {
 
     tags.html(
       Includes.headContent(titleStr),
       tags.body(
-        NavBar.main(NavParams(user,Config.baseUrl,Some("register"))),
+        NavBar.main(NavParams(author,Config.baseUrl,Some("register"))),
         div(id := "register-content",`class` := "container-fluid",
           div(`class` := "row justify-content-md-center align-items-center",
             div(`class` := "col-sm-5",

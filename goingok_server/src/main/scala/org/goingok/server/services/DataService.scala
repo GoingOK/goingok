@@ -455,12 +455,12 @@ class DataService {
     logger.warn(s"Associated IDs with Pseudonyms: ${result.toString}")
     result
   }
-  def getReflectionsforAuthor(goingok_id:UUID): DBResult[Vector[Reflection]] = {
+  def getReflectionsforAuthor(goingok_id:UUID): DBResult[Vector[ReflectionDB]] = {
     val query =
       sql"""select r.ref_id, r.timestamp, r.text, r.point
             from reflections r
             where goingok_id = $goingok_id
-            order by r.timestamp desc;""".query[Reflection]
+            order by r.timestamp desc;""".query[ReflectionDB]
     runQuery(query.to[Vector])
   }
   def getGraphsforAuthor(goingok_id: UUID): DBResult[Vector[AnltxGraph]] = {

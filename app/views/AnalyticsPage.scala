@@ -2,8 +2,8 @@ package views
 
 import java.time.LocalDate
 import org.goingok.server.Config
-import org.goingok.server.data.models.User
-import org.goingok.server.data.{Analytics, UiMessage, models}
+import org.goingok.server.data.models.{Author, GroupAnalytics, User}
+import org.goingok.server.data.{UiMessage, models}
 import scalatags.Text.all._
 import scalatags.Text.tags
 import views.components.NavBar.NavParams
@@ -13,9 +13,12 @@ import views.components.analytics.{Charts, SidePanel, Tables, TopPanel}
 
 
 
-class AnalyticsPage(user:Option[User]=None, analytics: Analytics, tester: Boolean, exp: Boolean) extends GenericPage {
+class AnalyticsPage(user:Option[User]=None, analytics: GroupAnalytics, tester: Boolean, exp: Boolean) extends GenericPage {
 
   val title = "GoingOK :: analytics"
+
+  // transition conversion of users to authors
+  val author = user.map(new Author(_))
 
   /** Analytics page HTML display */
   def pageContent(titleStr: String,message:Option[UiMessage]): PageContent = {
@@ -25,7 +28,7 @@ class AnalyticsPage(user:Option[User]=None, analytics: Analytics, tester: Boolea
     tags.html(
       Includes.headContent(titleStr),
       tags.body(
-        NavBar.main(NavParams(user,Config.baseUrl,Some("analytics"))),
+        NavBar.main(NavParams(author,Config.baseUrl,Some("analytics"))),
         div(`class`:="wrapper",
           if (tester){
             SidePanel.display(exp)
@@ -50,7 +53,7 @@ class AnalyticsPage(user:Option[User]=None, analytics: Analytics, tester: Boolea
     )
   }
 
-  private def downloadsSection(analytics: Analytics) = {
+  private def downloadsSection(analytics: GroupAnalytics) = {
     div(`class`:="row mt-3",
       div(`class`:="col",
         Includes.panel("groups-table","","Groups", Tables.groups(analytics.mergedCounts))

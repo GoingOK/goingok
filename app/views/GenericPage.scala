@@ -2,12 +2,13 @@ package views
 
 import org.goingok.server.data.UiMessage
 import org.goingok.server.data.models.User
+import play.api.Logging
 import play.twirl.api.Html
 import scalatags.Text
 import scalatags.Text.all._
 import scalatags.Text.{TypedTag, tags, tags2}
 
-trait GenericPage {
+trait GenericPage extends Logging {
 
   type PageContent = TypedTag[String]
 

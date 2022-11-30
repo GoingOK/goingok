@@ -2,7 +2,7 @@ package views
 
 import org.goingok.server.Config
 import org.goingok.server.data.UiMessage
-import org.goingok.server.data.models.User
+import org.goingok.server.data.models.{Author, User}
 import scalatags.Text.all._
 import scalatags.Text.{TypedTag, tags}
 //import views.ProfilePage.{showMessage, sliderStartPoint}
@@ -17,6 +17,9 @@ class DemoPage(user: Option[User]=None) extends GenericPage {
   private val sliderStartPoint:Double = 50.0
 
   val title = "GoingOK :: demo"
+
+  // transition from user to author
+//  val author = user.map(new Author(_))
 
   /** Displays a DEMO home page */
   def pageContent(titleStr: String = this.title, message:Option[UiMessage]=None): PageContent = {

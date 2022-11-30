@@ -1,16 +1,17 @@
 package views.components.profile
 
-import java.util.UUID
 
-import org.goingok.server.data.models
+import org.goingok.server.data.models.{AuthorAnalytics, ReflectionEntry}
 import scalatags.Text.TypedTag
 import scalatags.Text.all._
 
 object ReflectionList {
 
   /** List of reflections HTML display */
-  def display(data:Option[Map[String,Vector[models.ReflectionEntry]]]=None) :TypedTag[String] = {
-    val refs = data.getOrElse(List()).head._2
+  def display(analytics:Option[AuthorAnalytics]=None) :TypedTag[String] = {
+  //def display(data:Option[Map[String,Vector[models.ReflectionEntry]]]=None) :TypedTag[String] = {
+    //val refs = data.getOrElse(List()).head._2
+    val refs:Vector[ReflectionEntry] = analytics.map(_.refs).getOrElse(Vector())
     div(id:="reflection-box",
         for(ref <- refs) yield {
           div(`class` := "reflist-item",
@@ -20,7 +21,7 @@ object ReflectionList {
             span(`class` := "reflist-item-text font-weight-light", s"${ref.reflection.text}")
           )
         },
-      div(if(data.nonEmpty) { div(`class`:="text-center",span(`class`:="glyphicon glyphicon-chevron-down"))} else div())
+      div(if(analytics.nonEmpty) { div(`class`:="text-center",span(`class`:="glyphicon glyphicon-chevron-down"))} else div())
     )
   }
 

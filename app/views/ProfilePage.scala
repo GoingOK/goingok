@@ -3,7 +3,7 @@ package views
 
 import org.goingok.server.Config
 import org.goingok.server.data.models.{AnltxChart, AnltxEdge, AnltxEdgeLabel, AnltxLabel, AnltxNode, AnltxNodeLabel, AuthorAnalytics, ReflectionData, ReflectionEntry}
-import org.goingok.server.data.{Profile, UiMessage, models}
+import org.goingok.server.data.{AuthorProfile, Profile, UiMessage, models}
 import scalatags.Text.all._
 import scalatags.Text.{TypedTag, tags}
 import views.components.NavBar.NavParams
@@ -11,8 +11,13 @@ import views.components._
 import views.components.profile.{MessagesList, Network, ReflectionEntryForm, ReflectionList, ReflectionPointChart, Reflections, Sort, Tags, Timeline}
 
 
+class ProfilePage(authorProfile:AuthorProfile = AuthorProfile(), associateProfiles:Vector[AuthorProfile] = Vector(), flags:Map[String,Boolean] = Map() ) extends GenericPage {
 
-class ProfilePage(profile:Profile = Profile(), analytics: Option[Map[String, AuthorAnalytics]], tester: Boolean, exp: Boolean) extends GenericPage {
+  //the following are needed for transition from old ProfilePage
+  private val tester = flags.getOrElse("tester",false)
+  private val mcmexperiment = flags.getOrElse("mcm-experiment",false)
+
+//class ProfilePage(profile:Profile = Profile(), analytics: Option[Map[String, AuthorAnalytics]], tester: Boolean, exp: Boolean) extends GenericPage {
 
   private val sliderStartPoint:Double = 50.0
 
@@ -25,7 +30,7 @@ class ProfilePage(profile:Profile = Profile(), analytics: Option[Map[String, Aut
     tags.html(
       Includes.headContent(titleStr),
       tags.body(
-        NavBar.main(NavParams(profile.user,Config.baseUrl,Some("profile"))),
+        NavBar.main(NavParams(authorProfile.author,Config.baseUrl,Some("profile"))),
         div(`class`:="wrapper",
           if (tester) {
             div(id := "content", `class` := "content",
@@ -40,7 +45,7 @@ class ProfilePage(profile:Profile = Profile(), analytics: Option[Map[String, Aut
                               "and in the text box below write anything you like to describe how you how you are going. " +
                               "When finished, click the 'save' button to record your reflection.")
                         ),
-                        if (exp) {
+                        if (mcmexperiment) {
                           div(id := "sort", `class` := "col-md-12",
                             Sort.display()
                           )
@@ -84,7 +89,7 @@ class ProfilePage(profile:Profile = Profile(), analytics: Option[Map[String, Aut
                   "Use the slider to indicate how you are going from 'distressed' to 'soaring', "+
                     "and in the text box below write anything you like to describe how you how you are going. "+
                     "When finished, click the 'save' button to record your reflection."),
-                  Includes.panel("reflection-list", "fas fa-list-alt", "Past reflections", ReflectionList.display(profile.reflections),
+                  Includes.panel("reflection-list", "fas fa-list-alt", "Past reflections", ReflectionList.display(authorProfile.analytics),
                   "A reverse ordered list of reflections that you have written to date. The number represents your reflection point from 0 to 100 "+
                     "where 0 is 'distressed' and 100 is 'soaring'."
                   )
@@ -99,39 +104,55 @@ class ProfilePage(profile:Profile = Profile(), analytics: Option[Map[String, Aut
         ),
         //Includes.d3Js,
         script(src:=bundleUrl),
-        createChart(profile.reflections, analytics)
+        createChart(authorProfile)
       )
     )
   }
 
   /** Creates user chart */
   //private def createChart(data:Option[Map[String,Vector[ReflectionEntry]]], analytics: Map[String, Vector[models.AnalyticsAuthorChartsData]]) = {
-  private def createChart(data:Option[Map[String,Vector[ReflectionEntry]]], analytics: Option[Map[String, AuthorAnalytics]]) = {
 
-    val uuidRefsRaw = data.getOrElse(Vector()).toList
-    val uuidRefs = uuidRefsRaw.map(d =>
-      ujson.Obj("pseudonym" -> d._1,
-        "reflections" -> parseReflections(d._2)))
-    val reflections = ujson.write(uuidRefs)
+  private def createChart(authorProfile:AuthorProfile) = {
+  //private def createChart(data:Option[Map[String,Vector[ReflectionEntry]]], analytics: Option[Map[String, AuthorAnalytics]]) = {
+
+    //val uuidRefsRaw = data.getOrElse(Vector()).toList
+//    val uuidRefs = uuidRefsRaw.map(d =>
+//      ujson.Obj("pseudonym" -> d._1,
+//        "reflections" -> parseReflections(d._2)))
+//    val reflections = ujson.write(uuidRefs)
+    logger.warn(authorProfile.analytics.toString)
+    val authorPseudonym = authorProfile.author.flatMap(_.pseudonym).getOrElse[String]("")
+    val authorRefs = parseReflections(authorProfile.analytics.map(_.refs).getOrElse(Vector()))
+    val authorReflectionJson = ujson.Obj("pseudonym"-> authorPseudonym,"reflections"-> authorRefs)
+    val arj = ujson.write(authorReflectionJson)
+    logger.warn(s"Profile page arj: $arj")
+
     if (tester) {
-      val analyticsData = analytics.getOrElse(Map()).map { d =>
-        ujson.Obj("pseudonym" -> d._1,
-          "analytics" -> parseAnalytics(d._2))
-      }
+      val authorAnltx = authorProfile.analytics.map(parseAnalytics).getOrElse(ujson.Obj())
+      val authorAnalyticsJson = ujson.Obj("pseudonym" -> authorPseudonym, "analytics" -> authorAnltx)
+      val aaj = ujson.write(authorAnalyticsJson)
+      logger.warn(s"Profile page aaj: $aaj")
+//      val analyticsData = analytics.getOrElse(Map()).map { d =>
+//        ujson.Obj("pseudonym" -> d._1,
+//          "analytics" -> parseAnalytics(d._2))
+//      }
       //      val analyticsDataMultipleCharts: List[ujson.Obj] = analytics.map(r => ujson.Obj("name" -> r.name,
 //        "description" -> r.description,
 //        "nodes" -> parseNodes(r.nodes),
 //        "edges" -> parseEdges(r.edges)
 //      )).toList
-      val analyticsEntries: String = ujson.write(analyticsData)
-      if (exp){
-        script(raw(s"Visualisation.authorExpAnalyticsCharts($reflections, $analyticsEntries)"))
+      //val analyticsEntries: String = ujson.write(analyticsData)
+      if (mcmexperiment){
+        //script(raw(s"Visualisation.authorExpAnalyticsCharts($reflections, $analyticsEntries)"))
+
+        script(raw(s"Visualisation.authorExpAnalyticsCharts($arj, $aaj)"))
       } else {
-        script(raw(s"Visualisation.authorControlAnalyticsCharts($reflections, $analyticsEntries)"))
+        //script(raw(s"Visualisation.authorControlAnalyticsCharts($reflections, $analyticsEntries)"))
+        script(raw(s"Visualisation.authorControlAnalyticsCharts($arj, $aaj)"))
       }
     } else {
-      val chartData: List[ujson.Obj] = parseReflections(uuidRefsRaw.headOption.getOrElse("noPseudonym" -> Vector(ReflectionEntry(0, "1900-01-01", ReflectionData(0, ""))))._2)
-      val entries: String = ujson.write(chartData)
+      //val chartData: List[ujson.Obj] = parseReflections(uuidRefsRaw.headOption.getOrElse("noPseudonym" -> Vector(ReflectionEntry(0, "1900-01-01", ReflectionData(0, ""))))._2)
+      val entries: String = ujson.write(authorRefs)
       script(raw(s"Visualisation.rpChart($entries)"))
     }
   }

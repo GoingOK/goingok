@@ -1,6 +1,6 @@
 package org.goingok.server.data
 
-import org.goingok.server.data.models.{AnltxChart, AnltxEdge, AnltxEdgeLabel, AnltxGraph, GroupCode, AnltxLabel, AnltxNode, AnltxNodeLabel, ReflectionAuthorEntry, ReflectionAuthorEntryAndGroup, ReflectionEntry, Reflection}
+import org.goingok.server.data.models.{AnltxChart, AnltxEdge, AnltxEdgeLabel, AnltxGraph, GroupCode, AnltxLabel, AnltxNode, AnltxNodeLabel, ReflectionAuthorEntry, ReflectionAuthorEntryAndGroup, ReflectionEntry, ReflectionDB}
 
 object DbResults {
 
