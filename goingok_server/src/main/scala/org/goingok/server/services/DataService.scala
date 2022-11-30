@@ -451,7 +451,9 @@ class DataService {
             where u.goingok_id = a.associate_id
             and a.goingok_id = $goingok_id
            """.query[UserPseudonym]
-    runQuery(query.to[Vector])
+    val result = runQuery(query.to[Vector])
+    logger.warn(result.toString)
+    result
   }
   def getReflectionsforAuthor(goingok_id:UUID): DBResult[Vector[Reflection]] = {
     val query =
@@ -469,6 +471,7 @@ class DataService {
             and a.graph_id = g.graph_id;
            """.query[AnltxDBGraph]
     val result = runQuery(query.to[Vector])
+    logger.warn(s"getGraphsforAuthor: ${result.toString}")
     result.map(c => c.map( d => new AnltxGraph(d)))
   }
   def getNodesForGraph(graph_id:Int): DBResult[Vector[Int]] = {
@@ -476,7 +479,9 @@ class DataService {
       sql"""select node_id
            from anltx_graph_nodes
            where graph_id = $graph_id""".query[Int]
-   runQuery(query.to[Vector])
+    val result = runQuery(query.to[Vector])
+    logger.warn(s"getNodesForGraph: ${result.toString}")
+    result
   }
 
   def getEdgesForGraph(graph_id:Int): DBResult[Vector[AnltxEdge]] = {
@@ -484,7 +489,9 @@ class DataService {
       sql"""select e.edge_id, e.graph_id, e.edge_type, e.source_node_id, e.target_node_id, e.directional, e.weight
            from anltx_edges e
            where e.graph_id = $graph_id""".query[AnltxEdge]
-    runQuery(query.to[Vector])
+    val result = runQuery(query.to[Vector])
+    logger.warn(s"getEdgesForGraph: ${result.toString}")
+    result
   }
   def getNodesForReflection(ref_id:Int): DBResult[Vector[AnltxNode]] = {
     val query =
@@ -492,17 +499,21 @@ class DataService {
             from anltx_nodes n
             where n.ref_id = $ref_id;
            """.query[AnltxNode]
-    runQuery(query.to[Vector])
+    val result = runQuery(query.to[Vector])
+    logger.warn(s"getNodesForReflection: ${result.toString}")
+    result
   }
 
-  def getChartForGraph(graph_id:Int): DBResult[AnltxChart] = {
+  def getChartForGraph(graph_id:Int): DBResult[Vector[AnltxChart]] = {
+    logger.warn(s"getChartForGraph graph_id: $graph_id")
     val query =
       sql"""select c.chart_id, c.graph_id, c.name, c.description
             from anltx_charts c
             where c.graph_id = $graph_id;
-           """.query[AnltxDBChart].unique
-    val result = runQuery(query)
-    result.map(c => new AnltxChart(c))
+           """.query[AnltxDBChart]
+    val result = runQuery(query.to[Vector])
+    logger.warn(s"getChartForGraph: ${result.toString}")
+    result.map(c => c.map(new AnltxChart(_)))
   }
 
 //  def getLabelsForChart(chart_id: Int): DBResult[Vector[AnltxLabel]] = {

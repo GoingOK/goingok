@@ -109,7 +109,7 @@ class ProfileController @Inject()(components: ControllerComponents,profileServic
           case Right(an) =>
               Some(an)
           case Left(error) =>
-            logger.error(error.getMessage)
+            logger.error(s"Error in creating analytics for profile page: ${error.getMessage}")
             None
         }
 

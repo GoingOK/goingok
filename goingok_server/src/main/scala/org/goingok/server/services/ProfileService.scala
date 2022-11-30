@@ -56,13 +56,15 @@ class ProfileService {
   } yield rows
 
   def getAuthorAnalytics(goingok_ids:Vector[UserPseudonym]): Either[Throwable, Map[UserPseudonym,AuthorAnalytics]] = {
+    logger.warn(s"getAuthorAnalytics input: $goingok_ids")
     val (lerrors, ranalytics) = goingok_ids.map{up =>
       getSingleAuthorAnalytics(up)}.partitionMap(identity)
     lerrors.headOption.toLeft(ranalytics.flatten.toMap)
   }
 
   private def getSingleAuthorAnalytics(userp:UserPseudonym): Either[Throwable, Map[UserPseudonym,AuthorAnalytics]] = {
-    for {
+    logger.warn(s"getSingleAuthorAnalytics input: $userp")
+    val result = for {
       rs <- ds.getReflectionsforAuthor(userp.goingok_id)
       gs <- ds.getGraphsforAuthor(userp.goingok_id)
       ns <- getAllRefNodes(rs)
@@ -74,13 +76,20 @@ class ProfileService {
       els <- getEdgeLabelsForCharts(cs)
       ls <- getLabels(nls, els)
     } yield Map(userp -> AuthorAnalytics(rs, gse, ns, es, cs, nls, els, ls))
+    logger.warn(s"getSingleAuthorAnalytics result: $result")
+    result
   }
 
   def getAssociatedIds(goingok_id:UUID): Either[Throwable, Vector[UserPseudonym]] = {
-    for {
+    val result = for {
       us <- ds.getAssociatedIdsWithPseudonyms(goingok_id)
       //ps <- getAllPseudonyms(us)
     } yield us  //ps
+    result match {
+      case Right(r) => logger.warn(s"getAssociatedIds result:${r.toString}")
+      case Left(e) => logger.error(s"getAssociatedIds error:${e.getMessage}")
+    }
+    result
   }
 
 //  private def getAllPseudonyms(uuids:Vector[UUID]): Either[Throwable, Vector[(UUID,String)]] = {
@@ -104,7 +113,7 @@ class ProfileService {
 
   private def getChartsForGraphs(graphs: Vector[AnltxGraph]) = {
     val (errors, rgraphs) = graphs.map(g => ds.getChartForGraph(g.graph_id)).partitionMap(identity)
-    errors.headOption.toLeft(rgraphs)
+    errors.headOption.toLeft(rgraphs.flatten)
   }
 
   private def getNodeLabelsForCharts(charts: Vector[AnltxChart]) = {
