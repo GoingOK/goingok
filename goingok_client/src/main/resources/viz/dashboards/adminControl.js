@@ -1,12 +1,3 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var d3 = require("d3");
 import { Help } from "../utils/help.js";
 import { AdminAnalyticsData } from "../data/data.js";
@@ -18,12 +9,55 @@ import { Timeline } from "../charts/admin/timeline.js";
 import { Users } from "../charts/admin/users.js";
 import { Totals } from "../charts/admin/totals.js";
 export class Dashboard {
-    constructor(data) {
-        this.totals = new Totals(data);
-        this.barChart = new BarChart(data);
-        this.histogram = new Histogram(data);
-        this.timeline = new Timeline(data);
-        this.users = new Users(data);
+    constructor(entriesRaw) {
+        try {
+            const rawData = entriesRaw.map(d => new AdminAnalyticsDataRaw(d.group, d.value, d.createDate));
+            let data = rawData.map(d => d.transformData());
+            const colourScale = d3.scaleOrdinal(d3.schemeCategory10);
+            data = data.map(d => new AdminAnalyticsData(d.group, d.value, d.createDate, colourScale(d.group), true));
+            try {
+                this.totals = new Totals(data);
+            }
+            catch (e) {
+                this.renderError(e, "users-totals", ".card-title span");
+            }
+            try {
+                this.barChart = new BarChart(data);
+            }
+            catch (e) {
+                this.renderError(e, "users");
+            }
+            try {
+                this.histogram = new Histogram(data);
+            }
+            catch (e) {
+                this.renderError(e, "histogram");
+            }
+            try {
+                this.timeline = new Timeline(data);
+            }
+            catch (e) {
+                this.renderError(e, "timeline");
+            }
+            try {
+                this.users = new Users(data);
+            }
+            catch (e) {
+                this.renderError(e, "reflections");
+            }
+            this.preloadGroups(data);
+        }
+        catch (e) {
+            this.renderError(e, "users-totals", ".card-title span");
+            this.renderError(e, "users");
+            this.renderError(e, "histogram");
+            this.renderError(e, "timeline");
+            this.renderError(e, "reflections");
+        }
+    }
+    renderError(e, chartId, css) {
+        d3.select(`#${chartId} ${css === undefined ? ".chart-container" : css}`)
+            .text(`There was an error rendering the chart. ${e}`);
     }
     sidebarBtn() {
         //Handle side bar btn click
@@ -66,46 +100,34 @@ export class Dashboard {
     }
 }
 export function buildControlAdminAnalyticsCharts(entriesRaw) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const rawData = entriesRaw.map(d => new AdminAnalyticsDataRaw(d.group, d.value, d.createDate));
-        let entries = rawData.map(d => d.transformData());
-        const colourScale = d3.scaleOrdinal(d3.schemeCategory10);
-        entries = entries.map(d => new AdminAnalyticsData(d.group, d.value, d.createDate, colourScale(d.group), true));
-        yield drawCharts(entries);
-        new Tutorial([new TutorialData("#groups", "All your groups are selected to visualise and colours assigned. You cannot change this section"),
-            new TutorialData(".card-title button", "Click the help symbol in any chart to get additional information"),
-            new TutorialData("#users .bar", "Hover for information on demand"),
-            new TutorialData("#histogram .histogram-rect", "Hover for information on demand"),
-            new TutorialData("#timeline .zoom-buttons", "Click to zoom in and out. To pan the chart click, hold and move left or right in any blank area")]);
-        function drawCharts(allEntries) {
-            return __awaiter(this, void 0, void 0, function* () {
-                const help = new Help();
-                const dashboard = new Dashboard(allEntries);
-                //Handle sidebar button
-                dashboard.sidebarBtn();
-                dashboard.preloadGroups(allEntries);
-                //Create groups chart with current data
-                d3.select("#users .card-subtitle")
-                    .html("");
-                //Handle groups chart help
-                help.helpPopover(dashboard.barChart.id, `<b>Bar chart</b><br>
-            A bar chart of the users in each group code<br>
-            <u><i>Hover</i></u> over the bars for information on demand`);
-                //Handle users histogram chart help
-                help.helpPopover(dashboard.histogram.id, `<b>Histogram</b><br>
-            A histogram group data points into user-specific ranges. The data points in this histogram are <i>users average reflection point</i>
-            <u><i>Hover</i></u> over the boxes for information on demand`);
-                //Handle timeline chart help
-                d3.select("#timeline .card-title button")
-                    .on("click", function (e) {
-                    help.helpPopover(`${dashboard.timeline.id}-help`, `<b>Scatter plot</b><br>
-                    The data is showed as a collection of points<br>The data represented are <i>reflections over time</i><br>
-                    <u><i>Hover</i></u> over the circles for information on demand`);
-                });
-                //Handle users histogram chart help
-                help.helpPopover("reflections", `<b>Reflections</b><br>
-            Each user's reflections are shown sorted by time. The chart depicts the percentage of reflections in each reflection point group`);
-            });
-        }
+    const help = new Help();
+    const dashboard = new Dashboard(entriesRaw);
+    //Handle sidebar button
+    dashboard.sidebarBtn();
+    //Create groups chart with current data
+    d3.select("#users .card-subtitle")
+        .html("");
+    //Handle groups chart help
+    help.helpPopover(dashboard.barChart.id, `<b>Bar chart</b><br>
+        A bar chart of the users in each group code<br>
+        <u><i>Hover</i></u> over the bars for information on demand`);
+    //Handle users histogram chart help
+    help.helpPopover(dashboard.histogram.id, `<b>Histogram</b><br>
+        A histogram group data points into user-specific ranges. The data points in this histogram are <i>users average reflection point</i>
+        <u><i>Hover</i></u> over the boxes for information on demand`);
+    //Handle timeline chart help
+    d3.select("#timeline .card-title button")
+        .on("click", function (e) {
+        help.helpPopover(`${dashboard.timeline.id}-help`, `<b>Scatter plot</b><br>
+                The data is showed as a collection of points<br>The data represented are <i>reflections over time</i><br>
+                <u><i>Hover</i></u> over the circles for information on demand`);
     });
+    //Handle users histogram chart help
+    help.helpPopover("reflections", `<b>Reflections</b><br>
+        Each user's reflections are shown sorted by time. The chart depicts the percentage of reflections in each reflection point group`);
+    new Tutorial([new TutorialData("#groups", "All your groups are selected to visualise and colours assigned. You cannot change this section"),
+        new TutorialData(".card-title button", "Click the help symbol in any chart to get additional information"),
+        new TutorialData("#users .bar", "Hover for information on demand"),
+        new TutorialData("#histogram .histogram-rect", "Hover for information on demand"),
+        new TutorialData("#timeline .zoom-buttons", "Click to zoom in and out. To pan the chart click, hold and move left or right in any blank area")]);
 }

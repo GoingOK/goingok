@@ -11,8 +11,9 @@ export declare class Dashboard {
     histogram: Histogram;
     timeline: Timeline;
     users: Users;
-    constructor(data: IAdminAnalyticsData[]);
+    constructor(entriesRaw: IAdminAnalyticsDataRaw[]);
+    renderError(e: any, chartId: string, css?: string): void;
     sidebarBtn(): void;
     preloadGroups(allEntries: IAdminAnalyticsData[], enable?: boolean): IAdminAnalyticsData[];
 }
-export declare function buildControlAdminAnalyticsCharts(entriesRaw: IAdminAnalyticsDataRaw[]): Promise<void>;
+export declare function buildControlAdminAnalyticsCharts(entriesRaw: IAdminAnalyticsDataRaw[]): void;

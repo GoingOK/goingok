@@ -7,8 +7,8 @@ export declare class Dashboard {
     timeline: TimelineNetwork;
     network: Network;
     reflections: Reflections;
-    constructor(data: IAuthorAnalyticsData[]);
-    renderError(e: any, chartId: string): void;
+    constructor(entriesRaw: IAuthorEntriesRaw[], analyticsRaw: IAuthorAnalyticsEntriesRaw[]);
+    renderError(e: any, chartId: string, css?: string): void;
     resizeTimeline(): void;
     handleMultiUser(entries: IAuthorAnalyticsData[], extend?: Function): void;
     preloadTags(entries: IAuthorAnalyticsData, enable?: boolean): ITags[];

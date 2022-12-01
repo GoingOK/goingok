@@ -7,7 +7,7 @@ export declare class ExperimentalDashboard extends Dashboard {
     entries: IAdminAnalyticsData[];
     sort: Sort<IAdminAnalyticsData>;
     help: Help;
-    constructor(data: IAdminAnalyticsData[]);
+    constructor(entriesRaw: IAdminAnalyticsDataRaw[]);
     preloadGroups(entries: IAdminAnalyticsData[]): IAdminAnalyticsData[];
     handleGroups(): void;
     handleGroupsColours(): void;

@@ -104,54 +104,37 @@ class ProfilePage(authorProfile:AuthorProfile = AuthorProfile(), associateProfil
         ),
         //Includes.d3Js,
         script(src:=bundleUrl),
-        createChart(authorProfile)
+        createChart(authorProfile, associateProfiles)
       )
     )
   }
 
   /** Creates user chart */
-  //private def createChart(data:Option[Map[String,Vector[ReflectionEntry]]], analytics: Map[String, Vector[models.AnalyticsAuthorChartsData]]) = {
-
-  private def createChart(authorProfile:AuthorProfile) = {
-  //private def createChart(data:Option[Map[String,Vector[ReflectionEntry]]], analytics: Option[Map[String, AuthorAnalytics]]) = {
-
-    //val uuidRefsRaw = data.getOrElse(Vector()).toList
-//    val uuidRefs = uuidRefsRaw.map(d =>
-//      ujson.Obj("pseudonym" -> d._1,
-//        "reflections" -> parseReflections(d._2)))
-//    val reflections = ujson.write(uuidRefs)
-    logger.warn(authorProfile.analytics.toString)
-    val authorPseudonym = authorProfile.author.flatMap(_.pseudonym).getOrElse[String]("")
+  private def createChart(authorProfile:AuthorProfile, associateProfiles:Vector[AuthorProfile]) = {
     val authorRefs = parseReflections(authorProfile.analytics.map(_.refs).getOrElse(Vector()))
-    val authorReflectionJson = ujson.Obj("pseudonym"-> authorPseudonym,"reflections"-> authorRefs)
-    val arj = ujson.write(authorReflectionJson)
-    logger.warn(s"Profile page arj: $arj")
+    val profiles = Vector(authorProfile) ++ associateProfiles
+    val profilesReflectionJson = profiles.map(p => {
+      ujson.Obj("pseudonym" -> p.author.flatMap(_.pseudonym).getOrElse[String](""),
+        "reflections" -> parseReflections(p.analytics.map(_.refs).getOrElse(Vector()))
+      )
+    })
+    val prj = ujson.write(profilesReflectionJson)
+    logger.warn(s"Profile page arj: $prj")
 
     if (tester) {
-      val authorAnltx = authorProfile.analytics.map(parseAnalytics).getOrElse(ujson.Obj())
-      val authorAnalyticsJson = ujson.Obj("pseudonym" -> authorPseudonym, "analytics" -> authorAnltx)
-      val aaj = ujson.write(authorAnalyticsJson)
-      logger.warn(s"Profile page aaj: $aaj")
-//      val analyticsData = analytics.getOrElse(Map()).map { d =>
-//        ujson.Obj("pseudonym" -> d._1,
-//          "analytics" -> parseAnalytics(d._2))
-//      }
-      //      val analyticsDataMultipleCharts: List[ujson.Obj] = analytics.map(r => ujson.Obj("name" -> r.name,
-//        "description" -> r.description,
-//        "nodes" -> parseNodes(r.nodes),
-//        "edges" -> parseEdges(r.edges)
-//      )).toList
-      //val analyticsEntries: String = ujson.write(analyticsData)
+      val profilesAnalyticsJson = profiles.map(p => {
+        ujson.Obj("pseudonym" -> p.author.flatMap(_.pseudonym).getOrElse[String](""),
+          "analytics" -> p.analytics.map(parseAnalytics).getOrElse(ujson.Obj())
+        )
+      })
+      val paj = ujson.write(profilesAnalyticsJson)
+      logger.warn(s"Profile page aaj: $paj")
       if (mcmexperiment){
-        //script(raw(s"Visualisation.authorExpAnalyticsCharts($reflections, $analyticsEntries)"))
-
-        script(raw(s"Visualisation.authorExpAnalyticsCharts($arj, $aaj)"))
+        script(raw(s"Visualisation.authorExpAnalyticsCharts($prj, $paj)"))
       } else {
-        //script(raw(s"Visualisation.authorControlAnalyticsCharts($reflections, $analyticsEntries)"))
-        script(raw(s"Visualisation.authorControlAnalyticsCharts($arj, $aaj)"))
+        script(raw(s"Visualisation.authorControlAnalyticsCharts($prj, $paj)"))
       }
     } else {
-      //val chartData: List[ujson.Obj] = parseReflections(uuidRefsRaw.headOption.getOrElse("noPseudonym" -> Vector(ReflectionEntry(0, "1900-01-01", ReflectionData(0, ""))))._2)
       val entries: String = ujson.write(authorRefs)
       script(raw(s"Visualisation.rpChart($entries)"))
     }
