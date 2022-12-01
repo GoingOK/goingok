@@ -2,7 +2,7 @@ package controllers
 
 import java.util.UUID
 import javax.inject.Inject
-import org.goingok.server.data.models.{GroupAnalytics, ReflectionData, User}
+import org.goingok.server.data.models.{GroupAnalytics, ReflectionData, UiMessage, User}
 import org.goingok.server.data._
 import org.goingok.server.services.{AnalyticsService, ProfileService}
 import play.api.mvc._

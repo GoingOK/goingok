@@ -1,4 +1,4 @@
-package org.goingok.server.data.models
+package org.goingok.server.data
 
 //import play.api.libs.json.JsString
 

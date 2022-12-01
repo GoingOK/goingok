@@ -2,8 +2,8 @@ package views
 
 import java.time.LocalDate
 import org.goingok.server.Config
-import org.goingok.server.data.models.{Author, GroupAnalytics, User}
-import org.goingok.server.data.{UiMessage, models}
+import org.goingok.server.data.models.{Author, GroupAnalytics, UiMessage, User}
+import org.goingok.server.data.models
 import scalatags.Text.all._
 import scalatags.Text.tags
 import views.components.NavBar.NavParams

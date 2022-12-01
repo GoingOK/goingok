@@ -2,8 +2,8 @@ package views
 
 
 import org.goingok.server.Config
-import org.goingok.server.data.models.{AnltxChart, AnltxEdge, AnltxEdgeLabel, AnltxLabel, AnltxNode, AnltxNodeLabel, AuthorAnalytics, ReflectionData, ReflectionEntry}
-import org.goingok.server.data.{AuthorProfile, Profile, UiMessage, models}
+import org.goingok.server.data.models.{AnltxEdge, AnltxEdgeLabel, AnltxLabel, AnltxNode, AnltxNodeLabel, AuthorAnalytics, ReflectionEntry, UiMessage}
+import org.goingok.server.data.AuthorProfile
 import scalatags.Text.all._
 import scalatags.Text.{TypedTag, tags}
 import views.components.NavBar.NavParams

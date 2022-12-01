@@ -21,7 +21,7 @@ dockerChmodType := DockerChmodType.UserGroupWriteExecute
 dockerPermissionStrategy := DockerPermissionStrategy.CopyChown
 
 lazy val projectName = "goingok"
-lazy val projectVersion = "4.3.1"
+lazy val projectVersion = "4.3.2"
 lazy val projectOrganisation = "org.goingok"
 
 lazy val serverName = s"${projectName}_server"
@@ -29,7 +29,7 @@ lazy val clientName = s"${projectName}_client"
 lazy val sharedName = s"${projectName}_shared"
 
 //Versions
-scalaVersion in ThisBuild := "2.13.8"
+scalaVersion in ThisBuild := "2.13.10"
 
 lazy val vGuice = "5.1.0"
 
@@ -40,13 +40,13 @@ lazy val vUpickle = "2.0.0"
 lazy val vDoobie = "0.13.4"
 lazy val vConfig = "1.4.2"
 
-lazy val vScalaJsDom = "2.2.0" //1.2.0
-lazy val vWebpack = "4.10.2"
-lazy val vWebpackDevServer = "3.1.4"
+lazy val vScalaJsDom = "2.3.0" //1.2.0
+//lazy val vWebpack = "4.10.2"
+//lazy val vWebpackDevServer = "3.1.4"
 lazy val vPopper = "1.14.4"
 lazy val vD3 = "6.5.0" //"5.9.7"
 
-lazy val vScalaTest = "3.2.13"
+lazy val vScalaTest = "3.2.14"
 lazy val vScalaLogging = "3.9.5"
 
 //Settings
@@ -107,7 +107,8 @@ lazy val goingok = project.in(file("."))
     siteSubdirName in ScalaUnidoc := "api",
     addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), siteSubdirName in ScalaUnidoc)
   ).enablePlugins(PlayScala)
-  .enablePlugins(WebScalaJSBundlerPlugin)
+  .enablePlugins(SbtWeb)
+  //.enablePlugins(WebScalaJSBundlerPlugin)
   .enablePlugins(SiteScaladocPlugin,ScalaUnidocPlugin)
 
 lazy val docs = (project in file("project_docs"))
@@ -139,9 +140,10 @@ lazy val client = project.in(file(clientName))
   .settings(
     sharedSettings,
     scalaJSUseMainModuleInitializer := true,
-    webpackBundlingMode := BundlingMode.LibraryAndApplication(), //Needed for top level exports
-    version in webpack := vWebpack, // Needed for version 4 webpack
-    version in startWebpackDevServer := vWebpackDevServer, // Needed for version 4 webpack
+    scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
+   // webpackBundlingMode := BundlingMode.LibraryAndApplication(), //Needed for top level exports
+    //version in webpack := vWebpack, // Needed for version 4 webpack
+    //version in startWebpackDevServer := vWebpackDevServer, // Needed for version 4 webpack
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % vScalaJsDom,
       "com.lihaoyi" %%% "scalatags" % vScalaTags, //Using ScalaTags instead of Twirl
@@ -149,11 +151,11 @@ lazy val client = project.in(file(clientName))
       "org.scalactic" %%% "scalactic" % vScalaTest,
       "org.scalatest" %%% "scalatest" % vScalaTest % "test"
     ),
-    npmDependencies in Compile ++= Seq( //Only managing libraries that are used by ScalaJS, others are in public/javascripts and loaded in Includes (views)
-      "d3" -> vD3,
-    )
-  ).enablePlugins(ScalaJSPlugin)
-  .enablePlugins(ScalaJSBundlerPlugin) //, ScalaJSWeb)
+//    npmDependencies in Compile ++= Seq( //Only managing libraries that are used by ScalaJS, others are in public/javascripts and loaded in Includes (views)
+//      "d3" -> vD3,
+//    )
+  ).enablePlugins(ScalaJSPlugin, ScalaJSWeb)
+  //.enablePlugins(ScalaJSBundlerPlugin) //, ScalaJSWeb)
 
 //Documentation
 //Task for building docs and copying to root level docs folder (for GitHub pages)

@@ -1,4 +1,4 @@
-package org.goingok.server.data
+package org.goingok.server.data.models
 
 import java.util.UUID
 

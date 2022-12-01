@@ -1,12 +1,15 @@
 resolvers += "Typesafe repository" at "https://repo.typesafe.com/typesafe/releases/"
 
+ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
+
 //Play framework
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.8.16")
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.8.18")
 
 //ScalaJS
-addSbtPlugin("org.scala-js" % "sbt-scalajs" % "1.10.1")
+addSbtPlugin("org.scala-js" % "sbt-scalajs" % "1.12.0")
+//addSbtPlugin("ch.epfl.scala" % "sbt-scalajs-bundler" % "0.21.1")
 addSbtPlugin("com.vmunier" % "sbt-web-scalajs" % "1.2.0")
-addSbtPlugin("ch.epfl.scala" % "sbt-web-scalajs-bundler" % "0.20.0")
+//addSbtPlugin("ch.epfl.scala" % "sbt-web-scalajs-bundler" % "0.21.0-RC1")
 
 //Dependency management
 addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.6.3")

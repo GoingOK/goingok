@@ -1,4 +1,4 @@
-package org.goingok.server.data.models
+package org.goingok.server.data.unused
 
 //import play.api.libs.json.{Json, Writes}
 

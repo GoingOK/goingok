@@ -1,7 +1,6 @@
 package views
 
-import org.goingok.server.data.UiMessage
-import org.goingok.server.data.models.User
+import org.goingok.server.data.models.{UiMessage, User}
 import play.api.Logging
 import play.twirl.api.Html
 import scalatags.Text
@@ -28,7 +27,7 @@ trait GenericPage extends Logging {
   //def page(titleStr:String,user:Option[User],message:String) :Text.TypedTag[String] = tags.html(head(tags2.title(titleStr)))
 
   /** Bundles URL */
-  def bundleUrl: String = Seq("client-opt-bundle.js", "client-fastopt-bundle.js")
+  def bundleUrl: String = Seq("client-opt/main.js", "client-fastopt/main.js")
     .find(name => getClass.getResource(s"/public/$name") != null)
     .map(name => controllers.routes.Assets.versioned(s"$name").url).getOrElse("BUNDLE_NOT_FOUND")
 

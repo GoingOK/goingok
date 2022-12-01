@@ -1,6 +1,6 @@
 package views.components.register
 
-import org.goingok.server.data.UiMessage
+import org.goingok.server.data.models.UiMessage
 import scalatags.Text.TypedTag
 import scalatags.Text.all._
 

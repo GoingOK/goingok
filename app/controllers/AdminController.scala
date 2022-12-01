@@ -3,10 +3,10 @@ package controllers
 import java.util.UUID
 
 import javax.inject.Inject
-import org.goingok.server.data.{AdminData, UiMessage}
-import org.goingok.server.data.models.User
+import org.goingok.server.data.AdminData
+import org.goingok.server.data.models.{UiMessage, User}
 import org.goingok.server.services.{AdminService, ProfileService}
-import play.api.mvc.{AnyContent, _}
+import play.api.mvc._
 import views.AdminPage
 
 import scala.concurrent.{ExecutionContext, Future}

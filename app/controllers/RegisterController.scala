@@ -1,9 +1,9 @@
 package controllers
 
+import org.goingok.server.data.models.UiMessage
 import java.util.UUID
 
 import javax.inject.Inject
-import org.goingok.server.data.UiMessage
 import org.goingok.server.services.UserService
 import play.api.Logger
 import play.api.mvc._
