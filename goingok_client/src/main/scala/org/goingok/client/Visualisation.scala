@@ -1,7 +1,9 @@
 package org.goingok.client
 
+import org.goingok.client.ReflectionPointChart.buildChart
+
 import scala.scalajs.js
-import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
+import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel, JSGlobal}
 
 @JSExportTopLevel("Visualisation")
 object Visualisation {
@@ -11,7 +13,7 @@ object Visualisation {
   def rpChart(entries:js.Array[js.Object]) :Unit = {
     println("Generating Visualisation: rpChart")
     //println(s"rpChart entries: $entries")
-    RelfectionPointChart.buildChart(entries)
+    buildChart(entries)
   }
 
   @JSExport

@@ -1,4 +1,4 @@
-// Copyright (C) 2018 - 2021 the original author or authors.
+// Copyright (C) 2018 - 2022 the original author or authors.
 // See the LICENCE.txt file distributed with this work for additional
 // information regarding copyright ownership.
 //
@@ -29,25 +29,20 @@ lazy val clientName = s"${projectName}_client"
 lazy val sharedName = s"${projectName}_shared"
 
 //Versions
-scalaVersion in ThisBuild := "2.13.10"
-
-lazy val vGuice = "5.1.0"
-
-lazy val vScalaTags = "0.11.1" //0.9.4
-lazy val vSjsD3 = "0.3.4"
+ThisBuild / scalaVersion := "2.13.10"
 
 lazy val vUpickle = "2.0.0"
 lazy val vDoobie = "0.13.4"
 lazy val vConfig = "1.4.2"
-
-lazy val vScalaJsDom = "2.3.0" //1.2.0
-//lazy val vWebpack = "4.10.2"
-//lazy val vWebpackDevServer = "3.1.4"
-lazy val vPopper = "1.14.4"
-lazy val vD3 = "6.5.0" //"5.9.7"
-
 lazy val vScalaTest = "3.2.14"
 lazy val vScalaLogging = "3.9.5"
+
+lazy val vScalaTags = "0.11.1"
+lazy val vScalaJsDom = "2.3.0"
+lazy val vJquery = "3.6.1"
+lazy val vD3 = "6.7.0"
+lazy val vBootstrap = "5.2.3"
+lazy val vFontawesome = "6.2.0"
 
 //Settings
 val sharedSettings = Seq(
@@ -56,11 +51,9 @@ val sharedSettings = Seq(
 )
 
 //Dependencies
-
 val playDeps = Seq(ws, guice, ehcache) //, guice specs2 % Test)
 
 val generalDeps = Seq(
-  "com.google.inject" % "guice" % vGuice, //To fix reflection error by old version in Play
   "com.typesafe" % "config" % vConfig,
   "com.lihaoyi" %% "scalatags" % vScalaTags, //Using ScalaTags instead of Twirl
   "com.lihaoyi" %% "upickle" % vUpickle, //Using uJson for main JSON
@@ -81,8 +74,19 @@ val testDeps = Seq(
   "org.scalatest" %% "scalatest" % vScalaTest % "test"
 )
 
+val logDeps = Seq(
+  "com.typesafe.scala-logging" %% "scala-logging" % vScalaLogging
+)
+
+val jsDeps = Seq(
+  "org.webjars" % "jquery" % vJquery / "jquery.js",
+  "org.webjars" % "d3js" % vD3 / "d3.js",
+  "org.webjars" % "bootstrap" % vBootstrap / "bootstrap.js",
+  "org.webjars" % "font-awesome" % vFontawesome / "fontawesome.js",
+)
 
 
+// Main project
 lazy val goingok = project.in(file("."))
   .dependsOn(server,client)
   .aggregate(server,client)
@@ -92,25 +96,24 @@ lazy val goingok = project.in(file("."))
     libraryDependencies ++= generalDeps,
     libraryDependencies ++= authDeps,
     libraryDependencies ++= testDeps,
-    resolvers += Resolver.sonatypeRepo("snapshots"),
-    //resolvers += Resolver.sonatypeRepo("releases"),
+    resolvers ++= Resolver.sonatypeOssRepos("releases"),
 
     scalaJSProjects := Seq(client),
-    pipelineStages in Assets := Seq(scalaJSPipeline), //Needed for WebScalaJsBundler
+    Assets / pipelineStages := Seq(scalaJSPipeline),
 
     dockerExposedPorts := Seq(9000,80), // sbt docker:publishLocal
     dockerRepository := Some(s"$dockerRepoURI"),
-    defaultLinuxInstallLocation in Docker := "/opt/docker",
+    Docker / defaultLinuxInstallLocation := "/opt/docker",
     dockerExposedVolumes := Seq("/opt/docker/logs"),
     dockerBaseImage := "adoptopenjdk/openjdk8:latest", //"openjdk:18-oracle", //"openjdk:stable",
     // Puts unified scaladocs into target/api
-    siteSubdirName in ScalaUnidoc := "api",
-    addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), siteSubdirName in ScalaUnidoc)
+    ScalaUnidoc / siteSubdirName  := "api",
+    addMappingsToSiteDir( ScalaUnidoc / packageDoc / mappings,  ScalaUnidoc / siteSubdirName)
   ).enablePlugins(PlayScala)
   .enablePlugins(SbtWeb)
-  //.enablePlugins(WebScalaJSBundlerPlugin)
   .enablePlugins(SiteScaladocPlugin,ScalaUnidocPlugin)
 
+// Documentation subproject
 lazy val docs = (project in file("project_docs"))
   .settings(
     sharedSettings,
@@ -123,6 +126,7 @@ lazy val docs = (project in file("project_docs"))
     ),
   ).enablePlugins(ParadoxSitePlugin)
 
+// Server subproject
 lazy val server = project.in(file(serverName))
   .settings(
     sharedSettings,
@@ -130,32 +134,27 @@ lazy val server = project.in(file(serverName))
     libraryDependencies ++= dbDeps,
     libraryDependencies ++= authDeps,
     libraryDependencies ++= testDeps,
-    libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % vScalaLogging,
+    libraryDependencies ++= logDeps,
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
     buildInfoPackage := projectOrganisation,
     buildInfoOptions += BuildInfoOption.BuildTime,
   ).enablePlugins(BuildInfoPlugin)
 
+// Client subproject
 lazy val client = project.in(file(clientName))
   .settings(
     sharedSettings,
     scalaJSUseMainModuleInitializer := true,
-    scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
-   // webpackBundlingMode := BundlingMode.LibraryAndApplication(), //Needed for top level exports
-    //version in webpack := vWebpack, // Needed for version 4 webpack
-    //version in startWebpackDevServer := vWebpackDevServer, // Needed for version 4 webpack
+    scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.NoModule) },
+    jsDependencies ++= jsDeps,
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % vScalaJsDom,
       "com.lihaoyi" %%% "scalatags" % vScalaTags, //Using ScalaTags instead of Twirl
       "com.lihaoyi" %%% "upickle" % vUpickle, //Using uJson for main JSON
       "org.scalactic" %%% "scalactic" % vScalaTest,
       "org.scalatest" %%% "scalatest" % vScalaTest % "test"
-    ),
-//    npmDependencies in Compile ++= Seq( //Only managing libraries that are used by ScalaJS, others are in public/javascripts and loaded in Includes (views)
-//      "d3" -> vD3,
-//    )
-  ).enablePlugins(ScalaJSPlugin, ScalaJSWeb)
-  //.enablePlugins(ScalaJSBundlerPlugin) //, ScalaJSWeb)
+    )
+  ).enablePlugins(ScalaJSPlugin, ScalaJSWeb,JSDependenciesPlugin)
 
 //Documentation
 //Task for building docs and copying to root level docs folder (for GitHub pages)
