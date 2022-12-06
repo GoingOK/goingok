@@ -9,17 +9,11 @@ object Sort {
       div(`class` := "card-body",
         h6(`class` := "card-subtitle",
           span(`class` := "my-auto", "Sort reflections by:"),
-          div(`class` := "btn-group btn-group-toggle", data("toggle") := "buttons",
-            label(`class` := "btn btn-light active",
-              input(`type` := "radio", name := "sort", value := "timestamp", checked, "Date",
-                i(`class`:= "fa fa-chevron-down")
-              )
-            ),
-            label(`class` := "btn btn-light",
-              input(`type` := "radio", name := "sort", value := "point", checked, "Point",
-                i(`class`:= "fa fa-chevron-down d-none")
-              )
-            )
+          div(`class` := "btn-group sort-by", role := "group",
+            input(`type` := "radio", `class`:="btn-check", name := "sort", id:="sort-timestamp", value := "timestamp", checked),
+            label(`class` := "btn btn-outline-secondary", `for`:="sort-timestamp", "Date", i(`class` := "fa fa-chevron-down")),
+            input(`type` := "radio", `class`:="btn-check", name := "sort", id:="sort-point", value := "point"),
+            label(`class` := "btn btn-outline-secondary", `for`:="sort-point", "Point", i(`class` := "fa fa-chevron-down d-none"))
           )
         )
       )

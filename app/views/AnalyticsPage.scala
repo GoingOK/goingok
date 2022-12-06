@@ -77,9 +77,9 @@ class AnalyticsPage(user:Option[User]=None, analytics: GroupAnalytics, tester: B
       "createDate" -> r.timestamp))
     val entries:String = ujson.write(chartData)
     if (exp){
-      script(raw(s"Visualisation.expAnalyticsCharts($entries)"))
+      script(raw(s"gokd3.buildExperimentAdminAnalyticsCharts($entries)"))
     } else {
-      script(raw(s"Visualisation.controlAnalyticsCharts($entries)"))
+      script(raw(s"gokd3.buildControlAdminAnalyticsCharts($entries)"))
     }
   }
 }

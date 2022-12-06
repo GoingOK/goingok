@@ -9,13 +9,13 @@ object Network {
       div(`class` := "card-body",
         h5(`class` := "card-title",
           span("Reflections network"),
-          button(`type` := "button", `class` := "btn btn-light btn-sm float-right",
+          button(`type` := "button", `class` := "btn btn-light btn-sm float-end",
             i(`class` := "fas fa-question-circle")
           )
         ),
         h6(`class` := "card-subtitle mb-2",
           div(`class`:= "input-group input-group-sm zoom-buttons",
-            span(`class`:= "mr-2 my-auto", "zoom:"),
+            span(`class`:= "me-2 my-auto", "zoom:"),
             div(`class`:= "input-group-prepend",
               div(`class` := "input-group",
                 input(`class` := "btn btn-secondary btn-sm", `type`:="button", value:="-", id:="zoom-minus")

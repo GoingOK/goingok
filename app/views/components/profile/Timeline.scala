@@ -9,7 +9,7 @@ object Timeline {
       div(`class` := "card-body",
         h5(`class` := "card-title",
           span("Reflections timeline"),
-          button(`type` := "button", `class` := "btn btn-light btn-sm float-right",
+          button(`type` := "button", `class` := "btn btn-light btn-sm float-end",
             i(`class` := "fas fa-question-circle")
           )
         ),

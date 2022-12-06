@@ -130,9 +130,9 @@ class ProfilePage(authorProfile:AuthorProfile = AuthorProfile(), associateProfil
       val paj = ujson.write(profilesAnalyticsJson)
       logger.warn(s"Profile page aaj: $paj")
       if (mcmexperiment){
-        script(raw(s"Visualisation.authorExpAnalyticsCharts($prj, $paj)"))
+        script(raw(s"gokd3.buildExperimentAuthorAnalyticsCharts($prj, $paj)"))
       } else {
-        script(raw(s"Visualisation.authorControlAnalyticsCharts($prj, $paj)"))
+        script(raw(s"gokd3.buildControlAuthorAnalyticsCharts($prj, $paj)"))
       }
     } else {
       val entries: String = ujson.write(authorRefs)

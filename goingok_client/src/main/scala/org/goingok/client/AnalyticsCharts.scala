@@ -3,7 +3,6 @@ package org.goingok.client
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSGlobal, JSImport}
 
-//@JSImport("./viz/index", JSImport.Namespace)
 @js.native
 @JSGlobal
 object AnalyticsCharts extends js.Object {

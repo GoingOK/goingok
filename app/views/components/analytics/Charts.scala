@@ -49,22 +49,13 @@ object Charts {
             div(`class`:="card-body",
               h6(`class`:="card-subtitle",
                 span(`class`:= "mr-2", "Sort groups by:"),
-                div(`class`:="btn-group btn-group-toggle sort-by", data("toggle"):="buttons",
-                  label(`class`:="btn btn-light active",
-                    input(`type`:="radio", name:="sort", value:="createDate", "Create date",
-                      i(`class`:= "fa fa-chevron-down")
-                    )
-                  ),
-                  label(`class`:="btn btn-light",
-                    input(`type`:="radio", name:="sort", value:="group", "Name",
-                      i(`class`:= "fa fa-chevron-down d-none")
-                    )
-                  ),
-                  label(`class`:="btn btn-light",
-                    input(`type`:="radio", name:="sort", value:="mean", "Mean",
-                      i(`class`:= "fa fa-chevron-down d-none")
-                    )
-                  )
+                div(`class`:="btn-group sort-by", role:="group",
+                  input(`type` := "radio", `class`:="btn-check", name := "sort", id:="sort-createDate", value := "createDate", checked),
+                  label(`class`:="btn btn-outline-secondary", `for`:="sort-createDate", "Create date", i(`class` := "fa fa-chevron-down")),
+                  input(`type` := "radio", `class`:="btn-check", name := "sort", id:="sort-group", value := "group"),
+                  label(`class`:="btn btn-outline-secondary", `for`:="sort-group", "Name", i(`class` := "fa fa-chevron-down d-none")),
+                  input(`type` := "radio", `class`:="btn-check", name := "sort", id:="sort-mean", value := "mean"),
+                  label(`class`:="btn btn-outline-secondary", `for`:="sort-mean", "Mean", i(`class` := "fa fa-chevron-down d-none"))
                 )
               )
             )
@@ -76,7 +67,7 @@ object Charts {
           div(`class`:="card-body",
             h5(`class`:="card-title",
               span("Total users by group"),
-              button(`type`:="button", `class`:="btn btn-light btn-sm float-right",
+              button(`type`:="button", `class`:="btn btn-light btn-sm float-end",
                 i(`class`:="fas fa-question-circle")
               )
             ),
@@ -90,7 +81,7 @@ object Charts {
           div(`class`:="card-body",
             h5(`class`:="card-title",
               span("Users distribution"),
-              button(`type`:="button", `class`:="btn btn-light btn-sm float-right",
+              button(`type`:="button", `class`:="btn btn-light btn-sm float-end",
                 i(`class`:="fas fa-question-circle")
               )
             ),
@@ -104,7 +95,7 @@ object Charts {
           div(`class`:="card-body",
             h5(`class`:="card-title",
               span("Users reflection points timeline"),
-              button(`type`:="button", `class`:="btn btn-light btn-sm float-right",
+              button(`type`:="button", `class`:="btn btn-light btn-sm float-end",
                 i(`class`:="fas fa-question-circle")
               )
             ),
@@ -112,7 +103,7 @@ object Charts {
               p(`class` := "instructions mb-1"),
               p(`class` := "text-muted mb-0"),
               div(`class` := "input-group input-group-sm zoom-buttons",
-                span(`class` := "mr-2 my-auto", "zoom:"),
+                span(`class` := "me-2 my-auto", "zoom:"),
                 div(`class` := "input-group-prepend",
                   div(`class` := "input-group",
                     input(`class` := "btn btn-secondary btn-sm", `type` := "button", value := "-", id := "zoom-minus")
@@ -135,7 +126,7 @@ object Charts {
           div(`class`:="card-body",
             h5(`class`:="card-title",
               span("Users reflections"),
-              button(`type`:="button", `class`:="btn btn-light btn-sm float-right",
+              button(`type`:="button", `class`:="btn btn-light btn-sm float-end",
                 i(`class`:="fas fa-question-circle")
               )
             ),
@@ -144,18 +135,11 @@ object Charts {
               div(`class` := "col-md-6 d-flex",
                 div(id := "sort-users", `class` := "ml-auto",
                   span("Sort users by:"),
-                  div(`class` := "btn-group btn-group-toggle sort-by", data("toggle") := "buttons",
-                    label(`class` := "btn btn-light active",
-                      input(`type` := "radio", name := "sort", value := "pseudonym", "Name",
-                        i(`class` := "fa fa-chevron-down")
-                      )
-                    ),
-                    label(`class` := "btn btn-light",
-                      input(`type` := "radio", name := "sort", value := "mean", "Reflection state point",
-                        i(`class` := "fa fa-chevron-down d-none")
-                      )
-                    )
-                  )
+                  div(`class` := "btn-group sort-by", role := "group",
+                    input(`type` := "radio", `class`:="btn-check", name := "sort", id:="sort-pseudonym", value := "pseudonym"),
+                    label(`class` := "btn btn-outline-secondary", `for`:="sort-pseudonym", "Name", i(`class` := "fa fa-chevron-down")),
+                    input(`type` := "radio", `class`:="btn-check", name := "sort", id:="sort-avg", value := "avg"),
+                    label(`class` := "btn btn-outline-secondary", `for`:="sort-avg", "Reflection state point", i(`class` := "fa fa-chevron-down d-none")))
                 )
               )
             ),
