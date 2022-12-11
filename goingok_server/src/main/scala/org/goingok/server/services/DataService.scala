@@ -1,19 +1,19 @@
 package org.goingok.server.services
 
 import java.time.LocalDateTime
-
 import cats.effect.IO
 import doobie._
 import doobie.implicits._
 import doobie.util.ExecutionContexts
+
 import java.util.UUID
 import doobie.postgres._
 import doobie.postgres.implicits._
-
 import com.typesafe.scalalogging.Logger
 import org.goingok.server.Config
 import org.goingok.server.data.DbResults
 import org.goingok.server.data.models._
+//import org.goingok.server.data.unused.UserPseudonym
 
 
 
@@ -444,16 +444,16 @@ class DataService {
 //
 //  }
 
-  def getAssociatedIdsWithPseudonyms(goingok_id:UUID): DBResult[Vector[UserPseudonym]] = {
+  def getAssociatedIdsWithPseudonyms(goingok_id:UUID): DBResult[Vector[Author]] = {
     val query =
       sql"""select a.associate_id, u.pseudonym
             from users u, user_associates a
             where u.goingok_id = a.associate_id
             and a.goingok_id = $goingok_id
-           """.query[UserPseudonym]
+           """.query[(UUID,String)]
     val result = runQuery(query.to[Vector])
     logger.warn(s"Associated IDs with Pseudonyms: ${result.toString}")
-    result
+    result.map(_.map(up => Author(up._1,Some(up._2))))
   }
   def getReflectionsforAuthor(goingok_id:UUID): DBResult[Vector[ReflectionDB]] = {
     val query =

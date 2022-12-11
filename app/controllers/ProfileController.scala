@@ -3,7 +3,7 @@ package controllers
 import java.util.UUID
 import javax.inject.Inject
 import org.goingok.server.data.AuthorProfile
-import org.goingok.server.data.models.{Author, AuthorAnalytics, ReflectionData, UiMessage, User, UserPseudonym}
+import org.goingok.server.data.models.{Author, AuthorAnalytics, ReflectionData, UiMessage, User}
 import org.goingok.server.services.{AnalyticsService, ProfileService}
 import play.api.mvc._
 import views.ProfilePage
@@ -53,38 +53,43 @@ class ProfileController @Inject()(components: ControllerComponents,profileServic
           None
         }
 
-        // Get analytics for author + associates
-        val analytics:Either[Throwable,Map[String,AuthorAnalytics]] = {
-          for {
-            ais <- profileService.getAssociatedIds(goingok_id)
-            ans <- profileService.getAuthorAnalytics(Vector(UserPseudonym(goingok_id, user.get.pseudonym.get)) ++ ais)
-          } yield ans.map(r => (r._1.pseudonym,r._2))
-        }
-
-        val analyticsFinal: Option[Map[String,AuthorAnalytics]] = analytics match {
-          case Right(an) =>
-              Some(an)
-          case Left(error) =>
-            logger.error(s"Error in creating analytics for profile page: ${error.getMessage}")
-            None
-        }
 
         if(user.getOrElse(User(UUID.randomUUID())).group_code!="none") {
 
-          val author = user.map(new Author(_)) // New profile page uses Author instead of User
+          // Get the User/Author's profile data
+          val author = new Author(user.get) // New profile page uses Author instead of User
           val flags = Map("tester" -> isTester(user),"mcm-experiment" -> isExp(request))
+          val authorAnalyticsMap = getAuthorAnalyticsMap(author)
+          val authorProfile = AuthorProfile(Some(author),authorAnalyticsMap.getOrElse(author,None))
+          val associateAnalytics = authorAnalyticsMap.-(author).map(aa => AuthorProfile(Some(aa._1),aa._2)).toVector
 
-          val authorAnalyticsFinal = for {
-            a <- author
-            af <- analyticsFinal
-          } yield af.get(a.pseudonym.getOrElse(""))
-          Ok(new ProfilePage(AuthorProfile(author,authorAnalyticsFinal.flatten),Vector(),flags).buildPage(message = message))
+          Ok(new ProfilePage(authorProfile,associateAnalytics,flags).buildPage(message = message))
         } else {
           Redirect("/register") // User is not registered
         }
       }
     }.getOrElse {
       Future.successful(Unauthorized(UNAUTHORIZED_MESSAGE))
+    }
+  }
+
+
+  private def getAuthorAnalyticsMap(author:Author):Map[Author,Option[AuthorAnalytics]] = {
+
+    // Get analytics for author + associates
+    val analytics: Either[Throwable, Map[Author, AuthorAnalytics]] = {
+      for {
+        ais <- profileService.getAssociatedIds(author.goingok_id)
+        ans <- profileService.getAuthorAnalytics(ais.prepended(author))
+      } yield ans
+    }
+
+analytics match {
+      case Right(an) =>
+        an.map(aa => aa._1->Some(aa._2))
+      case Left(error) =>
+        logger.error(s"Error in creating analytics for profile page: ${error.getMessage}")
+        Map()
     }
   }
 
