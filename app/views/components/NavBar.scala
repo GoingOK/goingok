@@ -96,7 +96,7 @@ object NavBar {
         ul(`class`:="nav navbar-nav mx-auto")(
           if(isSignedIn){
             li(`class` := "nav-item dropdown multi-user")(
-                button(`class` := "btn btn-sm btn-outline-light", data("toggle") := "dropdown", disabled, displayName)
+                button(`class` := "btn btn-sm btn-outline-light", data("bs-toggle") := "dropdown", disabled, displayName)
                 , div(`class` := "dropdown-menu pointer")
                //(s"$displayName") }
             )
