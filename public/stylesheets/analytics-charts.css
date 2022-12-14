@@ -372,12 +372,28 @@ Author CSS
     overflow-y: auto;
 }
 
+#tags li {
+    margin-left: 0.5rem;
+}
+
+#tags li:not(:last-child) {
+    padding-right: 0.5rem;
+    border-right: 2px solid #ced4da;
+}
+
 .tag-row {
     background-color: #fff !important;
     border-top: none !important;
     border-left: none !important;
     border-right: none !important;
     text-align: center;
+}
+
+.tag-color-picker {
+    width: 30px;
+    padding: 2px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
 }
 
 .hardline {
