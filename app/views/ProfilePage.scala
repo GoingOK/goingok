@@ -8,7 +8,7 @@ import scalatags.Text.all._
 import scalatags.Text.{TypedTag, tags}
 import views.components.NavBar.NavParams
 import views.components._
-import views.components.profile.{MessagesList, Network, ReflectionEntryForm, ReflectionList, ReflectionPointChart, Reflections, Sort, Tags, Timeline}
+import views.components.profile.{MessagesList, Network, ReflectionEntryForm, ReflectionList, ReflectionPointChart, Reflections, Tags, Timeline}
 
 
 class ProfilePage(authorProfile:AuthorProfile = AuthorProfile(), associateProfiles:Vector[AuthorProfile] = Vector(), flags:Map[String,Boolean] = Map() ) extends GenericPage {
@@ -37,35 +37,20 @@ class ProfilePage(authorProfile:AuthorProfile = AuthorProfile(), associateProfil
               div(`class` := "content-wrapper",
                 div(`class` := "container-fluid",
                   div(id := "analytics-charts", `class` := "row",
-                    div(`class` := "col-md-4 mt-3",
+                    div(`class` := "col-md-12 mt-3",
                       div(`class` := "row",
-                        div(`class` := "col-md-12",
+                        div(`class` := "col-md-4",
                           Includes.panel("reflection-entry", "fas fa-edit", "Enter a reflection", ReflectionEntryForm.display(sliderStartPoint),
                             "Use the slider to indicate how you are going from 'distressed' to 'soaring', " +
                               "and in the text box below write anything you like to describe how you how you are going. " +
                               "When finished, click the 'save' button to record your reflection.")
                         ),
-                        if (mcmexperiment) {
-                          div(id := "sort", `class` := "col-md-12",
-                            Sort.display()
-                          )
-                        } else {},
-                        div(id := "reflections", `class` := "col-md-12 mt-3",
-                          Reflections.display()
-                        )
-                      )
-                    ),
-                    div(`class` := "col-md-8",
+                        div(id := "timeline", `class` := "col-md-8", Timeline.display()))),
+                    div(`class` := "col-md-12 mt-3", Tags.display()),
+                    div(`class` := "col-md-12 mt-3",
                       div(`class` := "row",
-                        div(id := "timeline", `class` := "col-md-12 mt-3",
-                          Timeline.display()
-                        ),
-                        div(`class` := "col-md-12 mt-3",
-                          Tags.display()
-                        ),
-                        div(id := "network", `class` := "col-md-12 mt-3",
-                          Network.display()
-                        )
+                        div(id := "reflections", `class` := "col-md-4", Reflections.display()),
+                        div(id := "network", `class` := "col-md-8", Network.display())
                       )
                     )
                   )
