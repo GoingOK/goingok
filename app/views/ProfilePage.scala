@@ -140,15 +140,16 @@ class ProfilePage(authorProfile:AuthorProfile = AuthorProfile(), associateProfil
   }
 
   private def parseNodes(nodeLabels: Vector[AnltxNodeLabel], nodes: Vector[AnltxNode], labels: Vector[AnltxLabel]): List[ujson.Obj] = {
-    nodeLabels.map(nl => {
-      val node = nodes.find(n => n.node_id == nl.node_id).getOrElse(AnltxNode(0, "", 0, 0, 0))
-      val label = labels.find(l => l.label_id == nl.label_id).getOrElse(AnltxLabel(0,"","","",true,ujson.Obj()))
-      ujson.Obj("idx" -> node.node_id,
-      "nodeType" -> node.node_type,
-      "refId" -> node.ref_id,
-      "startIdx" -> node.start_idx,
-      "endIdx" -> node.end_idx,
-      "expression" -> nl.expression,
+    nodes.map(n => {
+      val nodeLabel = nodeLabels.find(nl => nl.node_id == n.node_id).getOrElse(AnltxNodeLabel(0, 0, "", 0))
+      val label = labels.find(l => l.label_id == nodeLabel.label_id).getOrElse(AnltxLabel(0,"",null,"",true,ujson.Obj()))
+      ujson.Obj("idx" -> n.node_id,
+      "nodeType" -> n.node_type,
+      "nodeCode" -> n.node_code,
+      "refId" -> n.ref_id,
+      "startIdx" -> n.start_idx,
+      "endIdx" -> n.end_idx,
+      "expression" -> nodeLabel.expression,
       "labelType" -> label.label_type,
       "name" -> label.ui_name,
       "description" -> label.description,
@@ -158,15 +159,15 @@ class ProfilePage(authorProfile:AuthorProfile = AuthorProfile(), associateProfil
   }
 
   private def parseEdges(edgeLabels: Vector[AnltxEdgeLabel], edges: Vector[AnltxEdge], labels: Vector[AnltxLabel]): List[ujson.Obj] = {
-    edgeLabels.map(el => {
-      val edge = edges.find(e => e.edge_id == el.edge_id).getOrElse(AnltxEdge(0,0,"",0,0,false,0))
-      val label = labels.find(l => l.label_id == el.label_id).getOrElse(AnltxLabel(0,"","","",true,ujson.Obj()))
-      ujson.Obj("idx" -> edge.edge_id,
-      "edgeType" -> edge.edge_type,
-      "source" -> edge.source,
-      "target" -> edge.target,
-      "directional" -> edge.directional,
-      "weight" -> edge.weight,
+    edges.map(e => {
+      val edgeLabel = edgeLabels.find(el => el.edge_id == e.edge_id).getOrElse(AnltxEdgeLabel(0,0,0))
+      val label = labels.find(l => l.label_id == edgeLabel.label_id).getOrElse(AnltxLabel(0,"","","",true,ujson.Obj()))
+      ujson.Obj("idx" -> e.edge_id,
+      "edgeType" -> e.edge_type,
+      "source" -> e.source,
+      "target" -> e.target,
+      "directional" -> e.directional,
+      "weight" -> e.weight,
       "labelType" -> label.label_type,
       "name" -> label.ui_name,
       "description" -> label.description,

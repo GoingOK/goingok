@@ -495,7 +495,7 @@ class DataService {
   }
   def getNodesForReflection(ref_id:Int): DBResult[Vector[AnltxNode]] = {
     val query =
-      sql"""select n.node_id, n.node_type, n.ref_id, n.start_idx, n.end_idx
+      sql"""select n.node_id, n.node_type, n.node_code, n.ref_id, n.start_idx, n.end_idx
             from anltx_nodes n
             where n.ref_id = $ref_id;
            """.query[AnltxNode]

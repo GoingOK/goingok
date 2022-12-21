@@ -49,7 +49,7 @@ object ReflectionEntryForm {
       div( `class` := "p-2", "GoingOK"),
       div( `class` := "p-2", "Soaring")
     ),
-    input(`type`:="range",`class`:="form-control-range is-invalid", name:="reflection-point",id:="reflection-point",onchange:="rangeChange()"),
+    input(`type`:="range",`class`:="form-range is-invalid", name:="reflection-point",id:="reflection-point",onchange:="rangeChange()"),
     div(`class`:="invalid-feedback",b("Please set the slider to a point the best describes how you are going.")),
     script(raw(
       """

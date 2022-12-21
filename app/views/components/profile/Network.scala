@@ -13,20 +13,12 @@ object Network {
             i(`class` := "fas fa-question-circle")
           )
         ),
-        h6(`class` := "card-subtitle mb-2",
+        h6(`class` := "card-subtitle mb-2 d-flex",
+          span(`class`:= "ms-auto my-auto", "zoom:"),
           div(`class`:= "input-group input-group-sm zoom-buttons",
-            span(`class`:= "me-2 my-auto", "zoom:"),
-            div(`class`:= "input-group-prepend",
-              div(`class` := "input-group",
-                input(`class` := "btn btn-secondary btn-sm", `type`:="button", value:="-", id:="zoom-minus")
-              )
-            ),
+            button(`class` := "btn btn-secondary btn-sm", id:="zoom-minus", "-"),
             input(`type` := "text", value := "100%", `class` := "form-control text-center", id := "zoom-number", disabled:="True"),
-            div(`class` := "input-group-append",
-              div(`class` := "input-group",
-                input(`class` := "btn btn-secondary btn-sm", `type`:="button", value:="+", id:="zoom-plus")
-              )
-            )
+            button(`class` := "btn btn-secondary btn-sm", id:="zoom-plus", "+")
           )
         ),
         div(`class` := "chart-container network")
