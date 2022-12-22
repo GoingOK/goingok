@@ -14,12 +14,12 @@ object Network {
           )
         ),
         h6(`class` := "card-subtitle mb-2 d-flex",
-          span(`class`:= "ms-auto my-auto", "zoom:"),
-          div(`class`:= "input-group input-group-sm zoom-buttons",
-            button(`class` := "btn btn-secondary btn-sm", id:="zoom-minus", "-"),
-            input(`type` := "text", value := "100%", `class` := "form-control text-center", id := "zoom-number", disabled:="True"),
-            button(`class` := "btn btn-secondary btn-sm", id:="zoom-plus", "+")
-          )
+//          span(`class`:= "ms-auto my-auto", "zoom:"),
+//          div(`class`:= "input-group input-group-sm zoom-buttons",
+//            button(`class` := "btn btn-secondary btn-sm", id:="zoom-minus", "-"),
+//            input(`type` := "text", value := "100%", `class` := "form-control text-center", id := "zoom-number", disabled:="True"),
+//            button(`class` := "btn btn-secondary btn-sm", id:="zoom-plus", "+")
+//          )
         ),
         div(`class` := "chart-container network")
       )
