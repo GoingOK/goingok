@@ -28,8 +28,8 @@ object Includes {
     script(src := routes.Assets.versioned("scripts/gokd3-bundle.js").url),
     script(src := routes.Assets.versioned("lib/jquery/jquery.js").url),
     script(src := routes.Assets.versioned("lib/bootstrap/js/bootstrap.bundle.min.js").url),
-    script(src := routes.Assets.versioned("lib/font-awesome/js/solid.js").url),
-    script(src := routes.Assets.versioned("lib/font-awesome/js/fontawesome.js").url),
+    //script(src := routes.Assets.versioned("lib/font-awesome/js/solid.js").url),
+    //script(src := routes.Assets.versioned("lib/font-awesome/js/fontawesome.js").url),
 
     initPopovers
   )
