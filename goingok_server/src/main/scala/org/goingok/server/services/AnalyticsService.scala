@@ -102,6 +102,7 @@ class AnalyticsService {
         case _ => Left(new Exception("Range is not valid"))
       }
     }
+    logger.debug(s"result: $result")
     result match {
       case Right(result:DbResults.GroupedAuthorReflections) => {
         logger.info(s"reflections found: ${result.value.size}")

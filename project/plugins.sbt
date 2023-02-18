@@ -1,7 +1,7 @@
 ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
 
 //Play framework
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.8.18")
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.8.19")
 
 //ScalaJS
 addSbtPlugin("org.scala-js" % "sbt-scalajs" % "1.12.0")

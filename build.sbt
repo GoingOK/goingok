@@ -34,7 +34,7 @@ ThisBuild / scalaVersion := "2.13.10"
 lazy val vUpickle = "2.0.0"
 lazy val vDoobie = "0.13.4"
 lazy val vConfig = "1.4.2"
-lazy val vScalaTest = "3.2.14"
+lazy val vScalaTest = "3.2.15"
 lazy val vScalaLogging = "3.9.5"
 
 lazy val vScalaTags = "0.11.1"

@@ -4,11 +4,13 @@ import java.time.format.DateTimeFormatter
 import java.time.{LocalDateTime, ZoneId, ZonedDateTime}
 
 case class ReflectionAuthorEntry(pseudonym:String, reflectionEntry:ReflectionEntry) {
+  def this(ref: ReflectionAuthorDB) = this(ref.pseudonym,ReflectionEntry(ref.ref_id,ref.timestamp,ReflectionData(ref.point,ref.text)))
   def bneZonedDateTime: ZonedDateTime =  {
     LocalDateTime.parse(reflectionEntry.timestamp).atZone(ZoneId.of("GMT")).withZoneSameInstant(ZoneId.of("Australia/Brisbane"))
   }
   def bneTimestamp: String = bneZonedDateTime.toLocalDateTime.toString
   def bneDateTimeString: String = bneZonedDateTime.format(DateTimeFormatter.ofPattern("E d MMM Y hh:mm a")) //Mon 23 Jul 2018 12:41 AM
+
 
 }
 
