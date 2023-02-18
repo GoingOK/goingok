@@ -21,7 +21,7 @@ dockerChmodType := DockerChmodType.UserGroupWriteExecute
 dockerPermissionStrategy := DockerPermissionStrategy.CopyChown
 
 lazy val projectName = "goingok"
-lazy val projectVersion = "4.3.2"
+lazy val projectVersion = "4.3.7"
 lazy val projectOrganisation = "org.goingok"
 
 lazy val serverName = s"${projectName}_server"
