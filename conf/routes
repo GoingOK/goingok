@@ -15,16 +15,18 @@ GET     /signout                controllers.CognitoAuthController.signout
 #GET     /signout                controllers.AuthController.signout
 
 GET     /register               controllers.RegisterController.register
-+ nocsrf
++nocsrf
 POST    /registerWithGroup               controllers.RegisterController.registerWithGroup
 
 GET     /profile                controllers.ProfileController.profile
-+ nocsrf
++nocsrf
 POST     /profile         controllers.ProfileController.profile
 
 GET     /analytics              controllers.AnalyticsController.analytics
 GET     /analytics_old          controllers.AnalyticsController.analytics_old
 GET     /analytics/csv          controllers.AnalyticsController.reflectionsCsv
++nocsrf
+POST    /analytics/logUIevent   controllers.APIController.logUiActivity
 
 GET     /admin                  controllers.AdminController.admin
 +nocsrf

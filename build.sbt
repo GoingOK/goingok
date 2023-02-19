@@ -21,7 +21,7 @@ dockerChmodType := DockerChmodType.UserGroupWriteExecute
 dockerPermissionStrategy := DockerPermissionStrategy.CopyChown
 
 lazy val projectName = "goingok"
-lazy val projectVersion = "4.3.7"
+lazy val projectVersion = "4.3.9"
 lazy val projectOrganisation = "org.goingok"
 
 lazy val serverName = s"${projectName}_server"
@@ -105,7 +105,7 @@ lazy val goingok = project.in(file("."))
     dockerRepository := Some(s"$dockerRepoURI"),
     Docker / defaultLinuxInstallLocation := "/opt/docker",
     dockerExposedVolumes := Seq("/opt/docker/logs"),
-    dockerBaseImage := "adoptopenjdk/openjdk8:latest", //"openjdk:18-oracle", //"openjdk:stable",
+    dockerBaseImage := "eclipse-temurin:11", //"adoptopenjdk:latest", //"openjdk:18-oracle", //"openjdk:stable",
     // Puts unified scaladocs into target/api
     ScalaUnidoc / siteSubdirName  := "api",
     addMappingsToSiteDir( ScalaUnidoc / packageDoc / mappings,  ScalaUnidoc / siteSubdirName)

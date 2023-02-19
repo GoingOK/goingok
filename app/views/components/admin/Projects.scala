@@ -12,7 +12,18 @@ object Projects extends GenericComponents {
   def display(adminData:AdminData): TypedTag[String] = {
 
     card("Projects",
-      div(b("Interactive Visualisations"),div(""),testerList(adminData.testers),div(""),dashboardTestersForm)
+      div(b("Interactive Visualisations"),div(""),testerList(adminData.testers),div(""),dashboardTestersForm,div(b("Test Event Post")), uiLoggingTest)
+    )
+  }
+
+  private def uiLoggingTest: TypedTag[String] = {
+    form(`class` := "needs-validation", action := "/analytics/logUIevent", method := "POST", attr("novalidate") := "",
+      div(`class` := "form-group",
+        input(`type` := "hidden", name := "event", id := "event", value := "This is a test event"),
+      ),
+      div(`class` := "form-group text-right",
+        input(`type` := "submit", value := "post event", `class` := "btn btn-success")
+      )
     )
   }
 
