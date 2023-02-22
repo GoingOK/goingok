@@ -3,6 +3,7 @@ package controllers
 import org.goingok.server.data.Permissions
 import org.goingok.server.data.models.User
 import org.goingok.server.services.{APIService, AnalyticsService, ProfileService}
+import play.api.libs.json.{JsError, JsNull, JsObject, JsSuccess, JsValue}
 import play.api.mvc._
 
 import java.util.UUID
@@ -15,18 +16,28 @@ class APIController @Inject()(components: ControllerComponents, profileService: 
   def logUiActivity: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] => authorise(request,logActivity)}
 
   private val logActivity = (user: User, request: Request[AnyContent]) => {
-    val query = request.body.asFormUrlEncoded
+    val query = request.body.asJson
     logger.debug(query.toString())
-    val event = query.getOrElse(Map()).getOrElse("event",Vector("")).head
-    val response = if(event.isEmpty) {
-      logger.warn("Empty UI event posted to logUiActivity()")
-      "ERROR: Empty UI event"
-    } else {
-      apiService.registerUIActivity(user.goingok_id,event)
-      logger.info(s"UI event posted for ${user.goingok_id}: $event")
-      "UI event posted"
+    val json = query.getOrElse[JsValue](JsObject(Seq("event" -> JsNull)))
+    val eventResult = (json \ "event").validate[String]
+    eventResult match {
+      case JsSuccess(event, _) =>
+        apiService.registerUIActivity(user.goingok_id,event)
+        logger.info(s"UI event posted for ${user.goingok_id}: $event")
+      case e: JsError =>
+        logger.warn("Empty UI event posted to logUiActivity()")
     }
-    Ok(response)
+    Ok(eventResult.toString())
+    //val event = query.getOrElse(Map()).getOrElse("event",Vector("")).head
+//    val response = if(event == JsError) {
+//      logger.warn("Empty UI event posted to logUiActivity()")
+//      "ERROR: Empty UI event"
+//    } else {
+//      //apiService.registerUIActivity(user.goingok_id,event)
+//      logger.info(s"UI event posted for ${user.goingok_id}: $event")
+//      "UI event posted"
+//    }
+//    Ok(response)
   }
 
   private def authorise(request: Request[AnyContent], pageMaker: (User, Request[AnyContent]) => Result) = Future {
