@@ -296,7 +296,6 @@ Admin CSS
 }
 
 .zoom-buttons {
-    margin-left: 0.25rem;
     margin-bottom: 0;
     width: 160px !important;
 }
@@ -364,15 +363,14 @@ Author CSS
 ***************************************************/
 
 .chart-container.timeline {
-    min-height: 57vh;
+    min-height: 40vh;
 }
 
 .chart-container.network {
-    min-height: 70vh;
+    min-height: 40vh;
 }
 
 .reflections-tab {
-    height: 70vh;
     overflow-y: auto;
 }
 
@@ -393,11 +391,66 @@ Author CSS
     text-align: center;
 }
 
+.group-tags-check-div {
+    background-color: #ffffff;
+    border: 1px solid #6c757d;
+    width: 2rem;
+    height: 1rem;
+    float: left;
+    margin-left: -1.5rem;
+    margin-right: 0.5rem;
+    margin-top: 0.25rem;
+    border-radius: 0.5rem;
+}
+
+.group-tags-check-div.on {
+    background-color: #0d6efd;
+}
+
+.group-tags-check-input {
+    background-color: #0d6efd;
+    border-radius: 0.5rem;
+    position: absolute;
+    margin-top: 0.0625rem;
+    margin-left: 0.125rem;
+    width: 0.75rem;
+    height: 0.75rem;
+    appearance: none;
+    transition: all 0.15s;
+}
+
+.group-tags-check-input:checked {
+    background-color: #ffffff;
+    margin-left: 1rem;
+}
+
 .tag-color-picker {
-    width: 30px;
+    width: 20px;
+    height: 20px;
     padding: 2px;
     border: 1px solid #ced4da;
     border-radius: 5px;
+    margin-top: auto;
+    margin-bottom: auto;
+    cursor: pointer;
+}
+
+.tag-check-label {
+    vertical-align: middle;
+    font-size: smaller;
+    cursor: pointer;
+}
+
+.tag-check-label.off {
+    text-decoration: line-through;
+}
+
+.tag-help {
+    height: 25%;
+    font-size: 0.5rem !important;
+    margin-right: 0.5rem;
+    border: none;
+    cursor: help !important;
 }
 
 .hardline {
@@ -463,6 +516,12 @@ Author CSS
 
 .reflection-text span {
     color: #000000;
+}
+
+.reflection-text .selected {
+    background-color: #999999;
+    border: 2px solid #999999;
+    border-radius: 50rem;
 }
 
 /**************************************************

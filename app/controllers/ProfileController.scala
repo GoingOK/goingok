@@ -58,7 +58,7 @@ class ProfileController @Inject()(components: ControllerComponents,profileServic
 
           // Get the User/Author's profile data
           val author = new Author(user.get) // New profile page uses Author instead of User
-          val flags = Map("tester" -> isTester(user),"mcm-experiment" -> isExp(request))
+          val flags = Map("tester" -> isTester(user),"mcm-experiment" -> isExp(request),"mcm-experiment-group" -> isExpGroup(user))
           val authorAnalyticsMap = getAuthorAnalyticsMap(author)
           val authorProfile = AuthorProfile(Some(author),authorAnalyticsMap.getOrElse(author,None))
           val associateAnalytics = authorAnalyticsMap.-(author).map(aa => AuthorProfile(Some(aa._1),aa._2)).toVector
@@ -117,6 +117,13 @@ analytics match {
 
   private def isExp(request: Request[AnyContent]): Boolean = {
     request.getQueryString("exp").contains("true");
+  }
+
+  private def isExpGroup(user: Option[User]): Boolean = {
+    user match {
+      case Some(usr) => usr.group_code == "qut-ifn619" || usr.group_code == "qut-admin"
+      case None => false
+    }
   }
 
 //  def reflectionsCsv :Action[AnyContent] = silhouette.SecuredAction(errorHandler).async { implicit request: SecuredRequest[DefaultEnv, AnyContent] =>
