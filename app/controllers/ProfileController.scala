@@ -121,7 +121,7 @@ analytics match {
 
   private def isExpGroup(user: Option[User]): Boolean = {
     user match {
-      case Some(usr) => usr.group_code == "qut-ifn619" || usr.group_code == "qut-admin"
+      case Some(usr) => usr.group_code == "qut-ifn619"
       case None => false
     }
   }
