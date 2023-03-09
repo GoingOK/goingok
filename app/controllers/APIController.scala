@@ -44,7 +44,6 @@ class APIController @Inject()(components: ControllerComponents, profileService: 
     val user: Option[User] = for {
       uid <- request.session.get("user")
       u <- profileService.getUser(UUID.fromString(uid))
-      if u.supervisor
     } yield u
 
     user match {
