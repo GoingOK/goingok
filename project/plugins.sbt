@@ -1,5 +1,8 @@
 ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
 
+//Use Bloop build server
+addSbtPlugin("ch.epfl.scala" % "sbt-bloop" % "1.5.6")
+
 //Play framework
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.8.19")
 
