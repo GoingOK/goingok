@@ -2,7 +2,9 @@
 *.log
 *.DS_Store
 .idea/*
+.vscode/**
 .bloop/*
+project/.bloop/**
 .metals/*
 .history/*
 null/*
@@ -58,3 +60,5 @@ goingok_client/target/
 
 /.bsp/
 /.idea/
+.devcontainer.json
+goingok.code-workspace
