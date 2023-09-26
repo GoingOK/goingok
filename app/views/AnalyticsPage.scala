@@ -31,15 +31,14 @@ class AnalyticsPage(user:Option[User]=None, analytics: GroupAnalytics, tester: B
         NavBar.main(NavParams(author,Config.baseUrl,Some("analytics"))),
         div(`class`:="wrapper",
           if (tester){
-            SidePanel.display(exp)
+            SidePanel.display(true)
           } else {},
           div(id :="content", `class`:="content",
               div(`class`:="content-wrapper",
                 div(id := "analytics-content",`class` := "container-fluid",
                   showMessage(message),
                   if (tester){
-                    Charts.display(exp)
-
+                    Charts.display(true)
                   } else {
                     downloadsSection(analytics)
                   },
@@ -76,11 +75,12 @@ class AnalyticsPage(user:Option[User]=None, analytics: GroupAnalytics, tester: B
         ujson.Obj("refId" -> c.reflectionEntry.refId, "timestamp" -> c.reflectionEntry.timestamp, "pseudonym" -> c.pseudonym, "point" -> c.reflectionEntry.reflection.point, "text" -> c.reflectionEntry.reflection.text)),
       "createDate" -> r.timestamp))
     val entries:String = ujson.write(chartData)
-    if (exp){
-      script(raw(s"gokd3.buildExperimentAdminAnalyticsCharts($entries)"))
-    } else {
-      script(raw(s"gokd3.buildControlAdminAnalyticsCharts($entries)"))
-    }
+    script(raw(s"gokd3.buildExperimentAdminAnalyticsCharts($entries)"))
+//    if (exp){
+//      script(raw(s"gokd3.buildExperimentAdminAnalyticsCharts($entries)"))
+//    } else {
+//      script(raw(s"gokd3.buildControlAdminAnalyticsCharts($entries)"))
+//    }
   }
 }
 
