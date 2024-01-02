@@ -3,9 +3,10 @@
 *.DS_Store
 .idea/*
 .vscode/**
-.bloop/*
+.bloop/**
 project/.bloop/**
-.metals/*
+project/metals.sbt
+.metals/**
 .history/*
 null/*
 goingok.iml

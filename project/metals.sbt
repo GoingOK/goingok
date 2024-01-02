@@ -1,11 +1,6 @@
 // DO NOT EDIT! This file is auto-generated.
 
-// This plugin enables semantic information to be produced by sbt.
-// It also adds support for debugging using the Debug Adapter Protocol
+// This file enables sbt-bloop to create bloop config files.
 
-addSbtPlugin("org.scalameta" % "sbt-metals" % "0.11.11")
-
-// This plugin adds the BSP debug capability to sbt server.
-
-addSbtPlugin("ch.epfl.scala" % "sbt-debug-adapter" % "3.0.4")
+addSbtPlugin("ch.epfl.scala" % "sbt-bloop" % "1.5.13")
 

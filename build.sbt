@@ -29,13 +29,14 @@ lazy val clientName = s"${projectName}_client"
 lazy val sharedName = s"${projectName}_shared"
 
 //Versions
-ThisBuild / scalaVersion := "2.13.10"
+ThisBuild / scalaVersion := "2.13.12"
 
 lazy val vUpickle = "2.0.0"
 lazy val vDoobie = "0.13.4"
 lazy val vConfig = "1.4.2"
 lazy val vScalaTest = "3.2.15"
 lazy val vScalaLogging = "3.9.5"
+lazy val vGuice = "5.1.0"
 
 lazy val vScalaTags = "0.11.1"
 lazy val vScalaJsDom = "2.3.0"
@@ -56,18 +57,20 @@ val playDeps = Seq(ws, guice, ehcache) //, guice specs2 % Test)
 
 val generalDeps = Seq(
   "com.typesafe" % "config" % vConfig,
-  "com.lihaoyi" %% "scalatags" % vScalaTags, //Using ScalaTags instead of Twirl
-  "com.lihaoyi" %% "upickle" % vUpickle, //Using uJson for main JSON
+  "com.lihaoyi" %% "scalatags" % vScalaTags, // Using ScalaTags instead of Twirl
+  "com.lihaoyi" %% "upickle" % vUpickle, // Using uJson for main JSON
+  "com.google.inject" % "guice" % vGuice,
+  "com.google.inject.extensions" % "guice-assistedinject" % vGuice
 )
 
 val authDeps = Seq(
-  "com.pauldijou" %% "jwt-core" % "5.0.0",
+  "com.pauldijou" %% "jwt-core" % "5.0.0"
 )
 
 val dbDeps = Seq(
   "org.tpolecat" %% "doobie-core" % vDoobie,
-  "org.tpolecat" %% "doobie-postgres"  % vDoobie, // Postgres driver 42.2.2 + type mappings
-  "org.tpolecat" %% "doobie-scalatest" % vDoobie  // ScalaTest support for typechecking statements.
+  "org.tpolecat" %% "doobie-postgres" % vDoobie, // Postgres driver 42.2.2 + type mappings
+  "org.tpolecat" %% "doobie-scalatest" % vDoobie // ScalaTest support for typechecking statements.
 )
 
 val testDeps = Seq(
@@ -83,14 +86,14 @@ val jsDeps = Seq(
   "org.webjars" % "jquery" % vJquery / "jquery.js",
   "org.webjars" % "d3js" % vD3 / "d3.js",
   "org.webjars" % "bootstrap" % vBootstrap / "bootstrap.js",
-  "org.webjars" % "font-awesome" % vFontawesome / "fontawesome.js",
+  "org.webjars" % "font-awesome" % vFontawesome / "fontawesome.js"
 )
 
-
 // Main project
-lazy val goingok = project.in(file("."))
-  .dependsOn(server,client)
-  .aggregate(server,client)
+lazy val goingok = project
+  .in(file("."))
+  .dependsOn(server, client)
+  .aggregate(server, client)
   .settings(
     sharedSettings,
     libraryDependencies ++= playDeps,
@@ -98,21 +101,23 @@ lazy val goingok = project.in(file("."))
     libraryDependencies ++= authDeps,
     libraryDependencies ++= testDeps,
     resolvers ++= Resolver.sonatypeOssRepos("releases"),
-
     scalaJSProjects := Seq(client),
     Assets / pipelineStages := Seq(scalaJSPipeline),
-
-    dockerExposedPorts := Seq(9000,80), // sbt docker:publishLocal
+    dockerExposedPorts := Seq(9000, 80), // sbt docker:publishLocal
     dockerRepository := Some(s"$dockerRepoURI"),
     Docker / defaultLinuxInstallLocation := "/opt/docker",
     dockerExposedVolumes := Seq("/opt/docker/logs"),
-    dockerBaseImage := "eclipse-temurin:11", //"adoptopenjdk:latest", //"openjdk:18-oracle", //"openjdk:stable",
+    dockerBaseImage := "eclipse-temurin:11", // "adoptopenjdk:latest", //"openjdk:18-oracle", //"openjdk:stable",
     // Puts unified scaladocs into target/api
-    ScalaUnidoc / siteSubdirName  := "api",
-    addMappingsToSiteDir( ScalaUnidoc / packageDoc / mappings,  ScalaUnidoc / siteSubdirName)
-  ).enablePlugins(PlayScala)
+    ScalaUnidoc / siteSubdirName := "api",
+    addMappingsToSiteDir(
+      ScalaUnidoc / packageDoc / mappings,
+      ScalaUnidoc / siteSubdirName
+    )
+  )
+  .enablePlugins(PlayScala)
   .enablePlugins(SbtWeb)
-  .enablePlugins(SiteScaladocPlugin,ScalaUnidocPlugin)
+  .enablePlugins(SiteScaladocPlugin, ScalaUnidocPlugin)
 
 // Documentation subproject
 lazy val docs = (project in file("project_docs"))
@@ -124,11 +129,13 @@ lazy val docs = (project in file("project_docs"))
     paradoxProperties ++= Map(
       "github.base_url" -> s"$githubBaseUrl",
       "scaladoc.api.base_url" -> s"$scaladocApiBaseUrl"
-    ),
-  ).enablePlugins(ParadoxSitePlugin)
+    )
+  )
+  .enablePlugins(ParadoxSitePlugin)
 
 // Server subproject
-lazy val server = project.in(file(serverName))
+lazy val server = project
+  .in(file(serverName))
   .settings(
     sharedSettings,
     libraryDependencies ++= generalDeps,
@@ -138,11 +145,13 @@ lazy val server = project.in(file(serverName))
     libraryDependencies ++= logDeps,
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
     buildInfoPackage := projectOrganisation,
-    buildInfoOptions += BuildInfoOption.BuildTime,
-  ).enablePlugins(BuildInfoPlugin)
+    buildInfoOptions += BuildInfoOption.BuildTime
+  )
+  .enablePlugins(BuildInfoPlugin)
 
 // Client subproject
-lazy val client = project.in(file(clientName))
+lazy val client = project
+  .in(file(clientName))
   .settings(
     sharedSettings,
     scalaJSUseMainModuleInitializer := true,
@@ -150,23 +159,34 @@ lazy val client = project.in(file(clientName))
     jsDependencies ++= jsDeps,
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % vScalaJsDom,
-      "com.lihaoyi" %%% "scalatags" % vScalaTags, //Using ScalaTags instead of Twirl
-      "com.lihaoyi" %%% "upickle" % vUpickle, //Using uJson for main JSON
+      "com.lihaoyi" %%% "scalatags" % vScalaTags, // Using ScalaTags instead of Twirl
+      "com.lihaoyi" %%% "upickle" % vUpickle, // Using uJson for main JSON
       "org.scalactic" %%% "scalactic" % vScalaTest,
       "org.scalatest" %%% "scalatest" % vScalaTest % "test"
     )
-  ).enablePlugins(ScalaJSPlugin, ScalaJSWeb,JSDependenciesPlugin)
+  )
+  .enablePlugins(ScalaJSPlugin, ScalaJSWeb, JSDependenciesPlugin)
 
 //Documentation
 //Task for building docs and copying to root level docs folder (for GitHub pages)
-val updateDocsTask = TaskKey[Unit]("updateDocs","copies paradox docs to /docs directory")
+val updateDocsTask =
+  TaskKey[Unit]("updateDocs", "copies paradox docs to /docs directory")
 
 updateDocsTask := {
   val siteResult = makeSite.value
   val apiSource = new File("target/site")
   val paradoxSource = new File("project_docs/target/site")
   val docDest = new File("docs")
-  IO.copyDirectory(apiSource,docDest,overwrite=true,preserveLastModified=true)
-  IO.copyDirectory(paradoxSource,docDest,overwrite=true,preserveLastModified=true)
+  IO.copyDirectory(
+    apiSource,
+    docDest,
+    overwrite = true,
+    preserveLastModified = true
+  )
+  IO.copyDirectory(
+    paradoxSource,
+    docDest,
+    overwrite = true,
+    preserveLastModified = true
+  )
 }
-
